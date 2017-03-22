@@ -5,6 +5,7 @@
     float: right;
     padding: 10px;
     border-left: 1px solid gray;
+    overflow-y: auto;
 }
 
 html, body, .stretch {
@@ -22,7 +23,15 @@ h3 {
 .comment_text {
     width: 100%;
     min-height: 70px;
-    overflow-y: scroll;
+    overflow-y: auto;
+}
+
+.posted_comment {
+    width: 100%;
+    background: white;
+    border-radius: 5px;
+    margin: 5px 0px;
+    padding: 3px;
 }
 
 .add_comment:hover {
@@ -30,14 +39,16 @@ h3 {
     color: gray;
 }
 
-.btn:hover {
+.insert_btn:hover {
     cursor: pointer;
     background-color: #5eff5b;
     border-radius: 10px;
 }
 
-.btn {
+.insert_btn {
     vertical-align: top;
+    margin: 5px;
+    font-size: 1.2em;
 }
 
 #example_btn {
@@ -69,8 +80,9 @@ h3 {
 
 .suggestion_box {
     border: 1px solid #004ea3 !important;
-    height: 200px;
-    overflow-y: scroll;
+    height: 300px;
+    padding: 5px;
+    overflow-y: auto;
     background-color: rgba(74,74,74,0.03) !important;
     position: relative;
 }

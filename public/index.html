@@ -8,12 +8,8 @@
     <link rel="stylesheet" href="main.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script> 
-    $(function(){
-      $("#navbar_container").load("navbar.html"); 
-      $("#rubric_Readability").load("commenting.html"); 
-    });
-    </script>
+	<script src="/socket.io/socket.io.js"></script>
+    <script src="js/main.js"></script>
 </head>
 <body>
 	<div id="navbar_container"></div>
@@ -21,8 +17,7 @@
 		<div id="design_container"></div>
 		<div id="sidebar" class="stretch">
 			<h3>Comments:</h3>
-			<div id="rubric_Readability" class="rubric_category"></div>
-
+			<div id="rubrics_container"></div>
 		</div>
 	</div>
 </body>
