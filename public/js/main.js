@@ -4,23 +4,54 @@ var rubric_categories = Object.keys(full_sorted_comments);
 var latest_comment_inserted = -1;
 var socket;
 
+var flagging_comment_id = "";
+var flagging_comment_rubric = "";
+var deleting_comment_id = "";
+var correcting_category = 0;
+var correcting_rubric = "";
+
+var newest_comment_id = 0;
+
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
 
 	var rubric = dom_container.parents(".rubric_cat").attr("id");
-	
-	// send to server
-	socket.emit('comment submitted', 
-		{comment_id: latest_comment_inserted, comment_text: comment_text, rubric: rubric});
-	latest_comment_inserted = -1; // reset
+	if (comment_text != "") {
 
-	var comments_section = dom_container.parents(".rubric_cat").find(".posted_comments");
-	comments_section.append("<div class='posted_comment'>" + comment_text + "</div>");
-	dom_container.find(".comment_text").val("");
-	displayComments(rubric, full_sorted_comments[rubric]);
+		var yes_categories = dom_container.find(".comment_text").attr("data-categories");
+		var no_categories = dom_container.find(".comment_text").attr("data-nocategories");
 
-	dom_container.parents(".comment_interface").hide();
-	dom_container.parents(".rubric_cat").find(".add_comment").show();
+		// send to server
+		socket.emit('comment submitted', 
+			{comment_id: latest_comment_inserted, new_comment_id: newest_comment_id, comment_text: comment_text, 
+				rubric: rubric, yes_categories: yes_categories, no_categories: no_categories});
+		latest_comment_inserted = -1; // reset
+
+		var comments_section = dom_container.parents(".rubric_cat").find(".posted_comments");
+		comments_section.append("<div class='posted_comment' id='new_comment_" + newest_comment_id + "'>" + 
+			"<span class='new_comment_text'>" + comment_text + "</span>" +
+				"<span class='trash_comment glyphicon glyphicon-trash' title='Delete comment' " + 
+					"data-toggle='modal' data-target='#delete_modal'></span></div>");
+
+		$("#new_comment_" + newest_comment_id + " .trash_comment").click(function() {
+			var comment_text = $(this).parent().find(".new_comment_text").html();
+			$("#delete_text").html(comment_text);
+
+			deleting_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_")[1];
+			console.log(deleting_comment_id);
+		});
+
+
+		dom_container.find(".comment_text").val("");
+		displayComments(rubric, full_sorted_comments[rubric]);
+
+		dom_container.parents(".comment_interface").hide();
+		dom_container.parents(".rubric_cat").find(".add_comment").show();
+
+		newest_comment_id++;
+	} else {
+		alert("You can't submit an empty comment!");
+	}
 }
 
 // display comments for the given rubric item
@@ -38,8 +69,10 @@ function displayComments(rubric, comments) {
 
 		var string = "<tr id='comment_" + comment["ID"] + 
 	        "' class='comment' style='color: rgb(" + shade + ", " + shade + ", " + shade + ")'>" + 
-	        	"<td><span class='insert_btn glyphicon glyphicon-circle-arrow-right'></span></td>" +
+	        	"<td><span class='insert_btn glyphicon glyphicon-circle-arrow-right' title='Insert this comment'></span></td>" +
 	        	"<td class='comment_val comment_" + i + "'>" + comment["comment"] + "</td>" + 
+	        	"<td><span class='glyphicon glyphicon-flag flag_btn' title='Flag this comment' " + 
+	        		"data-toggle='modal' data-target='#flag_modal'></span></td>" +
 	        "</tr>";
 
 		if (comment["category"] == "1") {
@@ -51,9 +84,25 @@ function displayComments(rubric, comments) {
 	    } else {
 	        good_section.append("error with comment category");
 	    }
+
 	});
 
-	// callback for when a suggestion is clicked
+	$("#" + rubric + " .flag_btn").click(function() {
+		var comment_text = $(this).parents("tr").find(".comment_val").html();
+		// remove the blanky stuff
+		comment_text = comment_text.replace(/<input.*?>/g, "_____");
+		$("#flag_text").html(comment_text);
+
+		flagging_comment_id = $(this).parents("tr").attr("id").split("comment_")[1];
+		flagging_comment_rubric = rubric;
+	});
+
+	// set blank widths
+	$("input[placeholder]").each(function () {
+        $(this).attr('size', Math.max($(this).attr('placeholder').length, 10));
+    });
+
+	// INSERT A SUGGESTION
 	$(".insert_btn").unbind();
 	$(".insert_btn").click(function(obj) { 
 		var comment_id = $(this).parents(".comment").attr("id").split("comment_")[1];
@@ -70,23 +119,52 @@ function displayComments(rubric, comments) {
 			blank_i++;
 			blank_loc = comment.indexOf("<input");
 		}
+		var comment_textarea = suggestion_box.find(".comment_text.tt-input");
+		//console.log(comment_textarea[0].selectionStart);
+		//console.log(comment_textarea[0].selectionEnd);
 
-		suggestion_box.find(".comment_text").val(comment);
-		console.log(comment);
-		console.log(suggestion_box.find(".comment_text"));
+		comment_textarea.val(comment_textarea.val().substring(0, comment_textarea[0].selectionStart) + 
+				comment_textarea.val().substring(comment_textarea[0].selectionEnd));
+		comment_textarea.val(comment_textarea.val() + comment);
+		comment_textarea.select();
 
 		comment = comment.replace(/"/g, '\\"').replace(/'/g, "\\'");
 
 		// remember that we inserted it
 		latest_comment_inserted = comment_id;
 
+		// scroll back to top of div so you can see inserted comment
+		suggestion_box.animate({ scrollTop: 0 }, "fast");
+
+	});
+
+	$(".comment_text.tt-input").blur(function() {
+		console.log($(this).val());
 	});
 }
 
 // search comments, called whenever used types in text box
 function searchComments(query, suggestion_box) {
-	var result_comments = [];
 	var rubric = suggestion_box.parents(".rubric_cat").attr("id");
+	var result_comments = getMatchingComments(query, rubric);
+	
+	displayComments(rubric, result_comments);
+}
+
+var typeAheadSearch = function(rubric) {
+	console.log(rubric);
+	return function findMatches(q, cb) {
+		var matches = getMatchingComments(q, rubric);
+		var strings = matches.map(function(element) {
+			return element["comment"].replace(/<input.*?>/g, "_____");
+		});
+		console.log(strings);
+		cb(strings);
+	};
+};
+
+function getMatchingComments(query, rubric) {
+	var result_comments = [];
 	var comments_to_search = full_sorted_comments[rubric];
 	for (var i = 0; i < comments_to_search.length; i++) {
 		var comment = comments_to_search[i];
@@ -94,7 +172,7 @@ function searchComments(query, suggestion_box) {
 			result_comments.push(comment);
 		}
 	}
-	displayComments(rubric, result_comments);
+	return result_comments;
 }
 
 
@@ -102,6 +180,45 @@ $(function(){
 	socket = io();
 
     $("#navbar_container").load("navbar.html"); 
+
+    // event handlers for modal dialogs
+    $("#confirm_flag").click(function() {
+    	socket.emit('flag comment', {rubric: flagging_comment_rubric, comment_id: flagging_comment_id});
+    	$("#comment_" + flagging_comment_id).find(".flag_btn").css("color", "#CF0000");
+    	flagging_comment_rubric = "";
+    	flagging_comment_id = "";
+    });
+
+    $("#confirm_delete").click(function() {
+    	socket.emit('delete comment', {comment_id: deleting_comment_id});
+    	$("#new_comment_" + deleting_comment_id).remove();
+    	deleting_comment_id = "";
+    });
+
+    $("#correct_yes").click(function() {
+    	$("#" + correcting_rubric).find(".comment_text").attr("data-categories", 
+    		$("#" + correcting_rubric).find(".comment_text").attr("data-categories") + correcting_category);
+
+    	$("#" + correcting_rubric).find(".comment_text").attr("data-nocategories", 
+    		$("#" + correcting_rubric).find(".comment_text").attr("data-nocategories").replace(correcting_category, ""));
+
+    	$("#" + correcting_rubric).find(".indicator_" + correcting_category)
+    		.addClass("glyphicon-ok")
+    		.removeClass("glyphicon-remove");
+    });
+
+	$("#correct_no").click(function() {
+    	$("#" + correcting_rubric).find(".comment_text").attr("data-categories", 
+    		$("#" + correcting_rubric).find(".comment_text").attr("data-categories").replace(correcting_category, ""));
+
+    	$("#" + correcting_rubric).find(".comment_text").attr("data-nocategories", 
+    		$("#" + correcting_rubric).find(".comment_text").attr("data-nocategories") + correcting_category);
+
+    	$("#" + correcting_rubric).find(".indicator_" + correcting_category)
+    		.removeClass("glyphicon-ok")
+    		.addClass("glyphicon-remove");
+    });
+
 
     // load comment box for each rubric category
     rubric_categories.forEach(function(rubric_cat, i) {
@@ -116,13 +233,62 @@ $(function(){
 			    $(".cancel_comment").click(function() {
 			    	$(this).parents(".comment_interface").hide();
 			    	$(this).parents(".rubric_cat").find(".add_comment").show();
+			    	socket.emit('cancel comment');
 			    });
 			    $(".submit_comment").click(function() {
 			    	// get the contents of comment box
-			    	var dom_container = $(this).parent();
-			    	var comment_text = dom_container.find(".comment_text").val();
+			    	var dom_container = $(this).parents(".suggestion_box");
+			    	var comment_text = dom_container.find(".comment_text.tt-input").val();
+			    	console.log(dom_container.find(".comment_text.tt-input").val());
+			    	console.log(dom_container.find(".comment_text.tt-hint").val());
 			    	submitComment(comment_text, dom_container);
 			    });
+			    $(".indicator").hover(function() {
+			    	// function for hovering in and out of button
+			    	if ($(this).hasClass("glyphicon-remove")) {
+			    		$(this).removeClass("glyphicon-remove");
+			    		$(this).addClass("glyphicon-ok");
+			    	} else {
+			    		$(this).removeClass("glyphicon-ok");
+			    		$(this).addClass("glyphicon-remove");
+			    	}
+			    });
+
+			    $(".indicator").click(function() {
+			    	if ($(this).hasClass("indicator_1")) {
+			    		correcting_category = 1;
+			    	} else if ($(this).hasClass("indicator_2")) {
+			    		correcting_category = 2;
+			    	} else if ($(this).hasClass("indicator_3")) {
+			    		correcting_category = 3;
+			    	}
+			    	correcting_rubric = $(this).parents(".rubric_cat").attr("id");
+			    	var category_text = "";
+			    	if (correcting_category == 1) {
+			    		category_text = "positive statement";
+			    	} else if (correcting_category == 2) {
+			    		category_text = "problem statement";
+			    	} else if (correcting_category == 3) {
+			    		category_text = "suggested solution";
+			    	}
+			    	$("#correction_type").html(category_text);
+			    });
+
+			    $(".comment_text").each(function() {
+			    	var rubric = $(this).parents(".rubric_cat").attr("id");
+			    	console.log(rubric);
+			    	$(this).typeahead({
+						minLength: 2,
+						hint: true
+					},
+					{
+						source: typeAheadSearch(rubric),
+						limit: 1
+					});
+				});
+				$(".comment_text.tt-input").each(function() {
+					$(this).val("");
+				});
     		}
 
     		socket.emit('get comments', rubric_cat);

@@ -28,30 +28,24 @@ function loadComments(rubric_category) {
 	output = comments.filter(function(comment) {
 		return comment["rubric"] == rubric_category;
 	});
+	console.log(output);
 
-	// sort comments ascending by length
+	// sort comments ascending by length & frequency
     output = output.sort(function(info1, info2) {
 		var length1 = parseInt(info1["length"]);
 		var length2 = parseInt(info2["length"]);
-		if (length1 < length2) {
-			return -1;
-		} else if (length1 == length2) {
-			return 0;
-		} else {
-			return 1;
-		}
-    });
-
-    //console.log(comments);
-
-    // sort comments descending by frequency
-    output = output.sort(function(info1, info2) {
 		var freq1 = parseInt(info1["frequency"]);
 		var freq2 = parseInt(info2["frequency"]);
 		if (freq2 < freq1) {
 			return -1;
 		} else if (freq1 == freq2) {
-			return 0;
+			if (length1 < length2) {
+				return -1;
+			} else if (length1 == length2) {
+				return 0;
+			} else {
+				return 1;
+			}
 		} else {
 			return 1;
 		}
@@ -89,6 +83,7 @@ function loadComments(rubric_category) {
 		    blank_values = output[i]["blank values"].split(", ");
 		    var blank_loc = comment.indexOf("_blank_");
 			var blank_i = 0;
+
 			while (blank_loc != -1) {
 				comment = comment.replace(/_blank_/, 
 					"<input type='text' class='blank' placeholder='" + blank_values[blank_i] + "'/>");
@@ -133,6 +128,32 @@ io.on('connection', function(socket) {
 	  	} else {
 	  		//console.log("no comment clicked");
 	  		// TODO run the whole algo on it and everything, then add the new comment to the corpus
+	  		//data.new_comment_id is the id it was assigned by this user
+	  		// will need to create a new id since that is client-specific, but still save it in case client deletes it
 	  	}
+	  	// in both cases, yes_categories and no_categories hold the user-defined categories, so save those
+  	});
+
+  	// flag a comment
+  	socket.on('flag comment', function(data) {
+  		// find comment with this ID
+  		comments.forEach(function(comment) {
+  			if (comment["ID"] == data.comment_id) {
+  				console.log("found it, flagging comment ");
+  				console.log(comment["comment"]);
+  				comment["flagged"] = true;
+  			}
+  		});
+  	});
+
+  	// user deleted a comment
+  	socket.on('delete comment', function(data) {
+  		//TODO
+  		// log delete event
+  	});
+
+  	// user canceled comment (closed comment window)
+  	socket.on('cancel comment', function() {
+  		// TODO log comment canceled
   	});
 });

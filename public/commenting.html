@@ -1,18 +1,45 @@
 <div class="add_comment">
-	<span class="glyphicon glyphicon-plus-sign"></span> Add comment
+	<span class="glyphicon glyphicon-plus-sign add_comment_btn"></span> Add comment
 </div>
 <div class="comment_interface" style="display: none;">
 	<div class='suggestion_container'> 
 		<div class='rubric-comments suggestion_box'>
-			<textarea class='comment_text' placeholder='Type your comment...'></textarea>
-			<button class="submit_comment">Insert</button>
-			<button class="cancel_comment">Cancel</button>
-			<div class="first_header suggestion_header">"I wish..."</div>
-		      	<table class='comments_bad comments_table'></table>
-		    <div class="suggestion_header">"I suggest..."</div>
-		      	<table class='comments_should comments_table'></table>
-		    <div class="suggestion_header">"I like..."</div>
-		      	<table class='comments_good comments_table'></table>
+			<textarea class='comment_text typeahead' placeholder='Type your comment...' data-categories="" data-nocategories="">
+			</textarea>
+			<div class='suggestion_box_inside'>
+				<div class='suggestion_buttons'>
+					<button class="add_location">Attach to design</button>
+					<span class="right_buttons">
+						<button class="cancel_comment">Cancel</button>
+						<button class="submit_comment">Submit</button>
+					</span>
+				</div>
+				<div class="suggestion_tips">
+					<div class="first_header suggestion_header">Comment contains:</div>
+					<div>
+						&nbsp;<span class="glyphicon glyphicon-remove indicator indicator_1" title="Is this wrong?"
+							data-toggle='modal' data-target='#correct_modal'></span>
+						&nbsp;Positive statement <i>("I like...")</i>
+					</div>
+					<div>
+						&nbsp;<span class="glyphicon glyphicon-remove indicator indicator_2" title="Is this wrong?"
+							data-toggle='modal' data-target='#correct_modal'></span>
+						&nbsp;Problem statement <i>("I wish...")</i>
+					</div>
+					<div>
+						&nbsp;<span class="glyphicon glyphicon-remove indicator indicator_3" title="Is this wrong?"
+							data-toggle='modal' data-target='#correct_modal'></span>
+						&nbsp;Suggestion <i>("Here's how...")</i>
+					</div>
+				</div>
+				<div class="suggestion_header larger_header">Previously used comments:</div>
+				<div class="first_header suggestion_header">"I like..."</div>
+			      	<table class='comments_good comments_table'></table>
+				<div class="suggestion_header">"I wish..."</div>
+			      	<table class='comments_bad comments_table'></table>
+			    <div class="suggestion_header">"Here's how..."</div>
+			      	<table class='comments_should comments_table'></table>
+			</div>
 		</div>
 	</div>
 </div>

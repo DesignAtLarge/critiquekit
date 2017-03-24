@@ -1,152 +1,118 @@
 ID,Comment,Rubric,Length,Category,Frequency,Blank values
 0,This text is very difficult to read and should be presented in a larger font.,Readability,15,3,0,
-1,"I actually really like this one, it's very pleasant and the colors reflect the actual _blank_. The fonts are nice and everything seems to stand out fairly well.",Readability,28,1,0,temperature
-2,Great breakdown of information from specific to broad. Overall layout shows an understanding of current UI and web trends,Readability,19,1,0,
-3,outside margins violation,Readability,3,2,0,
-4,"The blue/gray color palette is great but adding a third, possibly complementary colors could help highlight areas and potentially give viewers a pathway through the display",Readability,26,3,0,
-5,This page may be a little too long for it to stay un-scrolling.,Readability,13,2,0,
-6,These don't really provide any information.,Readability,6,2,0,
-7,This poster would be more attractive with a bolder font here.,Readability,11,3,0,
-8,"Use a capital T. and remove ""kinda"" it sounds unprofessional.",Readability,10,3,0,
-9,"I like this overall. Nice color, contrast. Clean and professional looking.",Readability,11,1,0,
-10,Nice and clean layout. Nice use of color. Date is missing and needs to be primary information.,Readability,17,3,0,
-11,Watch out for the text creating tangents with the other elements here.,Readability,12,2,0,
-12,The abbreviations for the days should be 3 letters instead of just two.,Readability,13,3,0,
-13,"This chart is difficult to read. I think there should be some markers for weeks or days, and more indication that it is a chart. At first glance, it looks like waves.",Readability,32,3,0,
-14,"The waves are partially covering this text. Also, the colors for this chart are too similar. The High and Low are too similar, so it's difficult to tell which is which.",Layout,31,2,0,
+1,"I actually really like this one, it's very pleasant and the colors reflect the actual _blank_.",Appropriateness,16,1,0,temperature
+2,Great breakdown of information from specific to broad. Overall layout shows an understanding of current UI and web trends,Appropriateness,19,1,0,
+3,outside margins violation,Layout,3,2,0,
+5,This page may be a little too long for it to stay un-scrolling.,Layout,13,2,0,
+6,These don't really provide any information.,Appropriateness,6,2,0,
+7,This _blank_ would be more attractive with a bolder font here.,Emphasis,11,3,0,poster
+8,Use a capital_blank_ and remove _blank_ it sounds unprofessional.,Appropriateness,9,3,0," T., ""kinda"""
+9,"I like this overall. Nice color, contrast. Clean and professional looking.",Appropriateness,11,1,0,
+10,Nice and clean layout. Nice use of color. _blank_ is missing and needs to be primary information.,Emphasis,17,3,0,Date
+11,Watch out for the text creating tangents with the other elements here.,Layout,12,2,0,
+14,"The _blank_ are partially covering this text. Also, the colors for this _blank_ are too similar.",Layout,16,2,0,"waves, chart"
 15,This space is a bit large,Layout,6,2,0,
-16,"The information presented here is somewhat confusing without having to more carefully read and interpret it. Make this simpler, and use more graphics.",Layout,23,3,0,
-17,"Too much dead space here, should condense the box or move the central text to the left a little.",Layout,19,3,0,
-18,I don't understand what this diagram is trying to say. Something easier to understand would be better.,Layout,17,2,0,
-19,Is this a graphic of waves? Or a chart? Not sure what's going on down here.,Layout,16,2,0,
-20,Text is too small on these.,Layout,6,2,0,
-21,"Use a better, more appealing graphic to draw the reader in. The one presented is just not appealing or interesting.",Layout,20,3,0,
-22,great colors and typeface,Layout,4,1,0,
+16,"The information presented here is somewhat confusing without having to more carefully read and interpret it. Make this simpler, and use more graphics.",Simplicity,23,3,0,
+17,"Too much dead space here, should condense the _blank_ or move the central text to the left a little.",Layout,19,3,0,box
+18,I don't understand what this diagram is trying to say. Something easier to understand would be better.,Appropriateness,17,2,0,
+19,Is this a graphic of _blank_? Or a _blank_? Not sure what's going on down here.,Appropriateness,16,2,0,"waves, chart"
+20,Text is too small on these.,Readability,6,2,0,
+21,"Use a better, more appealing graphic to draw the reader in. The one presented is just not appealing or interesting.",Emphasis,20,3,0,
+22,great colors and typeface,Appropriateness,4,1,0,
 23,This graph feels like it is floating in space. An axis line might help,Layout,14,3,0,
-24,poor color choice barely legible,Layout,5,2,0,
-25,I would find a way to make the specified city clearer. Currently getting a bit lost but I like the idea.,Layout,21,2,0,
-26,"This information-type is essentially presented twice. I like the top-most one better. It is easier to read and to understand at a glance. I am not sure that readers wish to see such weather information pertaining to one year in arrears, as is presented in",Layout,45,2,0,
-27,"very clear, nice design",Layout,4,1,0,
-28,"I think this section should be at the top to make it clear that it is the current forecast, as well as looking more visually balanced.",Layout,26,3,0,
-29,Where is today's weather?,Balance,4,2,0,
-30,"Consider the audience you are appealing to. What specific weather information is important to them? How can you either omit information, or even add weather-related detail(s) (recent data, etc.) that might be more appealing to the observer/reader?",Balance,37,3,0,
-31,"Very good that I immediately know it is a weather information page. And, I see the addition of events for the week as adding some customized interest elements.",Balance,28,1,0,
-32,Blue text on a blue background is not easy to read. I would suggest a slightly bolder font with white text.,Balance,21,3,0,
-33,"Currently, the font, colors and line elements are coming across very 'stock' and not custom or current. Look at current trends to see what is visually appealing to people today and keep that in mind as you move forward with this.",Balance,41,3,0,
-34,I like the idea of listing out events. Maybe only do a week of events vs an entire month. This way more content can fit comfortably.,Balance,26,3,0,
-35,"Could probably bump the font size up 1 notch, plenty of space here.",Balance,13,3,0,
-36,Section under polygon may recapitulate the information presented in a new way but it is not very helpful and makes the poster overly busy.,Balance,24,2,0,
-37,"I feel like the fonts used here are somewhat bland and don't really grab the attention. I feel like introducing a little variety here would go a long way towards holding the attention of the audience. Some text is simply too small, as well - specifically ",Balance,46,3,0,
-38,"This ""graph"" is difficult to understand. You have to realize when someone is checking the weather they don't want to sit there for 30 minutes trying to figure out what they are seeing on the screen.",Balance,36,2,0,
-39,"It might be best to lose the 'Events' portion of the display. This would be good information to include if it had a more unique role such as ""Haunted Hearse Tours Today @ 3PM, best to wear a light sweater because it will be sunny but with a light breeze"" ",Balance,50,3,0,
-40,A white background isn't very interesting and makes things feel bland. Considering a gradient or some thematic backdrop would be neat as long as it isn't overpowering.,Balance,27,3,0,
-41,"No need to say ""it is"", simply put the time and date. Also remove the opinion about Florida.",Balance,18,3,0,
+24,poor color choice barely legible,Readability,5,2,0,
+25,I would find a way to make the specified _blank_ clearer. Currently getting a bit lost but I like the idea.,Balance,21,2,0,city
+26,This information-type is essentially presented twice. I like the top-most one better. It is easier to read and to understand at a glance.,Balance,23,2,0,
+27,"very clear, nice design",Appropriateness,4,1,0,
+28,"I think this section should be at the top to make it clear that it is the _blank_, as well as looking more visually balanced.",Layout,25,3,0,current forecast
+29,Where is _blank_?,Emphasis,3,2,0,today's weather
+30,Consider the audience you are appealing to. What specific _blank_ information is important to them? ,Appropriateness,15,3,0,weather
+31,"Very good that I immediately know it is a _blank_ page. And, I see the addition of _blank_ as adding some customized interest elements.",Appropriateness,24,1,0,"weather information, events for the week"
+33,"Currently, the font, colors and line elements are coming across very 'stock' and not custom or current. ",Emphasis,17,2,0,
+35,"Could probably bump the font size up 1 notch, plenty of space here.",Readability,13,3,0,
+36,Section under _blank_ may recapitulate the information presented in a new way but it is not very helpful and makes the _blank_ overly busy.,Simplicity,24,2,0,"polygon, poster"
+37,I feel like the fonts used here are somewhat bland and don't really grab the attention.,Emphasis,16,2,0,
+38,This _blank_ is difficult to understand. ,Consistency,6,2,0,"""graph"""
+39,It might be best to lose the _blank_ portion of the display. ,Balance,12,3,0, 'Events'
+40,A _blank_ background isn't very interesting and makes things feel bland.,Appropriateness,11,2,0,white
 42,Too many conflicting visuals.,Balance,4,2,0,
-43,This has a lot of information and it is presented pretty well. This area could be much smaller and accomplished with a sentence.,Balance,23,3,0,
-44,Font sizes too big and overlapping with sun icon,Balance,9,2,0,
-45,The graphs could be smaller and less intrusive as they clog up a lot of the space.,Balance,17,3,0,
-46,I think the background should be a different color as it isn't very appealing to the eyes.,Simplicity,17,3,0,
-47,Use a different color text to make this statement stand out more,Simplicity,12,3,0,
-48,this info has to be centered to its respective space,Simplicity,10,3,0,
+43,This has a lot of information and it is presented pretty well. This area could be much smaller and accomplished with a sentence.,Simplicity,23,3,0,
+44,Font sizes too big and overlapping with _blank_ icon,Layout,9,2,0,sun
+45,The _blank_ could be smaller and less intrusive as they clog up a lot of the space.,Layout,17,3,0,graphs
+46,I think the background should be a different color as it isn't very appealing to the eyes.,Appropriateness,17,3,0,
+47,Use a different color text to make this statement stand out more,Emphasis,12,3,0,
+48,this info has to be centered to its respective space,Layout,10,3,0,
 49,Unnecessary information.,Simplicity,2,2,0,
-50,"You lost the ""F"".",Simplicity,4,2,0,
-51,"The vital information in the image is all jumbled together. Perhaps move ""Topeka to the top right and bring the ""weekly weather"" front and center, with the grill/humidity information below it.",Simplicity,31,3,0,
-52,Very clever and nicely done. Do you intend to switch it out if the weather is cloudy? Rainy?,Simplicity,18,1,0,
-53,"Here is what I love: I love the use of the sun in the headline, the use of icons, and I actually like the photo in the background (with a little modification).",Simplicity,32,1,0,
-54,"To make more room so you can resize the 'hourly forecast' chart so it's easier to read, you could move this nice Topeka sign to the top of the poster. Maybe place it in the top-left corner and move the date/time to the top-right corner?",Simplicity,45,3,0,
-55,"The graphics are really all over the place, and lack a streamlined look. It causes the eye to be unable to adequately focus on the pertinent information.",Simplicity,27,2,0,
-56,Cannot read.,Simplicity,2,2,0,
-57,"The font/graphics are rather large and spread out, causing the weather information to be overlooked. Perhaps decrease the font size for the date, time, and city, as well as minimizing the section underneath ""Topeka"", which would even be better suited for ",Simplicity,41,3,0,
-58,"The colors of they typeface is fine, but there could be more variation in fonts, and the size definitely needs some editing as previously described.",Simplicity,25,2,0,
-59,"This is really not needed, but if you are going to use it, tell me when a good day is. I don't think Thursday is a great day to grill. It also needs to look different than everything else because it is ""personalized"" information.",Simplicity,44,3,0,
-60,This is hard to read over the photo. You could add a transparent white box to help the readability of this area. You could also take the background photo and do a gradient feather so the photo fades away at the point that the texts starts. The other optio,Simplicity,49,3,0,
-61,Font size might be hard to read. Maybe it is just how I am viewing the image?...,Simplicity,17,2,0,
-62,Excellent idea!!! Are the water drops a representation of precipitation?,Simplicity,10,1,0,
-63,Consider another font,Simplicity,3,2,0,
-64,I like the idea of calling out the current temperature in a different color however I'm not sure that this color is working well on top of the background. It looks a little muddy and not as crisp as the rest of the text surrounding it.,Emphasis,46,2,0,
-65,"This is very nice! Easy to read, the text is consistent, my eye follows a logical path, the visuals representing humidity are cute and clever!",Emphasis,25,1,0,
-66,"Hard to read, can make bigger by using space better.",Emphasis,10,3,0,
-67,What do the greens indicate? It's not really clear. I would also enlarge the fonts. Difficult to read.,Emphasis,18,3,0,
-68,Nice use of iconography!,Emphasis,4,1,0,
-69,Perhaps a monthly weather or map could go here.,Emphasis,9,3,0,
-70,A little too much dead space here. Maybe input sunrise and sunset info? Just a little more filler here.,Emphasis,19,3,0,
-71,Colors need to be more harmonious.,Emphasis,6,2,0,
-72,Not enough contrast between gray and blue bg,Emphasis,8,2,0,
-73,I like the use of icons,Emphasis,6,1,0,
-74,I think perhaps it would be better if you swapped the city/state box with the box with today's weather so that is the first one they see. Other than that I see nothing wrong and everything is very legible.,Emphasis,39,3,0,
-75,Add a legend to define each symbol,Emphasis,7,3,0,
-76,This would look better probably in white.,Emphasis,7,3,0,
-77,use text that specify highs andl ows for each day,Emphasis,10,3,0,
-78,The white background makes the text difficult to read.,Emphasis,9,2,0,
-79,"Graphics are quickly recognizable Overall information is quickly & easily understood Maybe capitalize the city just to make it pop a bit more For me the, muted colors don't grab my & hold my attention",Emphasis,35,3,0,
-80,I really like the pastel color palette but here it can be a bit too muted. It's losing visual impact and getting lost. Try thoughtfully adding more contrast to draw the viewers attention appropriately.,Emphasis,34,3,0,
-81,"Overall, you need to work with the spacing with this design. Too much dead space. Don't let it go to waste. Use it!",Emphasis,23,3,0,
-82,The text could be a bit larger and the percentages written in bold to make it easier to read.,Emphasis,19,3,0,
-83,"Try adding more color to the weather icons, it would help to add a bit more interest if their were some blue and yellows in the symbols that played off the gradient background.",Emphasis,33,3,0,
-84,"dead space on top (between ""harrisburg, PA"" and the box below). The visual information is packed with great information but that particular space is too much to be breathing space.",Emphasis,30,2,0,
-85,The background color fades off a little fast and could be more pleasing with a little more coverage,Emphasis,18,2,0,
-86,"These labels are hugging the box too closely. The type needs some space around it! You have arranged the other weather symbols/day/temp/precip. in a different order down below. For consistency, you may want to arrange these boxes the same way.",Consistency,40,3,0,
-87,Too small. Enlarge so that it is legible. The use of primary colors is TOO much and too harsh in comparison to the rest of the design.,Consistency,27,3,0,
-88,Increase the size of the more important elements (today/tonight) and shrink the calendar.,Consistency,13,3,0,
-89,"Very nice structure and organization. Box for weather and box for calendar feels a little detached. Perhaps aligning or having an illustration to ""connect"" both information would be helpful in providing some organization.",Consistency,33,3,0,
-90,Try using text to indicate what type of information we are looking at. (Weekly/Monthly/Today),Consistency,14,3,0,
-91,"good use of color, relaxing theme if a little too cute.",Consistency,11,1,0,
-92,"Does the red sun represent a sunny day? If so, try to keep your icons consistent with what you have in the layout found below",Consistency,25,3,0,
-93,Fantastic layout and color! Very well executed.,Consistency,7,1,0,
-94,"I like this area, but I would slide the colors (like a color wheel). Monday and Friday are really dark. If they were the only 2 sunny days, it might make sense, but ... they aren't.",Consistency,36,3,0,
-95,"Overall, the design is working, but the colors of the fonts are making all of the information hard to read. Even ""Denver"" in its large size is sort of blending into the background. Make sure all of your colors are working together and not over powering ea",Consistency,47,3,0,
-96,I think the date should be listed as well.,Consistency,9,3,0,
-97,The temperatures are small and hard to read. More area should be allocated to the weather boxes to allow these numbers to be larger.,Consistency,24,3,0,
-98,This sun doesn't match the sun icons below. It doesn't match the color scheme of the piece and stands out too harshly like a big red dot.,Consistency,27,2,0,
-99,"Very original design, fresh, unusual. I would certainly want to have something like that as an app on my mobile devices. Looking at it for a while now, and can't really find something I don't like. I feel that the characters should change depending on the",Consistency,46,3,0,
-100,I would rather see a light yellow sun here. The color is stronger than any other color on the page. Stay with the softer colors. It is taking too much attention on the page the way it is and no sun is really red.,Consistency,44,3,0,
-101,"overall I like this quite a bit easy & quick to read / understand nice, decipherable graphics & text",Consistency,19,1,0,
-102,The SURF HEIGHT Diagram is is not needed.,Consistency,8,2,0,
-103,"These icons are not great. The clouds look like big rocks and the sun is too pokey. Try to match the style of icons you have in the ""TODAY"" panel and keep it consistent.",Consistency,34,3,0,
-104,Current temperature should not be the same color as header background.,Consistency,11,3,0,
-105,Good idea!,Consistency,2,1,0,
-106,This layout is plain and boring. Needs a better UI.,Consistency,10,2,0,
-107,Love overall layout and the specific thought towards your audience. Overall design is clean and current.,Consistency,16,1,0,
-108,"In this area, I feel there needs to be a numerical reference to the day and maybe the month. And, just for an 'at a glance' nudge - I would add a label to the MONTH area with TEMPERATURE because at first I thought it might be more information about surf h",Appropriateness,52,3,0,
-109,"I understand that this is sundown, but the orientation of the graphic just throws me off. It may just be me :-) Just the change in color may be enough",Appropriateness,30,2,0,
-110,Maybe shorten this too 1 or 2 weeks.,Appropriateness,8,3,0,
-111,"You have the weather for the day noted in two areas of the bar. Too much. I would eliminate the icons below. They look too ""cutesy"" and odd. It's almost like they were placed there as an afterthought.",Appropriateness,38,3,0,
-112,"The colors are kind of bland from my perspective. Nothing really jumps out at me or catches my eye, which might contribute to the fact that I can't figure out where to look for what.",Appropriateness,35,2,0,
-113,It shows that you are trying to think outside of the box with your layout but your font choice is very generic. I would try to go for something fresh and current to align more with your audience who would presumably be a younger crowd who is into 'new' th,Appropriateness,50,3,0,
-114,Visually unappealing.,Appropriateness,2,2,0,
-115,"The icon of the man was not clear at first glance. I understand it means 'jacket weather' but this icon could be simplified, made gender neutral.",Appropriateness,26,3,0,
-116,"Too many lines/graphs in a small area. Again, it just looks too busy. Simple is best.",Appropriateness,16,2,0,
-117,"Right now color is being used to signify the type of weather, but what get's lost on me is when we jump from days to month overview at the end. Color could be used to help distinguish if not being used to show individual weather types.",Appropriateness,46,3,0,
-118,Why is Nov placed here? It doesn't make sense. Are you predicating weather for the entire month?,Appropriateness,17,2,0,
-119,This is very hard to read,Appropriateness,6,2,0,
-120,The time of day ... do I assume it is current and forward... ? AM and PM may be needed for clarity or a color change in text or a background band.,Appropriateness,32,3,0,
-121,"The high and low temperature should be located near the temperature of the day. Similarly, the State map, Seal and location should be in the same general location. Lastly, the extended and hourly information should also be in the same area.",Appropriateness,41,3,0,
-122,"Currently reviewing this on 1920 x 1080 screen. I can't read a single thing in those 2 boxes - it will probably be readable in full screen, but I'd suggest changing the layout completely in order to enable the info boxes to be bigger.",Appropriateness,44,3,0,
-123,The white background make it difficult to read the text.,Appropriateness,10,2,0,
-124,Good graph and legend. A little too many boxes and empty boxes seems a little unnecessary. Create a larger size calendar if the information only extends to a week.,Appropriateness,29,3,0,
-125,Is it necessary to include empty blocks?,Appropriateness,7,2,0,
-126,this info could be a bit larger,Appropriateness,7,3,0,
-127,The text is to small to read. there is room to make the information readable.,Appropriateness,15,2,0,
-128,Space in between the two boxes seems a little unproportionate to the other breathing space on the visual information dashboard,Appropriateness,20,2,0,
-129,To small,Appropriateness,2,2,0,
-130,The calender.. once I get into it I can see the data and the color coding ( thank you for the legend ) but the text is small and cramped.,Appropriateness,30,2,0,
-131,The background image makes it harder to read all of the information.,Appropriateness,12,2,0,
-132,"This document is dark. The sun is black and it bothers me. Can we make the sun orange or yellow. If you are set on black, can you make it look more like Saturdays icon? It dominants the page at the moment.",Appropriateness,42,3,0,
-133,Check spelling and punctuation.,Appropriateness,4,3,0,
-134,I think a title other than 'Calendar' could better help your audience find their way around the graphic. I would be more specific,Appropriateness,23,3,0,
-135,"Not really needed, but if you do use it then make is easier to read and able to tell what it is easier.",Appropriateness,23,2,0,
-136,Provide units of measurement. Does the 60/70/80 refer to temperature?,Appropriateness,10,3,0,
-137,"too small for a serif font on the web, very hard to read",Appropriateness,13,2,0,
-138,This tree photo looks like spring?,Appropriateness,6,2,0,
-139,This is a nice little chart. What about making it for the ten day extended forecast? Just not sure if anyone cares about the past temperatures.,Appropriateness,26,3,0,
-140,My eyes are going all over the place.,Appropriateness,8,2,0,
-141,There are some odd proportions going on with this display and the varied baseline of the text element makes it a mess for the eye. I would prefer to see them all on one line across with the baselines aligned.,Appropriateness,40,3,0,
-142,I also feel the dashed vertical lines could be solid to allow the dashed data line to own the meaning instead of competing with the grid.,Appropriateness,26,3,0,
-143,Highs and lows should be marked properly and organized better.,Appropriateness,10,3,0,
-144,This layout is plain,Appropriateness,4,2,0,
-145,"Days of week font color could be difference (navy blue or same orange as ""Today"") to make optics clearer..",Appropriateness,19,3,0,
-146,"When you move these to the center, increase the size as to promote them as the most important area of the design.",Appropriateness,22,3,0,
-147,You say next month but are showing info from 2 weeks ago all the way up to next month.,Appropriateness,19,2,0,
-148,Text is too small on these to read from a distance.,Appropriateness,11,2,0,
-149,There is no city indicated.,Appropriateness,5,2,0,
-150,"Too much info, making to interface too cluttered. Delete ""Today"" and ""Next Month"" graphs.",Appropriateness,14,3,0,
+50,You lost the _blank_.,Simplicity,4,2,0,"""F"""
+51,The vital information in the _blank_ is all jumbled together. ,Simplicity,10,2,0,image
+55,"The graphics are really all over the place, and lack a streamlined look.",Layout,13,2,0,
+56,Cannot read.,Readability,2,2,0,
+57,"The font/graphics are rather large and spread out, causing the _blank_ information to be overlooked. ",Layout,15,2,0,weather
+58,"The colors of they typeface is fine, but there could be more variation in fonts, and the size definitely needs some editing as previously described.",Appropriateness,25,2,0,
+60,This is hard to read over the _blank_. You could add a transparent _blank_ to help the readability of this area.,Readability,21,3,0,"photo, white box"
+61,Font size might be hard to read. Maybe it is just how I am viewing the _blank_?...,Readability,17,2,0,image
+63,Consider another font,Readability,3,2,0,
+65,"This is very nice! Easy to read, the text is consistent, my eye follows a logical path, the visuals representing _blank_ are cute and clever!",Consistency,25,1,0,humidity
+66,"Hard to read, can make bigger by using space better.",Readability,10,3,0,
+67,What do the _blank_ indicate? It's not really clear. I would also enlarge the fonts. Difficult to read.,Readability,18,3,0,greens
+68,Nice use of iconography!,Consistency,4,1,0,
+69,Perhaps a _blank_ or _blank_ could go here.,Layout,8,3,0,"monthly weather, map"
+70,A little too much dead space here. Maybe input _blank_ info? Just a little more filler here.,Layout,17,3,0,sunrise and sunset
+71,Colors need to be more harmonious.,Consistency,6,2,0,
+72,Not enough contrast between _blank_ and _blank_ bg,Balance,8,2,0,"gray, blue"
+73,I like the use of icons,Consistency,6,1,0,
+75,Add a legend to define each symbol,Consistency,7,3,0,
+76,This would look better probably in _blank_.,Appropriateness,7,3,0,white
+78,The _blank_ background makes the text difficult to read.,Readability,9,2,0,white
+80,I really like the _blank_ color palette but here it can be a bit too muted. It's losing visual impact and getting lost.,Emphasis,23,3,0,pastel
+81,"Overall, you need to work with the spacing with this design. Too much dead space. Don't let it go to waste. Use it!",Layout,23,3,0,
+82,The text could be a bit larger and the _blank_ written in bold to make it easier to read.,Readability,19,3,0,percentages
+84,dead space on top. The visual information is packed with great information but that particular space is too much to be breathing space.,Layout,23,2,0,
+85,The background color fades off a little fast and could be more pleasing with a little more coverage,Appropriateness,18,2,0,
+87,Too small. Enlarge so that it is legible.,Readability,8,3,0,
+88,Increase the size of the more important elements and shrink the _blank_.,Balance,12,3,0,calendar
+89,Very nice structure and organization. Box for _blank_ and box for _blank_ feels a little detached.,Layout,16,2,0,"weather, calendar"
+90,Try using text to indicate what type of information we are looking at. ,Appropriateness,13,3,0,
+91,"good use of color, relaxing theme if a little too cute.",Appropriateness,11,1,0,
+92,"Does the _blank_ represent a _blank_? If so, try to keep your icons consistent with what you have in the layout found below",Consistency,23,3,0,"red sun, sunny day"
+93,Fantastic layout and color! Very well executed.,Layout,7,1,0,
+94,"I like this area, but I would slide the colors. _blank_ and _blank_ are really dark. ",Balance,16,3,0,"Monday, Friday"
+95,"Overall, the design is working, but the colors of the fonts are making all of the information hard to read. ",Readability,20,2,0,
+96,I think the _blank_ should be listed as well.,Emphasis,9,3,0,date
+98,This _blank_ doesn't match the _blank_ icons below.,Consistency,8,2,0,"sun, sun"
+99,"Very original design, fresh, unusual. I would certainly want to have something like that as an _blank_ on my _blank_. ",Appropriateness,20,1,0,"app, mobile devices"
+100,I would rather see a_blank_ here. The color is stronger than any other color on the page. Stay with the softer colors.,Balance,22,3,0,light yellow sun
+101,"overall I like this quite a bit easy & quick to read / understand nice, decipherable graphics & text",Readability,19,1,0,
+102,The _blank_ Diagram is is not needed.,Simplicity,7,2,0,SURF HEIGHT
+104,_blank_ should not be the same color as _blank_.,Balance,9,3,0,"Current temperature, header background"
+105,Good idea!,Layout,2,1,0,
+106,This layout is plain and boring. Needs a better UI.,Layout,10,2,0,
+107,Love overall layout and the specific thought towards your audience. Overall design is clean and current.,Appropriateness,16,1,0,
+109,"I understand that this is _blank_, but the orientation of the graphic just throws me off. It may just be me :-)",Layout,22,2,0,sundown
+111,You have the _blank_ noted in two areas of the _blank_. Too much. I would eliminate the icons below. ,Simplicity,19,3,0,"weather for the day, bar"
+112,The colors are kind of bland from my perspective. ,Emphasis,9,2,0,
+113,It shows that you are trying to think outside of the box with your layout but your font choice is very generic.,Appropriateness,22,2,0,
+114,Visually unappealing.,Layout,2,2,0,
+115,The icon of the _blank_ was not clear at first glance.,Consistency,11,2,0,man
+116,"Too many lines/graphs in a small area. Again, it just looks too busy. Simple is best.",Simplicity,16,2,0,
+119,This is very hard to read,Readability,6,2,0,
+123,The _blank_ background make it difficult to read the text.,Readability,10,2,0,white
+125,Is it necessary to include empty _blank_?,Simplicity,7,2,0,blocks
+126,this info could be a bit larger,Readability,7,3,0,
+127,The text is to small to read. there is room to make the information readable.,Readability,15,2,0,
+129,To small,Readability,2,2,0,
+131,The background image makes it harder to read all of the information.,Readability,12,2,0,
+133,Check spelling and punctuation.,Readability,4,3,0,
+134,I think a title other than _blank_ could better help your audience find their way around the graphic. I would be more specific,Appropriateness,23,3,0,"""Calendar"""
+135,"Not really needed, but if you do use it then make is easier to read and able to tell what it is easier.",Readability,23,2,0,
+137,"too small for a serif font on the web, very hard to read",Readability,13,2,0,
+139,This is a nice little chart. What about making it for the _blank_?,Appropriateness,13,3,0,ten day extended forecast
+140,My eyes are going all over the place.,Layout,8,2,0,
+141,There are some odd proportions going on with this display and the varied baseline of the text element makes it a mess for the eye.,Layout,25,2,0,
+143,_blank_ should be marked properly and organized better.,Appropriateness,8,3,0,Highs and lows
+144,This layout is plain,Layout,4,2,0,
+145,_blank_ font color could be difference to make _blank_ clearer..,Readability,10,3,0,"Days of week, optics"
+146,"When you move these to the center, increase the size as to promote them as the most important area of the design.",Emphasis,22,3,0,
+148,Text is too small on these to read from a distance.,Readability,11,2,0,
+149,There is no _blank_ indicated.,Consistency,5,2,0,city
+150,"Too much info, making to interface too cluttered. Delete _blank_ and _blank_ graphs.",Simplicity,13,3,0,"""Today"", ""Next Month"""

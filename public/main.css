@@ -1,11 +1,15 @@
 #sidebar {
-    width: 350px;
+    width: 400px;
     height: 100%;
-    background: #ddd;
+    background-color: rgba(74,74,74,0.06);
     float: right;
     padding: 10px;
     border-left: 1px solid gray;
     overflow-y: auto;
+}
+
+#flag_modal .modal-dialog {
+    width: 500px;
 }
 
 html, body, .stretch {
@@ -16,14 +20,69 @@ h3 {
     margin-top: 0;
 }
 
+button {
+    border-radius: 2px;
+    box-shadow: none;
+    background-color: #dedede;
+    border: 1px solid rgba(74,74,74,0.3);
+    padding: 4px 10px;
+}
+
+button:hover {
+    background-color: #cdcdcd;
+}
+
+.indicator:hover {
+    cursor: pointer;
+}
+
+.submit_comment {
+    background-color: rgba(139, 0, 0, 0.2);
+}
+
+.submit_comment:hover {
+    background-color: rgba(139, 0, 0, 0.5);
+}
+
+.help_icon {
+    color: #1CA9C4;
+}
+
 .navbar {
     margin-bottom: 0px;
+}
+
+.add_comment_btn {
+    color: #106575;
 }
 
 .comment_text {
     width: 100%;
     min-height: 70px;
     overflow-y: auto;
+    border: 2px solid rgba(74,74,74,0.3);
+    border-radius: 2px;
+    padding: 5px;
+    resize: none;
+}
+
+.twitter-typeahead {
+    width: 100%;
+}
+
+.comment_text:focus {
+    outline: none !important;
+    border: 2px solid #1CA9C4;
+}
+
+.glyphicon-remove {
+    border: 2px solid darkred;
+    color: darkred;
+}
+
+.glyphicon-ok {
+    border: 2px solid green;
+    color: green;
 }
 
 .posted_comment {
@@ -32,11 +91,46 @@ h3 {
     border-radius: 5px;
     margin: 5px 0px;
     padding: 3px;
+    padding-right: 20px;
+    position: relative;
+}
+
+.trash_comment {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 2px;
+    border: none;
+}
+
+.trash_comment:hover {
+    cursor: pointer;
+    background-color: #ddd;
 }
 
 .add_comment:hover {
     cursor: pointer;
     color: gray;
+}
+
+.add_location {
+    float: left;
+}
+
+.right_buttons {
+    float: right;
+}
+
+.flag_btn {
+    font-size: 90%;
+    color: #610000;
+}
+
+.flag_btn:hover {
+    cursor: pointer;
+    color: #CF0000;
 }
 
 .insert_btn:hover {
@@ -56,14 +150,26 @@ h3 {
 }
 
 .comment td{
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    line-height: 1.1em;
 }
 
 .blank {
     cursor: pointer;
     display: inline-block;
-    width: 75px !important;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    color: #4A4A4A;
+    border-bottom: 2px solid transparent;
+    box-shadow: none;
+    padding: 2px;
+    -webkit-appearance: none;
+}
+
+.blank:focus {
+    border-bottom: 2px solid #1CA9C4;
 }
 
 .suggestion_header {
@@ -74,17 +180,30 @@ h3 {
     font-size: 15px;
 }
 
+.suggestion_tips {
+    clear: both;
+}
+
 .first_header {
     border: none !important;
+    margin-top: 0;
+}
+
+.larger_header {
+    font-size: 16px !important;
 }
 
 .suggestion_box {
     border: 1px solid #004ea3 !important;
-    height: 300px;
-    padding: 5px;
+    height: 500px;
     overflow-y: auto;
     background-color: rgba(74,74,74,0.03) !important;
     position: relative;
+
+}
+
+.suggestion_box_inside {
+    padding: 5px;
 }
 
 #sugg_insts {
