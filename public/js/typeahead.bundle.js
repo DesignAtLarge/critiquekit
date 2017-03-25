@@ -1871,6 +1871,10 @@
                 var $selectable = this._getSelectables().first();
                 return $selectable.length ? $selectable : null;
             },
+            getSelectableAtIndex: function getSelectableAtIndex(index) { // function added by ailie
+                var $selectable = this._getSelectables().get(index);
+                return $selectable.length ? $selectable : null;
+            },
             update: function update(query) {
                 var isValidUpdate = query !== this.query;
                 if (isValidUpdate) {
@@ -2050,10 +2054,12 @@
                 this.close();
             },
             _onUpKeyed: function onUpKeyed() {
-                this.moveCursor(-1);
+                this.moveCursor(-1); // ailie
+                //this._previousHint();
             },
             _onDownKeyed: function onDownKeyed() {
-                this.moveCursor(+1);
+                this.moveCursor(+1); // ailie
+                //this._nextHint();
             },
             _onLeftKeyed: function onLeftKeyed() {
                 if (this.dir === "rtl" && this.input.isCursorAtEnd()) {
@@ -2087,6 +2093,21 @@
             _updateHint: function updateHint() {
                 var $selectable, data, val, query, escapedQuery, frontMatchRegEx, match;
                 $selectable = this.menu.getTopSelectable();
+                data = this.menu.getSelectableData($selectable);
+                val = this.input.getInputValue();
+                if (data && !_.isBlankString(val) && !this.input.hasOverflow()) {
+                    query = Input.normalizeQuery(val);
+                    escapedQuery = _.escapeRegExChars(query);
+                    frontMatchRegEx = new RegExp("^(?:" + escapedQuery + ")(.+$)", "i");
+                    match = frontMatchRegEx.exec(data.val);
+                    match && this.input.setHint(val + match[1]);
+                } else {
+                    this.input.clearHint();
+                }
+            },
+            _nextHint: function nextHint() { // function added by ailie
+                var $selectable, data, val, query, escapedQuery, frontMatchRegEx, match;
+                $selectable = this.menu.getSelectableAtIndex(index);//?????
                 data = this.menu.getSelectableData($selectable);
                 val = this.input.getInputValue();
                 if (data && !_.isBlankString(val) && !this.input.hasOverflow()) {

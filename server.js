@@ -28,7 +28,7 @@ function loadComments(rubric_category) {
 	output = comments.filter(function(comment) {
 		return comment["rubric"] == rubric_category;
 	});
-	console.log(output);
+	//console.log(output);
 
 	// sort comments ascending by length & frequency
     output = output.sort(function(info1, info2) {

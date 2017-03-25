@@ -105,6 +105,8 @@ function displayComments(rubric, comments) {
 	// INSERT A SUGGESTION
 	$(".insert_btn").unbind();
 	$(".insert_btn").click(function(obj) { 
+		$(".typeahead").typeahead('close');
+
 		var comment_id = $(this).parents(".comment").attr("id").split("comment_")[1];
 
 		var suggestion_box = $(this).parents(".suggestion_box")
@@ -136,10 +138,8 @@ function displayComments(rubric, comments) {
 		// scroll back to top of div so you can see inserted comment
 		suggestion_box.animate({ scrollTop: 0 }, "fast");
 
-	});
 
-	$(".comment_text.tt-input").blur(function() {
-		console.log($(this).val());
+
 	});
 }
 
@@ -152,13 +152,12 @@ function searchComments(query, suggestion_box) {
 }
 
 var typeAheadSearch = function(rubric) {
-	console.log(rubric);
 	return function findMatches(q, cb) {
 		var matches = getMatchingComments(q, rubric);
 		var strings = matches.map(function(element) {
 			return element["comment"].replace(/<input.*?>/g, "_____");
 		});
-		console.log(strings);
+		//console.log(strings);
 		cb(strings);
 	};
 };
@@ -239,8 +238,6 @@ $(function(){
 			    	// get the contents of comment box
 			    	var dom_container = $(this).parents(".suggestion_box");
 			    	var comment_text = dom_container.find(".comment_text.tt-input").val();
-			    	console.log(dom_container.find(".comment_text.tt-input").val());
-			    	console.log(dom_container.find(".comment_text.tt-hint").val());
 			    	submitComment(comment_text, dom_container);
 			    });
 			    $(".indicator").hover(function() {
@@ -276,18 +273,21 @@ $(function(){
 
 			    $(".comment_text").each(function() {
 			    	var rubric = $(this).parents(".rubric_cat").attr("id");
-			    	console.log(rubric);
 			    	$(this).typeahead({
 						minLength: 2,
 						hint: true
 					},
 					{
 						source: typeAheadSearch(rubric),
-						limit: 1
+						limit: 5
 					});
+					$(this).typeahead('val', '');
 				});
-				$(".comment_text.tt-input").each(function() {
-					$(this).val("");
+				$(".comment_text").on('typeahead:open', function() {
+					$(this).typeahead('val', $(this).val());
+				});
+				$(".comment_text").on('typeahead:select', function() {
+					console.log("select");
 				});
     		}
 
