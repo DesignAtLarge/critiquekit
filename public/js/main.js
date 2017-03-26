@@ -221,6 +221,7 @@ $(function(){
     $("#confirm_delete").click(function() {
     	socket.emit('delete comment', {comment_id: deleting_comment_id});
     	$("#new_comment_" + deleting_comment_id).remove();
+    	$("#location_" + deleting_comment_id).remove();
     	deleting_comment_id = "";
     });
 
