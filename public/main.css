@@ -1,11 +1,39 @@
 #sidebar {
-    width: 400px;
+    min-width: 400px;
     height: 100%;
     background-color: rgba(74,74,74,0.06);
     float: right;
     padding: 10px;
     border-left: 1px solid gray;
     overflow-y: auto;
+    display: table-cell;
+}
+
+#design_container {
+    width: 100%;
+    height: 100%;
+    display: table-cell;
+    position: relative;
+}
+
+iframe {
+    border: none;
+}
+
+.choosing_location iframe{
+  vertical-align:top;
+  pointer-events: none; /* let any clicks go through me */
+}
+
+.comment_location {
+    position: absolute;
+    background-color: rgba(200, 200, 200, 0.7);
+    padding: 10px;
+}
+
+#design_frame {
+    width: 100%;
+    height: 100%;
 }
 
 #flag_modal .modal-dialog {
@@ -18,6 +46,10 @@ html, body, .stretch {
 
 h3 {
     margin-top: 0;
+}
+
+#main_container {
+    display: table;
 }
 
 button {

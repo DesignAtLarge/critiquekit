@@ -125,7 +125,7 @@ io.on('connection', function(socket) {
 	  		// if they are not, maybe eventually (TODO) replace with whichever is better, 
 	  		// but for now also just do nothing
 	  		// TODO at least log the event though
-	  	} else {
+	  	} else { // no comment was clicked
 	  		//console.log("no comment clicked");
 	  		// TODO run the whole algo on it and everything, then add the new comment to the corpus
 	  		//data.new_comment_id is the id it was assigned by this user

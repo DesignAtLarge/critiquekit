@@ -1,3 +1,5 @@
+var design_link = "http://cseweb.ucsd.edu/~cafraser"; // LINK to the website to be evaluated
+
 var full_sorted_comments = {"Readability": [], "Layout": [], "Balance": [], "Simplicity": [], "Emphasis": [], 
 	"Consistency": [], "Appropriateness": []};
 var rubric_categories = Object.keys(full_sorted_comments);
@@ -16,10 +18,18 @@ var newest_comment_id = 0;
 function submitComment(comment_text, dom_container) {
 
 	var rubric = dom_container.parents(".rubric_cat").attr("id");
+	var comment_location = $("#location_" + newest_comment_id);
+	if (comment_location.size() > 0) {
+		comment_location.html(comment_text);
+	}
+
 	if (comment_text != "") {
 
 		var yes_categories = dom_container.find(".comment_text").attr("data-categories");
 		var no_categories = dom_container.find(".comment_text").attr("data-nocategories");
+
+		// if comment_location.size() > 0, this comment was pasted on somehwere
+		// send the location?
 
 		// send to server
 		socket.emit('comment submitted', 
@@ -49,7 +59,7 @@ function submitComment(comment_text, dom_container) {
 		dom_container.parents(".rubric_cat").find(".add_comment").show();
 
 		newest_comment_id++;
-	} else {
+	} else if (comment_text == "") {
 		alert("You can't submit an empty comment!");
 	}
 }
@@ -174,11 +184,31 @@ function getMatchingComments(query, rubric) {
 	return result_comments;
 }
 
+function addLocation(dom_container) {
+	// disable links in iframe by making its div container have a layer over it 
+	$("#design_container").addClass("choosing_location");
+
+	var rubric = dom_container.attr("id");
+
+	// wait for user click
+	$("#design_container").click(function(event) {		
+		$("#main_container").append("<div id='location_" + newest_comment_id + 
+				"' class='comment_location' style='top: " + event.pageY + 
+				"px; left: " + event.pageX + "px;'><i>Press Submit to see your comment here.</i></div>");
+
+		// remove the layer & click event
+		$("#design_container").unbind();
+		$("#design_container").removeClass("choosing_location");
+	});
+}
+
 
 $(function(){
 	socket = io();
 
     $("#navbar_container").load("navbar.html"); 
+
+    $("#design_frame").attr("src", design_link);
 
     // event handlers for modal dialogs
     $("#confirm_flag").click(function() {
@@ -239,6 +269,10 @@ $(function(){
 			    	var dom_container = $(this).parents(".suggestion_box");
 			    	var comment_text = dom_container.find(".comment_text.tt-input").val();
 			    	submitComment(comment_text, dom_container);
+			    });
+			    $(".add_location").click(function() {
+			    	var dom_container = $(this).parents(".rubric_cat");
+			    	addLocation(dom_container);
 			    });
 			    $(".indicator").hover(function() {
 			    	// function for hovering in and out of button
