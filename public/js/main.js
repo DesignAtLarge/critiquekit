@@ -342,9 +342,11 @@ $(function(){
     			$(".add_comment").click(function() {
 	    			$(this).hide();
 			    	$(this).parent().find(".comment_interface").show();
+			    	socket.emit("clicked add comment", $(this).parents(".rubric_cat").attr("id"));
 			    });
 			    $(".cancel_comment").click(function() {
 			    	$(this).parents(".suggestion_box").find(".comment_text.tt-input").val("");
+			    	searchComments("", $(this).parents(".suggestion_box")); // clear search
 			    	updateComment();
 			    	$(this).parents(".comment_interface").hide();
 			    	$(this).parents(".rubric_cat").find(".add_comment").show();

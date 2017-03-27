@@ -1,5 +1,6 @@
 var express = require('express');
 var request = require('request');
+var jsonfile = require('jsonfile');
 const socketIO = require('socket.io');
 const path = require('path');
 const PORT = process.env.PORT || 5000;
@@ -12,6 +13,9 @@ const server = express()
 
 var comment_obj = require('./comments.json');
 var comments = comment_obj["comments"];
+var comment_update_file = "comments_update.json";
+var logs = {"logs": []};
+var log_file = "logs.json";
 
 //app.set('port', (process.env.PORT || 5000));
 //app.use(express.static(__dirname + '/public'));
@@ -22,6 +26,11 @@ var comments = comment_obj["comments"];
 var io = require('socket.io')(app);*/
 const io = socketIO(server);
 
+function updateJSON(file, obj) {
+	jsonfile.writeFile(file, obj, {spaces: 4}, function(err) {
+	  	console.error(err);
+	});
+}
 
 // get comments for given rubric and sort them
 function loadComments(rubric_category) {
@@ -111,6 +120,14 @@ io.on('connection', function(socket) {
   		socket.emit('comments', {"rubric": rubric, "comments": result});
   	});
 
+  	// user opened comment interface for given rubric
+  	socket.on('clicked add comment', function(rubric) {
+  		logs.logs.push({ "time": new Date().toString(), 
+  						"event": "clicked add comment", 
+  						"rubric": rubric});
+  		updateJSON(log_file, logs);
+  	});
+
   	// a suggestion was posted, save it and update frequency if a suggestion was clicked
   	socket.on('comment submitted', function(data) {
   		// find the clicked comment in comments
@@ -121,6 +138,7 @@ io.on('connection', function(socket) {
 	  		});
 
 	  		this_comment["frequency"] = parseInt(this_comment["frequency"] + 1);
+	  		updateJSON(comment_update_file, comments);
 
 	  		// compare the text, if they are exactly the same do nothing
 	  		// if they are not, maybe eventually (TODO) replace with whichever is better, 
@@ -131,6 +149,7 @@ io.on('connection', function(socket) {
 	  		// TODO run the whole algo on it and everything, then add the new comment to the corpus
 	  		//data.new_comment_id is the id it was assigned by this user
 	  		// will need to create a new id since that is client-specific, but still save it in case client deletes it
+	  		// updateJSON(comment_update_file, comments);
 	  	}
 	  	// in both cases, yes_categories and no_categories hold the user-defined categories, so save those
   	});
@@ -143,14 +162,17 @@ io.on('connection', function(socket) {
   				console.log("found it, flagging comment ");
   				console.log(comment["comment"]);
   				comment["flagged"] = true;
+  				updateJSON(comment_update_file, comments);
   			}
   		});
   	});
 
   	// user deleted a comment
   	socket.on('delete comment', function(data) {
-  		//TODO
-  		// log delete event
+  		logs.logs.push({ "time": new Date().toString(), 
+  						"event": "comment delete", 
+  						"comment ID": data.comment_id});
+  		updateJSON(log_file, logs);
   	});
 
   	// user canceled comment (closed comment window)
@@ -161,27 +183,31 @@ io.on('connection', function(socket) {
   	// user typed something, call real-time predictor and send result back
   	socket.on('comment update', function(data) {
 
-  		var options = {
-		    url: 'http://localhost:8000/rate/',
-		    headers: {
-		        'Content-Type': 'application/x-www-form-urlencoded'
-		    },
-		    body: "comment=" + data.comment
-		};
+  		if (data.comment.length > 3) {
+	  		var options = {
+			    url: 'http://localhost:8000/rate/',
+			    headers: {
+			        'Content-Type': 'application/x-www-form-urlencoded'
+			    },
+			    body: "comment=" + data.comment
+			};
 
-  		request.post(options, function (error, response, body) {
-		  	if (error) {
-		  		console.log('error:', error); // Print the error if one occurred
-		  	}
-		  	if (response && response.statusCode == 200) {
-		  		console.log('category:', body); 
-		  		if (body.length != 3) {
-		  			console.log("error with category string length");
-		  		} else {
-		  			socket.emit('category', {rubric: data.rubric, category_string: body});
-		  		}
-		  	}		  	
-		});
+	  		request.post(options, function (error, response, body) {
+			  	if (error) {
+			  		console.log('error:', error); // Print the error if one occurred
+			  	}
+			  	if (response && response.statusCode == 200) {
+			  		console.log('category:', body); 
+			  		if (body.length != 3) {
+			  			console.log("error with category string length");
+			  		} else {
+			  			socket.emit('category', {rubric: data.rubric, category_string: body});
+			  		}
+			  	}		  	
+			});
+		} else {
+			socket.emit('category', {rubric: data.rubric, category_string: "000"});
+		}
 
   	});
 });
