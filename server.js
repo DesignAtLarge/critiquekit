@@ -17,6 +17,13 @@ var comment_update_file = "comments_update.json";
 var logs = {"logs": []};
 var log_file = "logs.json";
 
+var options = {
+    url: 'http://arielweingarten.com:8000/rate/',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+};
+
 //app.set('port', (process.env.PORT || 5000));
 //app.use(express.static(__dirname + '/public'));
 
@@ -30,6 +37,15 @@ function updateJSON(file, obj) {
 	jsonfile.writeFile(file, obj, {spaces: 4}, function(err) {
 	  	console.error(err);
 	});
+}
+
+function saveNewComment(data, category_string) {
+	var category = category_string.lastIndexOf("1") + 1;
+	if (category == 0) {
+		return; // comment sucks, don't add to corpus
+	} 
+	// TODO add comment
+	
 }
 
 // get comments for given rubric and sort them
@@ -150,6 +166,28 @@ io.on('connection', function(socket) {
 	  		//data.new_comment_id is the id it was assigned by this user
 	  		// will need to create a new id since that is client-specific, but still save it in case client deletes it
 	  		// updateJSON(comment_update_file, comments);
+	  		
+	  		// categorize new comment
+	  		if (data.comment_text.length > 3) {
+	  			options.body = "comment=" + data.comment_text;
+
+		  		request.post(options, function (error, response, body) {
+				  	if (error) {
+				  		console.log('error:', error); // Print the error if one occurred
+				  	}
+				  	if (response && response.statusCode == 200) {
+				  		console.log('category:', body); 
+				  		if (body.length != 3) {
+				  			console.log("error with category string length");
+				  		} else {
+				  			saveNewComment(data, body);
+				  		}
+				  	}		  	
+				});
+			} else {
+				saveNewComment(data, "000");
+			}
+
 	  	}
 	  	// in both cases, yes_categories and no_categories hold the user-defined categories, so save those
   	});
@@ -184,13 +222,7 @@ io.on('connection', function(socket) {
   	socket.on('comment update', function(data) {
 
   		if (data.comment.length > 3) {
-	  		var options = {
-			    url: 'http://localhost:8000/rate/',
-			    headers: {
-			        'Content-Type': 'application/x-www-form-urlencoded'
-			    },
-			    body: "comment=" + data.comment
-			};
+  			options.body = "comment=" + data.comment;
 
 	  		request.post(options, function (error, response, body) {
 			  	if (error) {
