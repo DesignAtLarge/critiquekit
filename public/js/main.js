@@ -1,4 +1,4 @@
-var design_link = "http://cseweb.ucsd.edu/~cafraser"; // LINK to the website to be evaluated
+var design_link = "http://cseweb.ucsd.edu/~cafraser/"; // LINK to the website to be evaluated
 
 var full_sorted_comments = {"Readability": [], "Layout": [], "Balance": [], "Simplicity": [], "Emphasis": [], 
 	"Consistency": [], "Appropriateness": []};
@@ -13,6 +13,7 @@ var correcting_category = 0;
 var correcting_rubric = "";
 
 var newest_comment_id = 0;
+var current_rubric = "";
 
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
@@ -51,6 +52,17 @@ function submitComment(comment_text, dom_container) {
 			console.log(deleting_comment_id);
 		});
 
+		$("#new_comment_" + newest_comment_id).hover(function() {
+			commentHover($(this).attr("id").split("new_comment_")[1]);
+			}, function() {
+			commentUnHover($(this).attr("id").split("new_comment_")[1]);
+		});
+		$("#location_" + newest_comment_id).hover(function() {
+			commentHover($(this).attr("id").split("location_")[1]);
+			}, function() {
+			commentUnHover($(this).attr("id").split("location_")[1]);
+		});
+
 
 		dom_container.find(".comment_text").val("");
 		displayComments(rubric, full_sorted_comments[rubric]);
@@ -61,6 +73,62 @@ function submitComment(comment_text, dom_container) {
 		newest_comment_id++;
 	} else if (comment_text == "") {
 		alert("You can't submit an empty comment!");
+	}
+}
+
+function commentHover(comment_id) {
+	$("#new_comment_" + comment_id).css("background-color", "rgba(28, 169, 196, 0.5)");
+	$("#location_" + comment_id).css("background-color", "rgba(28, 169, 196, 0.5)");
+}
+
+function commentUnHover(comment_id) {
+	$("#new_comment_" + comment_id).css("background-color", "white");
+	$("#location_" + comment_id).css("background-color", "rgba(200, 200, 200, 0.7)");
+}
+
+function updateComment(rubric) {
+	// get comment text
+	setTimeout(function() { // let it update
+		var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
+
+		// send to server.js
+		socket.emit("comment update", {comment: comment_text, rubric: current_rubric});
+	}, 100);
+}
+
+// called everytime categories are updated
+// update submit button colour to match
+function categoryUpdate(rubric) {
+	var num_green = 0;
+	for (var i = 1; i <=3; i++) {
+		var icon = $("#" + rubric).find(".indicator_" + i)
+		if (icon.hasClass("glyphicon-ok")) {
+			num_green++;
+		}
+	}
+	var selector = $("#" + rubric).find(".submit_comment");
+
+	if (num_green == 0) { // red
+		selector.css("background-color", "rgba(139, 0, 0, 0.2)");
+		selector.hover(function() {
+		  	$(this).css("background-color","rgba(139, 0, 0, 0.5)")
+			}, function() {
+				$(this).css("background-color","rgba(139, 0, 0, 0.2)")
+		});
+	} else if (num_green == 3) { // green
+		selector.css("background-color", "rgba(0, 150, 0, 0.2)");
+		selector.hover(function() {
+		  	$(this).css("background-color","rgba(0, 150, 0, 0.5)")
+			}, function() {
+			$(this).css("background-color","rgba(0, 150, 0, 0.2)")
+		});
+	} else { // orange
+		selector.css("background-color", "rgba(186, 99, 0, 0.2)");
+		selector.hover(function() {
+		  	$(this).css("background-color","rgba(186, 99, 0, 0.5)")
+			}, function() {
+			$(this).css("background-color","rgba(186, 99, 0, 0.2)")
+		});
 	}
 }
 
@@ -119,6 +187,8 @@ function displayComments(rubric, comments) {
 
 		var comment_id = $(this).parents(".comment").attr("id").split("comment_")[1];
 
+		current_rubric = $(this).parents(".rubric_cat").attr("id");
+
 		var suggestion_box = $(this).parents(".suggestion_box")
 
 		var comment = $(this).parents("tr").find(".comment_val").html();
@@ -148,7 +218,7 @@ function displayComments(rubric, comments) {
 		// scroll back to top of div so you can see inserted comment
 		suggestion_box.animate({ scrollTop: 0 }, "fast");
 
-
+		updateComment();
 
 	});
 }
@@ -235,6 +305,8 @@ $(function(){
     	$("#" + correcting_rubric).find(".indicator_" + correcting_category)
     		.addClass("glyphicon-ok")
     		.removeClass("glyphicon-remove");
+
+    	categoryUpdate(correcting_rubric);
     });
 
 	$("#correct_no").click(function() {
@@ -247,8 +319,19 @@ $(function(){
     	$("#" + correcting_rubric).find(".indicator_" + correcting_category)
     		.removeClass("glyphicon-ok")
     		.addClass("glyphicon-remove");
+
+    	categoryUpdate(correcting_rubric);
     });
 
+    $(window).on("autocompleted", function() { 
+    	var comment_text = $("#" + current_rubric).find(".comment_text").val();
+    	full_sorted_comments[current_rubric].forEach(function(check_comment) {
+    		if (check_comment["comment"].replace(/<input.*?>/g, "_____") == comment_text) {
+    			latest_comment_inserted = check_comment["ID"];
+    			updateComment();
+    		}
+    	});
+    });
 
     // load comment box for each rubric category
     rubric_categories.forEach(function(rubric_cat, i) {
@@ -261,6 +344,8 @@ $(function(){
 			    	$(this).parent().find(".comment_interface").show();
 			    });
 			    $(".cancel_comment").click(function() {
+			    	$(this).parents(".suggestion_box").find(".comment_text.tt-input").val("");
+			    	updateComment();
 			    	$(this).parents(".comment_interface").hide();
 			    	$(this).parents(".rubric_cat").find(".add_comment").show();
 			    	socket.emit('cancel comment');
@@ -317,6 +402,12 @@ $(function(){
 						limit: 5
 					});
 					$(this).typeahead('val', '');
+
+					$(this).keydown(function(e) {
+						var this_rubric = $(this).parents(".rubric_cat").attr("id");
+						current_rubric = this_rubric;
+						updateComment();
+					});
 				});
 				$(".comment_text").on('typeahead:open', function() {
 					$(this).typeahead('val', $(this).val());
@@ -340,5 +431,23 @@ $(function(){
 		$(".comment_text").on("input", function() {
 			searchComments($(this).val(), $(this).parent());
 		});
+    });
+
+    // got a categorization for this comment
+    socket.on('category', function(data) {
+    	console.log("category: " + data.category_string)
+    	var rubric = data.rubric;
+
+    	for (var i = 1; i <=3; i++) {
+    		var icon = $("#" + rubric).find(".indicator_" + i)
+    		if (parseInt(data.category_string[i-1])) {
+    			// category i is YES
+    			icon.addClass("glyphicon-ok").removeClass("glyphicon-remove");
+    		} else {
+    			// category i is NO
+    			icon.addClass("glyphicon-remove").removeClass("glyphicon-ok");
+    		}
+    		categoryUpdate(rubric);
+    	}
     });
 });

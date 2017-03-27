@@ -1,4 +1,5 @@
 var express = require('express');
+var request = require('request');
 const socketIO = require('socket.io');
 const path = require('path');
 const PORT = process.env.PORT || 5000;
@@ -155,5 +156,32 @@ io.on('connection', function(socket) {
   	// user canceled comment (closed comment window)
   	socket.on('cancel comment', function() {
   		// TODO log comment canceled
+  	});
+
+  	// user typed something, call real-time predictor and send result back
+  	socket.on('comment update', function(data) {
+
+  		var options = {
+		    url: 'http://localhost:8000/rate/',
+		    headers: {
+		        'Content-Type': 'application/x-www-form-urlencoded'
+		    },
+		    body: "comment=" + data.comment
+		};
+
+  		request.post(options, function (error, response, body) {
+		  	if (error) {
+		  		console.log('error:', error); // Print the error if one occurred
+		  	}
+		  	if (response && response.statusCode == 200) {
+		  		console.log('category:', body); 
+		  		if (body.length != 3) {
+		  			console.log("error with category string length");
+		  		} else {
+		  			socket.emit('category', {rubric: data.rubric, category_string: body});
+		  		}
+		  	}		  	
+		});
+
   	});
 });

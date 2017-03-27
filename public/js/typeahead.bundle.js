@@ -1951,6 +1951,7 @@
     }();
     var Typeahead = function() {
         "use strict";
+        let current_index = 0;
         function Typeahead(o, www) {
             var onFocused, onBlurred, onEnterKeyed, onTabKeyed, onEscKeyed, onUpKeyed, onDownKeyed, onLeftKeyed, onRightKeyed, onQueryChanged, onWhitespaceChanged;
             o = o || {};
@@ -2192,6 +2193,9 @@
                 return false;
             },
             autocomplete: function autocomplete($selectable) {
+                var auto_event = new Event("autocompleted"); // ailie
+                dispatchEvent(auto_event); // ailie
+
                 var query, data, isValid;
                 query = this.input.getQuery();
                 data = this.menu.getSelectableData($selectable);
