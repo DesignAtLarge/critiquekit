@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+    <h1>THE FEEDBACK RATER-NATER</h1>
+    <form action="" method="post">
+      <label for="POST-comment">Enter yo feedback:</label>
+      <input id="feedback" onkeypress="rateComment()" type="text"></input>
+    </form>
+    <li class="comment-attr" id="category-1"></li>
+    <li class="comment-attr" id="category-2"></li>
+    <li class="comment-attr" id="category-3"></li>
+</body>
+<script>
+  function rateComment() {
+    const rateRequest = new XMLHttpRequest();
+    const feedback = document.getElementById('feedback').value;
+    console.log(feedback);
+    rateRequest.onreadystatechange = updateCommentStatus(rateRequest);
+    rateRequest.open('POST', 'http://localhost:8000/rate/', true);
+    rateRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    data = "comment=" + feedback;
+    rateRequest.send(data);
+  }
+
+  function updateCommentStatus(rateRequest) {
+    return (function(rateRequest) {
+      if(rateRequest.target.readyState === XMLHttpRequest.DONE) {
+        response = rateRequest.target.responseText;
+        console.log('Response Received: ' + response);
+        document.getElementById('category-1').innerHTML = 'This comment is of type '+ response;
+      }
+    });
+  }
+
+</script>
+</html>

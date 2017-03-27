@@ -1,0 +1,5 @@
+*.pyc
+.DS_Store
+label-these
+*.swp
+*.swo
