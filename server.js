@@ -44,7 +44,16 @@ function saveNewComment(data, category_string) {
 	if (category == 0) {
 		return; // comment sucks, don't add to corpus
 	} 
-	// TODO add comment
+	// add comment to corpus
+	comments.push({"comment": data.comment_text,
+        "category": category,
+        "blank values": "",
+        "length": data.comment_text.split(" ").length,
+        "frequency": 1,
+        "rubric": data.rubric,
+        "ID": parseInt(comments[comments.length-1]["ID"]) + 1,
+    });
+    updateJSON(comment_update_file, comments);
 	
 }
 
