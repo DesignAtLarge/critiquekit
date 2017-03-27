@@ -1872,7 +1872,9 @@
                 return $selectable.length ? $selectable : null;
             },
             getSelectableAtIndex: function getSelectableAtIndex(index) { // function added by ailie
+                console.log(this._getSelectables());
                 var $selectable = this._getSelectables().get(index);
+                console.log($selectable);
                 return $selectable.length ? $selectable : null;
             },
             update: function update(query) {
@@ -2061,6 +2063,7 @@
             _onDownKeyed: function onDownKeyed() {
                 this.moveCursor(+1); // ailie
                 //this._nextHint();
+                //this._hintAtIndex(current_index + 1);
             },
             _onLeftKeyed: function onLeftKeyed() {
                 if (this.dir === "rtl" && this.input.isCursorAtEnd()) {
@@ -2094,6 +2097,7 @@
             _updateHint: function updateHint() {
                 var $selectable, data, val, query, escapedQuery, frontMatchRegEx, match;
                 $selectable = this.menu.getTopSelectable();
+                console.log($selectable);
                 data = this.menu.getSelectableData($selectable);
                 val = this.input.getInputValue();
                 if (data && !_.isBlankString(val) && !this.input.hasOverflow()) {
@@ -2106,9 +2110,10 @@
                     this.input.clearHint();
                 }
             },
-            _nextHint: function nextHint() { // function added by ailie
+            _hintAtIndex: function hintAtIndex(index) { // function added by ailie
                 var $selectable, data, val, query, escapedQuery, frontMatchRegEx, match;
-                $selectable = this.menu.getSelectableAtIndex(index);//?????
+                $selectable = this.menu.getSelectableAtIndex(index);
+                console.log($selectable);
                 data = this.menu.getSelectableData($selectable);
                 val = this.input.getInputValue();
                 if (data && !_.isBlankString(val) && !this.input.hasOverflow()) {

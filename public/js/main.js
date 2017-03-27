@@ -437,7 +437,6 @@ $(function(){
 
     // got a categorization for this comment
     socket.on('category', function(data) {
-    	console.log("category: " + data.category_string)
     	var rubric = data.rubric;
 
     	for (var i = 1; i <=3; i++) {
