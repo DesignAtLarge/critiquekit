@@ -230,7 +230,7 @@ io.on('connection', function(socket) {
   	// user typed something, call real-time predictor and send result back
   	socket.on('comment update', function(data) {
 
-  		if (data.comment.length > 3) {
+  		if (data.comment && data.comment.length > 3) {
   			options.body = "comment=" + data.comment;
 
 	  		request.post(options, function (error, response, body) {
