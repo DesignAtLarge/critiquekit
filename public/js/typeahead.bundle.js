@@ -1872,10 +1872,13 @@
                 return $selectable.length ? $selectable : null;
             },
             getSelectableAtIndex: function getSelectableAtIndex(index) { // function added by ailie
-                console.log(this._getSelectables());
-                var $selectable = this._getSelectables().get(index);
-                console.log($selectable);
+                //console.log(this._getSelectables());
+                var $selectable = this._getSelectables().eq(index);
+                //console.log($selectable);
                 return $selectable.length ? $selectable : null;
+            },
+            getSelectablesLength: function getSelectablesLength() { // ailie
+                return this._getSelectables().size();
             },
             update: function update(query) {
                 var isValidUpdate = query !== this.query;
@@ -2057,29 +2060,42 @@
                 this.close();
             },
             _onUpKeyed: function onUpKeyed() {
-                this.moveCursor(-1); // ailie
-                //this._previousHint();
+                //this.moveCursor(-1); // ailie
+                //console.log("up. index = " + current_index);
+                if (current_index > 0) {
+                    this._hintAtIndex(current_index - 1);
+                    current_index--;
+                    //console.log("changed to " + current_index);
+                }
             },
             _onDownKeyed: function onDownKeyed() {
-                this.moveCursor(+1); // ailie
-                //this._nextHint();
-                //this._hintAtIndex(current_index + 1);
+                //this.moveCursor(+1); // ailie
+                //console.log("down. index = " + current_index);
+                if (current_index < this.menu.getSelectablesLength() - 1) {
+                    this._hintAtIndex(current_index + 1);
+                    current_index++;
+                    //console.log("changed to " + current_index);
+                }
             },
             _onLeftKeyed: function onLeftKeyed() {
                 if (this.dir === "rtl" && this.input.isCursorAtEnd()) {
-                    this.autocomplete(this.menu.getTopSelectable());
+                    this.autocomplete(this.menu.getSelectableAtIndex(current_index));
+                    current_index = 0; // ailie
                 }
             },
             _onRightKeyed: function onRightKeyed() {
                 if (this.dir === "ltr" && this.input.isCursorAtEnd()) {
-                    this.autocomplete(this.menu.getTopSelectable());
+                    this.autocomplete(this.menu.getSelectableAtIndex(current_index));
+                    current_index = 0; // ailie
                 }
             },
             _onQueryChanged: function onQueryChanged(e, query) {
                 this._minLengthMet(query) ? this.menu.update(query) : this.menu.empty();
+                current_index = 0; // ailie
             },
             _onWhitespaceChanged: function onWhitespaceChanged() {
                 this._updateHint();
+                current_index = 0; // ailie
             },
             _onLangDirChanged: function onLangDirChanged(e, dir) {
                 if (this.dir !== dir) {
@@ -2097,7 +2113,7 @@
             _updateHint: function updateHint() {
                 var $selectable, data, val, query, escapedQuery, frontMatchRegEx, match;
                 $selectable = this.menu.getTopSelectable();
-                console.log($selectable);
+                //console.log($selectable);
                 data = this.menu.getSelectableData($selectable);
                 val = this.input.getInputValue();
                 if (data && !_.isBlankString(val) && !this.input.hasOverflow()) {
@@ -2113,7 +2129,7 @@
             _hintAtIndex: function hintAtIndex(index) { // function added by ailie
                 var $selectable, data, val, query, escapedQuery, frontMatchRegEx, match;
                 $selectable = this.menu.getSelectableAtIndex(index);
-                console.log($selectable);
+                //console.log($selectable);
                 data = this.menu.getSelectableData($selectable);
                 val = this.input.getInputValue();
                 if (data && !_.isBlankString(val) && !this.input.hasOverflow()) {
