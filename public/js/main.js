@@ -1,4 +1,4 @@
-var design_link = "http://cseweb.ucsd.edu/~cafraser/"; // LINK to the website to be evaluated
+var design_link = "./design/design.html"; // LINK to the website to be evaluated
 
 var full_sorted_comments = {"Readability": [], "Layout": [], "Balance": [], "Simplicity": [], "Emphasis": [], 
 	"Consistency": [], "Appropriateness": []};
@@ -14,28 +14,30 @@ var correcting_rubric = "";
 
 var newest_comment_id = 0;
 var current_rubric = "";
+var iframe;
+var previous_highlight = undefined;
+var choosing_location = false;
+var location_words = ["this", "that", "there", "here"];
 
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
 
 	var rubric = dom_container.parents(".rubric_cat").attr("id");
-	var comment_location = $("#location_" + newest_comment_id);
+	var comment_location = iframe.find("#location_" + newest_comment_id);
 	if (comment_location.size() > 0) {
-		comment_location.html(comment_text);
+		comment_location.find(".location_text").html(comment_text);
 	}
 
 	if (comment_text != "") {
 
-		var yes_categories = dom_container.find(".comment_text").attr("data-categories");
-		var no_categories = dom_container.find(".comment_text").attr("data-nocategories");
-
-		// if comment_location.size() > 0, this comment was pasted on somehwere
+		var category_string = dom_container.find(".comment_text").attr("data-categorystring");
+		var location = (comment_location.size() > 0); // whether this comment was pasted on somehwere
 		// send the location?
-
+			
 		// send to server
 		socket.emit('comment submitted', 
 			{comment_id: latest_comment_inserted, new_comment_id: newest_comment_id, comment_text: comment_text, 
-				rubric: rubric, yes_categories: yes_categories, no_categories: no_categories});
+				rubric: rubric, category_string: category_string, location: location});
 		latest_comment_inserted = -1; // reset
 
 		var comments_section = dom_container.parents(".rubric_cat").find(".posted_comments");
@@ -57,7 +59,7 @@ function submitComment(comment_text, dom_container) {
 			}, function() {
 			commentUnHover($(this).attr("id").split("new_comment_")[1]);
 		});
-		$("#location_" + newest_comment_id).hover(function() {
+		iframe.find("#location_" + newest_comment_id).hover(function() {
 			commentHover($(this).attr("id").split("location_")[1]);
 			}, function() {
 			commentUnHover($(this).attr("id").split("location_")[1]);
@@ -78,12 +80,14 @@ function submitComment(comment_text, dom_container) {
 
 function commentHover(comment_id) {
 	$("#new_comment_" + comment_id).css("background-color", "rgba(28, 169, 196, 0.5)");
-	$("#location_" + comment_id).css("background-color", "rgba(28, 169, 196, 0.5)");
+	iframe.find("#location_" + comment_id).css("background-color", "rgba(177, 218, 226, 1.0)");
+	iframe.find("#location_" + comment_id).css("z-index", "1001");
 }
 
 function commentUnHover(comment_id) {
 	$("#new_comment_" + comment_id).css("background-color", "white");
-	$("#location_" + comment_id).css("background-color", "rgba(200, 200, 200, 0.7)");
+	iframe.find("#location_" + comment_id).css("background-color", "rgba(200, 200, 200, 0.7)");
+	iframe.find("#location_" + comment_id).css("z-index", "1000");
 }
 
 function updateComment(rubric) {
@@ -96,7 +100,7 @@ function updateComment(rubric) {
 	}, 100);
 }
 
-// called everytime categories are updated
+// called everytime categories are updated 
 // update submit button colour to match
 function categoryUpdate(rubric) {
 	var num_green = 0;
@@ -204,9 +208,11 @@ function displayComments(rubric, comments) {
 		var comment_textarea = suggestion_box.find(".comment_text.tt-input");
 		//console.log(comment_textarea[0].selectionStart);
 		//console.log(comment_textarea[0].selectionEnd);
+		var selection_start = comment_textarea[0].selectionStart;
+		var selection_end = comment_textarea[0].selectionEnd;
 
-		comment_textarea.val(comment_textarea.val().substring(0, comment_textarea[0].selectionStart) + 
-				comment_textarea.val().substring(comment_textarea[0].selectionEnd));
+		comment_textarea.val(comment_textarea.val().substring(0, selection_start) + 
+				comment_textarea.val().substring(selection_end));
 		comment_textarea.val(comment_textarea.val() + comment);
 		comment_textarea.select();
 
@@ -219,6 +225,9 @@ function displayComments(rubric, comments) {
 		suggestion_box.animate({ scrollTop: 0 }, "fast");
 
 		updateComment();
+
+		socket.emit("suggestion inserted", {rubric: current_rubric, comment_id: comment_id, 
+			comment_text: comment, selection_length: selection_end - selection_start});
 
 	});
 }
@@ -254,22 +263,77 @@ function getMatchingComments(query, rubric) {
 	return result_comments;
 }
 
+function selectLocation(element) {
+	var side;
+	var x_location;
+	var target = $(element.target);
+	console.log(target);
+	var targetX = target.offset().left;
+	var targetY = target.offset().top;
+
+	if (targetX < ($("#design_container").width() / 2)) {
+		side = "left";
+		x_location = targetX;
+	} else {
+		side = "right";
+		x_location = iframe.find("body").width() - targetX;
+	}
+
+	iframe.find("body").append(
+		"<div id='location_" + newest_comment_id + 
+			"' class='comment_location' style='top: " + targetY + 
+			"px; " + side + ": " + x_location + "px;'><div class='location_text'>" + 
+				"<i>Press Submit to see your comment here.</i></div>" + 
+			"<div class='location_marker_" + side + "'></div>" + 
+		"</div>"
+	);
+
+	choosing_location = false;
+	stopHighlightDOMElements();
+}
+
 function addLocation(dom_container) {
-	// disable links in iframe by making its div container have a layer over it 
-	$("#design_container").addClass("choosing_location");
 
-	var rubric = dom_container.attr("id");
+	highlightDOMElements();
+	choosing_location = true;
+}
 
-	// wait for user click
-	$("#design_container").click(function(event) {		
-		$("#main_container").append("<div id='location_" + newest_comment_id + 
-				"' class='comment_location' style='top: " + event.pageY + 
-				"px; left: " + event.pageX + "px;'><i>Press Submit to see your comment here.</i></div>");
+// activate when user is choosing where to place their comment
+function highlightDOMElements() {
+	if (iframe != undefined) {
+		iframe.mouseover(function(element) {
+			var target = $(element.target);
+			if (!(target.hasClass("comment_location") || target.parent().hasClass("comment_location"))) {
+				if (previous_highlight != undefined) {
+					previous_highlight.removeClass("highlight");
+				}
+				target.addClass("highlight");
+				previous_highlight = target;
+			}
+		});
+		iframe.mouseout(function(element) {
+			var target = $(element.target);
+			if (!(target.hasClass("comment_location") || target.parent().hasClass("comment_location"))) {
+				if (previous_highlight != undefined) {
+					previous_highlight.removeClass("highlight");
+				}
+			}
+		});
+	} else {
+		console.log("ERROR, iframe not loaded yet");
+	}
+}
 
-		// remove the layer & click event
-		$("#design_container").unbind();
-		$("#design_container").removeClass("choosing_location");
-	});
+// when user has chosen location, stop highlighting
+function stopHighlightDOMElements() {
+	if (previous_highlight != undefined) {
+		previous_highlight.removeClass("highlight");
+		previous_highlight = undefined;
+	}
+	if (iframe != undefined) {
+		iframe.unbind("mouseover");
+		iframe.unbind("mouseout");
+	}
 }
 
 
@@ -279,6 +343,19 @@ $(function(){
     $("#navbar_container").load("navbar.html"); 
 
     $("#design_frame").attr("src", design_link);
+
+    $("#design_frame").load(function() {
+    	iframe = $("#design_frame").contents();
+    	console.log("iframe loaded");
+    	// disable all clicks / links on iframe
+    	iframe.get(0).addEventListener("click", function(e) {
+		    e.stopPropagation();
+		    e.preventDefault();
+		    if (choosing_location) {
+		    	selectLocation(e);
+		    }
+		}, true);
+    });
 
     // event handlers for modal dialogs
     $("#confirm_flag").click(function() {
@@ -291,34 +368,39 @@ $(function(){
     $("#confirm_delete").click(function() {
     	socket.emit('delete comment', {comment_id: deleting_comment_id});
     	$("#new_comment_" + deleting_comment_id).remove();
-    	$("#location_" + deleting_comment_id).remove();
+    	iframe.find("#location_" + deleting_comment_id).remove();
     	deleting_comment_id = "";
     });
 
     $("#correct_yes").click(function() {
-    	$("#" + correcting_rubric).find(".comment_text").attr("data-categories", 
-    		$("#" + correcting_rubric).find(".comment_text").attr("data-categories") + correcting_category);
 
-    	$("#" + correcting_rubric).find(".comment_text").attr("data-nocategories", 
-    		$("#" + correcting_rubric).find(".comment_text").attr("data-nocategories").replace(correcting_category, ""));
+    	var category_string = $("#" + correcting_rubric).find(".comment_text").attr("data-categorystring");
+    	var index = correcting_category - 1;
+    	category_string = category_string.substring(0, index) + "1" + category_string.substring(index+1);
+    	$("#" + correcting_rubric).find(".comment_text").attr("data-categorystring", category_string);
 
     	$("#" + correcting_rubric).find(".indicator_" + correcting_category)
-    		.addClass("glyphicon-ok")
+    		.addClass("glyphicon-ok corrected")
     		.removeClass("glyphicon-remove");
+
+    	socket.emit('user category added', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
+    										category: correcting_category});
 
     	categoryUpdate(correcting_rubric);
     });
 
 	$("#correct_no").click(function() {
-    	$("#" + correcting_rubric).find(".comment_text").attr("data-categories", 
-    		$("#" + correcting_rubric).find(".comment_text").attr("data-categories").replace(correcting_category, ""));
-
-    	$("#" + correcting_rubric).find(".comment_text").attr("data-nocategories", 
-    		$("#" + correcting_rubric).find(".comment_text").attr("data-nocategories") + correcting_category);
+    	var category_string = $("#" + correcting_rubric).find(".comment_text").attr("data-categorystring");
+    	var index = correcting_category - 1;
+    	category_string = category_string.substring(0, index) + "0" + category_string.substring(index+1);
+    	$("#" + correcting_rubric).find(".comment_text").attr("data-categorystring", category_string);
 
     	$("#" + correcting_rubric).find(".indicator_" + correcting_category)
     		.removeClass("glyphicon-ok")
-    		.addClass("glyphicon-remove");
+    		.addClass("glyphicon-remove corrected");
+
+    	socket.emit('user category removed', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
+    										category: correcting_category});
 
     	categoryUpdate(correcting_rubric);
     });
@@ -326,8 +408,9 @@ $(function(){
     $(window).on("autocompleted", function() { 
     	var comment_text = $("#" + current_rubric).find(".comment_text").val();
     	full_sorted_comments[current_rubric].forEach(function(check_comment) {
-    		if (check_comment["comment"].replace(/<input.*?>/g, "_____") == comment_text) {
+    		if (check_comment["comment"].replace(/<input.*?>/g, "_____").toLowerCase() == comment_text.toLowerCase()) {
     			latest_comment_inserted = check_comment["ID"];
+    			socket.emit('autocompleted suggestion', {rubric: current_rubric, comment_id: latest_comment_inserted});
     			updateComment();
     		}
     	});
@@ -350,7 +433,9 @@ $(function(){
 			    	updateComment();
 			    	$(this).parents(".comment_interface").hide();
 			    	$(this).parents(".rubric_cat").find(".add_comment").show();
-			    	socket.emit('cancel comment');
+			    	// delete location if one was made
+			    	iframe.find("#location_" + newest_comment_id).remove();
+			    	socket.emit('cancel comment', $(this).parents(".rubric_cat").attr("id"));
 			    });
 			    $(".submit_comment").click(function() {
 			    	// get the contents of comment box
@@ -406,6 +491,8 @@ $(function(){
 					$(this).typeahead('val', '');
 
 					$(this).keydown(function(e) {
+						deleting = (e.which == 46 || e.which == 8) // true for delete or backspace
+
 						var this_rubric = $(this).parents(".rubric_cat").attr("id");
 						current_rubric = this_rubric;
 						updateComment();
@@ -441,14 +528,18 @@ $(function(){
 
     	for (var i = 1; i <=3; i++) {
     		var icon = $("#" + rubric).find(".indicator_" + i)
-    		if (parseInt(data.category_string[i-1])) {
-    			// category i is YES
-    			icon.addClass("glyphicon-ok").removeClass("glyphicon-remove");
-    		} else {
-    			// category i is NO
-    			icon.addClass("glyphicon-remove").removeClass("glyphicon-ok");
-    		}
-    		categoryUpdate(rubric);
+    		if (!icon.hasClass("corrected") || deleting == true) {
+	    		if (parseInt(data.category_string[i-1])) {
+	    			// category i is YES
+	    			icon.addClass("glyphicon-ok").removeClass("glyphicon-remove");
+	    		} else {
+	    			// category i is NO
+	    			icon.addClass("glyphicon-remove").removeClass("glyphicon-ok");
+	    		}
+	    		// save category
+	    		$("#" + rubric).find(".comment_text").attr("data-categorystring", data.category_string);
+	    		categoryUpdate(rubric);
+	    	}
     	}
     });
 });

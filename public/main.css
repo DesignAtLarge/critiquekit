@@ -7,6 +7,7 @@
     border-left: 1px solid gray;
     overflow-y: auto;
     display: table-cell;
+    position: relative;
 }
 
 #design_container {
@@ -20,26 +21,25 @@ iframe {
     border: none;
 }
 
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 380px;
+}
+
+.modal-dialog {
+    width: 380px;
+}
+
 .choosing_location iframe{
   vertical-align:top;
   pointer-events: none; /* let any clicks go through me */
 }
 
-.comment_location {
-    position: absolute;
-    background-color: rgba(200, 200, 200, 0.7);
-    padding: 10px;
-    border-radius: 5px;
-    max-width: 400px;
-}
-
 #design_frame {
     width: 100%;
     height: 100%;
-}
-
-#flag_modal .modal-dialog {
-    width: 500px;
 }
 
 html, body, .stretch {
@@ -111,7 +111,7 @@ button:hover {
 
 .glyphicon-remove {
     border: 2px solid darkred;
-    color: darkred;
+    color: transparent !important;
 }
 
 .glyphicon-ok {
