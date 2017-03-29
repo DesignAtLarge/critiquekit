@@ -364,7 +364,7 @@ function uncheckIcon(icon) {
 function urlParam(name){
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
     if (results==null){
-       return null;
+    	return 0;
     }
     else{
        return results[1] || 0;
@@ -400,7 +400,9 @@ $(function(){
 	    	socket.emit('done design', design_num);
 	    	var url_parts = window.location.href.split("=");
 	    	design_num++;
-	    	if (design_num < design_links.length) {
+	    	if (url_parts.length == 1) {
+	    		window.location.href = url_parts[0] + "?design=" + design_num;
+	    	} else if (design_num < design_links.length) {
 	    		window.location.href = url_parts[0] + "=" + design_num
 	    	} else {
 	    		// show message that you're done
