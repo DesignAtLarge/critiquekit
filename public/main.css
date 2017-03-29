@@ -21,15 +21,37 @@ iframe {
     border: none;
 }
 
-.modal {
+.side_modal {
     position: absolute;
     top: 0;
     left: 0;
     width: 380px;
 }
 
-.modal-dialog {
+.side_modal-dialog {
     width: 380px;
+}
+
+#adding_location_modal {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
+#location_modal_content {
+    position: absolute;
+    top: 25%;
+    left: 10%;
+    width: 80%;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
 }
 
 .choosing_location iframe{
@@ -80,6 +102,26 @@ button:hover {
 
 .help_icon {
     color: #1CA9C4;
+}
+
+.done_icon {
+    color: #1CA9C4;
+}
+
+#help_button, #done_button {
+    cursor: pointer;
+}
+
+#close_help {
+    display: none;
+}
+
+#prev_help, #done_help {
+    display: none;
+}
+
+#help_page_2 {
+    display: none;
 }
 
 .navbar {

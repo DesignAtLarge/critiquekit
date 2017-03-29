@@ -1,0 +1,37 @@
+body {margin: 0 auto; text-align: center; font-family: "freight-sans-pro", arial, sans-serif; font-size: 16px; line-height: 16px;}
+
+.container {max-width: 775px; margin: 0 auto;}
+h2 {font-size: 18px; margin: 0px 0 2px 0; font-weight: 500; color: #016a73;}
+
+.price {color: #016a73;}
+
+img.menu {background: #ffffff; padding: 5px; margin: 0 10px 0 0; border: 1px solid #eeeeee; border-radius: 5px;}
+
+#h2title {clear: both; text-align: left; padding: 30px 5px 0 5px; color: #016a73; font-size: 26px; line-height: 26px; font-weight: 600; border-bottom: 1px solid #eeeeee; width: 100%;}
+.titlethin {font-weight: 300; color: #016a73;}
+a:hover, a:focus {text-decoration: none;}
+
+.hili {text-align: left; margin: 5px 0 0; border: 1px solid #ffffff;}
+.hili:hover {background: #fcf1e2; border: 1px solid #eeeeee;}
+.menurow {margin: 5px 0; clear: both;}
+.tablefade {background: url('g/tablefade.jpg');}
+.lower {margin-top: 15px;}
+
+.navbar, .navbar-inverse {margin-bottom: 0;}
+.navbar-inverse .navbar-nav > li > a {color: #dddddd; padding: 15px 9px;}
+.navbar-header > a {color: #ffffff;}
+.dropdown-menu > li > a {font-size: 16px;}
+
+h3 {text-align: left;}
+
+label {font-weight: 500;}
+
+input {width: 80px;}
+
+.shad {box-shadow: 3px 6px 5px #cccccc;}
+
+h2.carousel-caption {font-size: 30px;}
+
+p.menu1 {text-align: left; padding: 10px 5px 0; margin-bottom: 0;}
+
+p.menu2 {text-align: left; padding: 10px 5px 5px; margin-bottom: 0; border-bottom: 1px solid #eeeeee;}

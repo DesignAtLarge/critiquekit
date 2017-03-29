@@ -1,118 +1,118 @@
 ID,Comment,Rubric,Length,Category,Frequency,Blank values
-0,This text is very difficult to read and should be presented in a larger font.,Readability,15,3,0,
-1,"I actually really like this one, it's very pleasant and the colors reflect the actual _blank_.",Appropriateness,16,1,0,temperature
-2,Great breakdown of information from specific to broad. Overall layout shows an understanding of current UI and web trends,Appropriateness,19,1,0,
-3,outside margins violation,Layout,3,2,0,
-5,This page may be a little too long for it to stay un-scrolling.,Layout,13,2,0,
-6,These don't really provide any information.,Appropriateness,6,2,0,
-7,This _blank_ would be more attractive with a bolder font here.,Emphasis,11,3,0,poster
-8,Use a capital_blank_ and remove _blank_ it sounds unprofessional.,Appropriateness,9,3,0," T., ""kinda"""
-9,"I like this overall. Nice color, contrast. Clean and professional looking.",Appropriateness,11,1,0,
-10,Nice and clean layout. Nice use of color. _blank_ is missing and needs to be primary information.,Emphasis,17,3,0,Date
-11,Watch out for the text creating tangents with the other elements here.,Layout,12,2,0,
-14,"The _blank_ are partially covering this text. Also, the colors for this _blank_ are too similar.",Layout,16,2,0,"waves, chart"
-15,This space is a bit large,Layout,6,2,0,
-16,"The information presented here is somewhat confusing without having to more carefully read and interpret it. Make this simpler, and use more graphics.",Simplicity,23,3,0,
-17,"Too much dead space here, should condense the _blank_ or move the central text to the left a little.",Layout,19,3,0,box
-18,I don't understand what this diagram is trying to say. Something easier to understand would be better.,Appropriateness,17,2,0,
+0,This text is very difficult to read and should be presented in a larger font.,VisualAesthetics,15,3,0,
+1,"I actually really like this one, it's very pleasant and the colors reflect the actual _blank_.",VisualAesthetics,16,1,0,temperature
+2,Great breakdown of information from specific to broad. Overall layout shows an understanding of current UI and web trends,Functionality,19,1,0,
+3,outside margins violation,VisualAesthetics,3,2,0,
+5,This page may be a little too long for it to stay un-scrolling.,VisualAesthetics,13,2,0,
+6,These don't really provide any information.,Functionality,6,2,0,
+7,This _blank_ would be more attractive with a bolder font here.,VisualAesthetics,11,3,0,poster
+8,Use a capital_blank_ and remove _blank_ it sounds unprofessional.,AdditionalFeedback,9,3,0," T., ""kinda"""
+9,"I like this overall. Nice color, contrast. Clean and professional looking.",VisualAesthetics,11,1,0,
+10,Nice and clean layout. Nice use of color. _blank_ is missing and needs to be primary information.,VisualAesthetics,17,3,0,Date
+11,Watch out for the text creating tangents with the other elements here.,VisualAesthetics,12,2,0,
+14,"The _blank_ are partially covering this text. Also, the colors for this _blank_ are too similar.",VisualAesthetics,16,2,0,"waves, chart"
+15,This space is a bit large,VisualAesthetics,6,2,0,
+16,"The information presented here is somewhat confusing without having to more carefully read and interpret it. Make this simpler, and use more graphics.",Functionality,23,3,0,
+17,"Too much dead space here, should condense the _blank_ or move the central text to the left a little.",VisualAesthetics,19,3,0,box
+18,I don't understand what this diagram is trying to say. Something easier to understand would be better.,Functionality,17,2,0,
 19,Is this a graphic of _blank_? Or a _blank_? Not sure what's going on down here.,Appropriateness,16,2,0,"waves, chart"
-20,Text is too small on these.,Readability,6,2,0,
-21,"Use a better, more appealing graphic to draw the reader in. The one presented is just not appealing or interesting.",Emphasis,20,3,0,
-22,great colors and typeface,Appropriateness,4,1,0,
-23,This graph feels like it is floating in space. An axis line might help,Layout,14,3,0,
-24,poor color choice barely legible,Readability,5,2,0,
-25,I would find a way to make the specified _blank_ clearer. Currently getting a bit lost but I like the idea.,Balance,21,2,0,city
-26,This information-type is essentially presented twice. I like the top-most one better. It is easier to read and to understand at a glance.,Balance,23,2,0,
-27,"very clear, nice design",Appropriateness,4,1,0,
-28,"I think this section should be at the top to make it clear that it is the _blank_, as well as looking more visually balanced.",Layout,25,3,0,current forecast
-29,Where is _blank_?,Emphasis,3,2,0,today's weather
-30,Consider the audience you are appealing to. What specific _blank_ information is important to them? ,Appropriateness,15,3,0,weather
-31,"Very good that I immediately know it is a _blank_ page. And, I see the addition of _blank_ as adding some customized interest elements.",Appropriateness,24,1,0,"weather information, events for the week"
-33,"Currently, the font, colors and line elements are coming across very 'stock' and not custom or current. ",Emphasis,17,2,0,
-35,"Could probably bump the font size up 1 notch, plenty of space here.",Readability,13,3,0,
-36,Section under _blank_ may recapitulate the information presented in a new way but it is not very helpful and makes the _blank_ overly busy.,Simplicity,24,2,0,"polygon, poster"
-37,I feel like the fonts used here are somewhat bland and don't really grab the attention.,Emphasis,16,2,0,
-38,This _blank_ is difficult to understand. ,Consistency,6,2,0,"""graph"""
-39,It might be best to lose the _blank_ portion of the display. ,Balance,12,3,0, 'Events'
-40,A _blank_ background isn't very interesting and makes things feel bland.,Appropriateness,11,2,0,white
-42,Too many conflicting visuals.,Balance,4,2,0,
-43,This has a lot of information and it is presented pretty well. This area could be much smaller and accomplished with a sentence.,Simplicity,23,3,0,
-44,Font sizes too big and overlapping with _blank_ icon,Layout,9,2,0,sun
-45,The _blank_ could be smaller and less intrusive as they clog up a lot of the space.,Layout,17,3,0,graphs
-46,I think the background should be a different color as it isn't very appealing to the eyes.,Appropriateness,17,3,0,
-47,Use a different color text to make this statement stand out more,Emphasis,12,3,0,
-48,this info has to be centered to its respective space,Layout,10,3,0,
-49,Unnecessary information.,Simplicity,2,2,0,
-50,You lost the _blank_.,Simplicity,4,2,0,"""F"""
-51,The vital information in the _blank_ is all jumbled together. ,Simplicity,10,2,0,image
-55,"The graphics are really all over the place, and lack a streamlined look.",Layout,13,2,0,
-56,Cannot read.,Readability,2,2,0,
-57,"The font/graphics are rather large and spread out, causing the _blank_ information to be overlooked. ",Layout,15,2,0,weather
-58,"The colors of they typeface is fine, but there could be more variation in fonts, and the size definitely needs some editing as previously described.",Appropriateness,25,2,0,
-60,This is hard to read over the _blank_. You could add a transparent _blank_ to help the readability of this area.,Readability,21,3,0,"photo, white box"
-61,Font size might be hard to read. Maybe it is just how I am viewing the _blank_?...,Readability,17,2,0,image
-63,Consider another font,Readability,3,2,0,
-65,"This is very nice! Easy to read, the text is consistent, my eye follows a logical path, the visuals representing _blank_ are cute and clever!",Consistency,25,1,0,humidity
-66,"Hard to read, can make bigger by using space better.",Readability,10,3,0,
-67,What do the _blank_ indicate? It's not really clear. I would also enlarge the fonts. Difficult to read.,Readability,18,3,0,greens
-68,Nice use of iconography!,Consistency,4,1,0,
-69,Perhaps a _blank_ or _blank_ could go here.,Layout,8,3,0,"monthly weather, map"
-70,A little too much dead space here. Maybe input _blank_ info? Just a little more filler here.,Layout,17,3,0,sunrise and sunset
-71,Colors need to be more harmonious.,Consistency,6,2,0,
-72,Not enough contrast between _blank_ and _blank_ bg,Balance,8,2,0,"gray, blue"
-73,I like the use of icons,Consistency,6,1,0,
-75,Add a legend to define each symbol,Consistency,7,3,0,
-76,This would look better probably in _blank_.,Appropriateness,7,3,0,white
-78,The _blank_ background makes the text difficult to read.,Readability,9,2,0,white
-80,I really like the _blank_ color palette but here it can be a bit too muted. It's losing visual impact and getting lost.,Emphasis,23,3,0,pastel
-81,"Overall, you need to work with the spacing with this design. Too much dead space. Don't let it go to waste. Use it!",Layout,23,3,0,
-82,The text could be a bit larger and the _blank_ written in bold to make it easier to read.,Readability,19,3,0,percentages
-84,dead space on top. The visual information is packed with great information but that particular space is too much to be breathing space.,Layout,23,2,0,
-85,The background color fades off a little fast and could be more pleasing with a little more coverage,Appropriateness,18,2,0,
-87,Too small. Enlarge so that it is legible.,Readability,8,3,0,
-88,Increase the size of the more important elements and shrink the _blank_.,Balance,12,3,0,calendar
-89,Very nice structure and organization. Box for _blank_ and box for _blank_ feels a little detached.,Layout,16,2,0,"weather, calendar"
-90,Try using text to indicate what type of information we are looking at. ,Appropriateness,13,3,0,
-91,"good use of color, relaxing theme if a little too cute.",Appropriateness,11,1,0,
-92,"Does the _blank_ represent a _blank_? If so, try to keep your icons consistent with what you have in the layout found below",Consistency,23,3,0,"red sun, sunny day"
-93,Fantastic layout and color! Very well executed.,Layout,7,1,0,
-94,"I like this area, but I would slide the colors. _blank_ and _blank_ are really dark. ",Balance,16,3,0,"Monday, Friday"
-95,"Overall, the design is working, but the colors of the fonts are making all of the information hard to read. ",Readability,20,2,0,
-96,I think the _blank_ should be listed as well.,Emphasis,9,3,0,date
-98,This _blank_ doesn't match the _blank_ icons below.,Consistency,8,2,0,"sun, sun"
-99,"Very original design, fresh, unusual. I would certainly want to have something like that as an _blank_ on my _blank_. ",Appropriateness,20,1,0,"app, mobile devices"
-100,I would rather see a_blank_ here. The color is stronger than any other color on the page. Stay with the softer colors.,Balance,22,3,0,light yellow sun
-101,"overall I like this quite a bit easy & quick to read / understand nice, decipherable graphics & text",Readability,19,1,0,
-102,The _blank_ Diagram is is not needed.,Simplicity,7,2,0,SURF HEIGHT
-104,_blank_ should not be the same color as _blank_.,Balance,9,3,0,"Current temperature, header background"
-105,Good idea!,Layout,2,1,0,
-106,This layout is plain and boring. Needs a better UI.,Layout,10,2,0,
-107,Love overall layout and the specific thought towards your audience. Overall design is clean and current.,Appropriateness,16,1,0,
-109,"I understand that this is _blank_, but the orientation of the graphic just throws me off. It may just be me :-)",Layout,22,2,0,sundown
-111,You have the _blank_ noted in two areas of the _blank_. Too much. I would eliminate the icons below. ,Simplicity,19,3,0,"weather for the day, bar"
-112,The colors are kind of bland from my perspective. ,Emphasis,9,2,0,
-113,It shows that you are trying to think outside of the box with your layout but your font choice is very generic.,Appropriateness,22,2,0,
-114,Visually unappealing.,Layout,2,2,0,
-115,The icon of the _blank_ was not clear at first glance.,Consistency,11,2,0,man
-116,"Too many lines/graphs in a small area. Again, it just looks too busy. Simple is best.",Simplicity,16,2,0,
-119,This is very hard to read,Readability,6,2,0,
-123,The _blank_ background make it difficult to read the text.,Readability,10,2,0,white
-125,Is it necessary to include empty _blank_?,Simplicity,7,2,0,blocks
-126,this info could be a bit larger,Readability,7,3,0,
-127,The text is to small to read. there is room to make the information readable.,Readability,15,2,0,
-129,To small,Readability,2,2,0,
-131,The background image makes it harder to read all of the information.,Readability,12,2,0,
-133,Check spelling and punctuation.,Readability,4,3,0,
-134,I think a title other than _blank_ could better help your audience find their way around the graphic. I would be more specific,Appropriateness,23,3,0,"""Calendar"""
-135,"Not really needed, but if you do use it then make is easier to read and able to tell what it is easier.",Readability,23,2,0,
-137,"too small for a serif font on the web, very hard to read",Readability,13,2,0,
-139,This is a nice little chart. What about making it for the _blank_?,Appropriateness,13,3,0,ten day extended forecast
-140,My eyes are going all over the place.,Layout,8,2,0,
-141,There are some odd proportions going on with this display and the varied baseline of the text element makes it a mess for the eye.,Layout,25,2,0,
-143,_blank_ should be marked properly and organized better.,Appropriateness,8,3,0,Highs and lows
-144,This layout is plain,Layout,4,2,0,
-145,_blank_ font color could be difference to make _blank_ clearer..,Readability,10,3,0,"Days of week, optics"
-146,"When you move these to the center, increase the size as to promote them as the most important area of the design.",Emphasis,22,3,0,
-148,Text is too small on these to read from a distance.,Readability,11,2,0,
-149,There is no _blank_ indicated.,Consistency,5,2,0,city
-150,"Too much info, making to interface too cluttered. Delete _blank_ and _blank_ graphs.",Simplicity,13,3,0,"""Today"", ""Next Month"""
+20,Text is too small on these.,Functionality,6,2,0,
+21,"Use a better, more appealing graphic to draw the reader in. The one presented is just not appealing or interesting.",VisualAesthetics,20,3,0,
+22,great colors and typeface,VisualAesthetics,4,1,0,
+23,This graph feels like it is floating in space. An axis line might help,VisualAesthetics,14,3,0,
+24,poor color choice barely legible,VisualAesthetics,5,2,0,
+25,I would find a way to make the specified _blank_ clearer. Currently getting a bit lost but I like the idea.,Functionality,21,2,0,city
+26,This information-type is essentially presented twice. I like the top-most one better. It is easier to read and to understand at a glance.,Functionality,23,2,0,
+27,"very clear, nice design",VisualAesthetics,4,1,0,
+28,"I think this section should be at the top to make it clear that it is the _blank_, as well as looking more visually balanced.",VisualAesthetics,25,3,0,current forecast
+29,Where is _blank_?,Functionality,3,2,0,today's weather
+30,Consider the audience you are appealing to. What specific _blank_ information is important to them? ,Functionality,15,3,0,weather
+31,"Very good that I immediately know it is a _blank_ page. And, I see the addition of _blank_ as adding some customized interest elements.",Functionality,24,1,0,"weather information, events for the week"
+33,"Currently, the font, colors and line elements are coming across very 'stock' and not custom or current. ",VisualAesthetics,17,2,0,
+35,"Could probably bump the font size up 1 notch, plenty of space here.",VisualAesthetics,13,3,0,
+36,Section under _blank_ may recapitulate the information presented in a new way but it is not very helpful and makes the _blank_ overly busy.,Functionality,24,2,0,"polygon, poster"
+37,I feel like the fonts used here are somewhat bland and don't really grab the attention.,VisualAesthetics,16,2,0,
+38,This _blank_ is difficult to understand. ,Functionality,6,2,0,"""graph"""
+39,It might be best to lose the _blank_ portion of the display. ,Functionality,12,3,0, 'Events'
+40,A _blank_ background isn't very interesting and makes things feel bland.,VisualAesthetics,11,2,0,white
+42,Too many conflicting visuals.,VisualAesthetics,4,2,0,
+43,This has a lot of information and it is presented pretty well. This area could be much smaller and accomplished with a sentence.,Functionality,23,3,0,
+44,Font sizes too big and overlapping with _blank_ icon,VisualAesthetics,9,2,0,sun
+45,The _blank_ could be smaller and less intrusive as they clog up a lot of the space.,VisualAesthetics,17,3,0,graphs
+46,I think the background should be a different color as it isn't very appealing to the eyes.,VisualAesthetics,17,3,0,
+47,Use a different color text to make this statement stand out more,VisualAesthetics,12,3,0,
+48,this info has to be centered to its respective space,VisualAesthetics,10,3,0,
+49,Unnecessary information.,Functionality,2,2,0,
+50,You lost the _blank_.,AdditionalFeedback,4,2,0,"""F"""
+51,The vital information in the _blank_ is all jumbled together. ,Functionality,10,2,0,image
+55,"The graphics are really all over the place, and lack a streamlined look.",VisualAesthetics,13,2,0,
+56,Cannot read.,VisualAesthetics,2,2,0,
+57,"The font/graphics are rather large and spread out, causing the _blank_ information to be overlooked. ",Functionality,15,2,0,weather
+58,"The colors of they typeface is fine, but there could be more variation in fonts, and the size definitely needs some editing as previously described.",VisualAesthetics,25,2,0,
+60,This is hard to read over the _blank_. You could add a transparent _blank_ to help the readability of this area.,VisualAesthetics,21,3,0,"photo, white box"
+61,Font size might be hard to read. Maybe it is just how I am viewing the _blank_?...,VisualAesthetics,17,2,0,image
+63,Consider another font,VisualAesthetics,3,2,0,
+65,"This is very nice! Easy to read, the text is consistent, my eye follows a logical path, the visuals representing _blank_ are cute and clever!",VisualAesthetics,25,1,0,humidity
+66,"Hard to read, can make bigger by using space better.",VisualAesthetics,10,3,0,
+67,What do the _blank_ indicate? It's not really clear. I would also enlarge the fonts. Difficult to read.,VisualAesthetics,18,3,0,greens
+68,Nice use of iconography!,VisualAesthetics,4,1,0,
+69,Perhaps a _blank_ or _blank_ could go here.,Functionality,8,3,0,"monthly weather, map"
+70,A little too much dead space here. Maybe input _blank_ info? Just a little more filler here.,VisualAesthetics,17,3,0,sunrise and sunset
+71,Colors need to be more harmonious.,VisualAesthetics,6,2,0,
+72,Not enough contrast between _blank_ and _blank_ bg,VisualAesthetics,8,2,0,"gray, blue"
+73,I like the use of icons,VisualAesthetics,6,1,0,
+75,Add a legend to define each symbol,Functionality,7,3,0,
+76,This would look better probably in _blank_.,VisualAesthetics,7,3,0,white
+78,The _blank_ background makes the text difficult to read.,VisualAesthetics,9,2,0,white
+80,I really like the _blank_ color palette but here it can be a bit too muted. It's losing visual impact and getting lost.,VisualAesthetics,23,3,0,pastel
+81,"Overall, you need to work with the spacing with this design. Too much dead space. Don't let it go to waste. Use it!",VisualAesthetics,23,3,0,
+82,The text could be a bit larger and the _blank_ written in bold to make it easier to read.,VisualAesthetics,19,3,0,percentages
+84,dead space on top. The visual information is packed with great information but that particular space is too much to be breathing space.,VisualAesthetics,23,2,0,
+85,The background color fades off a little fast and could be more pleasing with a little more coverage,VisualAesthetics,18,2,0,
+87,Too small. Enlarge so that it is legible.,VisualAesthetics,8,3,0,
+88,Increase the size of the more important elements and shrink the _blank_.,Functionality,12,3,0,calendar
+89,Very nice structure and organization. Box for _blank_ and box for _blank_ feels a little detached.,Functionality,16,2,0,"weather, calendar"
+90,Try using text to indicate what type of information we are looking at. ,Functionality,13,3,0,
+91,"good use of color, relaxing theme if a little too cute.",VisualAesthetics,11,1,0,
+92,"Does the _blank_ represent a _blank_? If so, try to keep your icons consistent with what you have in the layout found below",Functionality,23,3,0,"red sun, sunny day"
+93,Fantastic layout and color! Very well executed.,VisualAesthetics,7,1,0,
+94,"I like this area, but I would slide the colors. _blank_ and _blank_ are really dark. ",VisualAesthetics,16,3,0,"Monday, Friday"
+95,"Overall, the design is working, but the colors of the fonts are making all of the information hard to read. ",VisualAesthetics,20,2,0,
+96,I think the _blank_ should be listed as well.,Functionality,9,3,0,date
+98,This _blank_ doesn't match the _blank_ icons below.,VisualAesthetics,8,2,0,"sun, sun"
+99,"Very original design, fresh, unusual. I would certainly want to have something like that as an _blank_ on my _blank_. ",AdditionalFeedback,20,1,0,"app, mobile devices"
+100,I would rather see a_blank_ here. The color is stronger than any other color on the page. Stay with the softer colors.,VisualAesthetics,22,3,0,light yellow sun
+101,"overall I like this quite a bit easy & quick to read / understand nice, decipherable graphics & text",Functionality,19,1,0,
+102,The _blank_ Diagram is is not needed.,Functionality,7,2,0,SURF HEIGHT
+104,_blank_ should not be the same color as _blank_.,VisualAesthetics,9,3,0,"Current temperature, header background"
+105,Good idea!,AdditionalFeedback,2,1,0,
+106,This layout is plain and boring. Needs a better UI.,VisualAesthetics,10,2,0,
+107,Love overall layout and the specific thought towards your audience. Overall design is clean and current.,VisualAesthetics,16,1,0,
+109,"I understand that this is _blank_, but the orientation of the graphic just throws me off. It may just be me :-)",VisualAesthetics,22,2,0,sundown
+111,You have the _blank_ noted in two areas of the _blank_. Too much. I would eliminate the icons below. ,Functionality,19,3,0,"weather for the day, bar"
+112,The colors are kind of bland from my perspective. ,VisualAesthetics,9,2,0,
+113,It shows that you are trying to think outside of the box with your layout but your font choice is very generic.,VisualAesthetics,22,2,0,
+114,Visually unappealing.,VisualAesthetics,2,2,0,
+115,The icon of the _blank_ was not clear at first glance.,Functionality,11,2,0,man
+116,"Too many lines/graphs in a small area. Again, it just looks too busy. Simple is best.",VisualAesthetics,16,2,0,
+119,This is very hard to read,VisualAesthetics,6,2,0,
+123,The _blank_ background make it difficult to read the text.,VisualAesthetics,10,2,0,white
+125,Is it necessary to include empty _blank_?,Functionality,7,2,0,blocks
+126,this info could be a bit larger,VisualAesthetics,7,3,0,
+127,The text is to small to read. there is room to make the information readable.,VisualAesthetics,15,2,0,
+129,To small,VisualAesthetics,2,2,0,
+131,The background image makes it harder to read all of the information.,VisualAesthetics,12,2,0,
+133,Check spelling and punctuation.,Functionality,4,3,0,
+134,I think a title other than _blank_ could better help your audience find their way around the graphic. I would be more specific,Functionality,23,3,0,"""Calendar"""
+135,"Not really needed, but if you do use it then make is easier to read and able to tell what it is easier.",Functionality,23,2,0,
+137,"too small for a serif font on the web, very hard to read",VisualAesthetics,13,2,0,
+139,This is a nice little chart. What about making it for the _blank_?,Functionality,13,3,0,ten day extended forecast
+140,My eyes are going all over the place.,VisualAesthetics,8,2,0,
+141,There are some odd proportions going on with this display and the varied baseline of the text element makes it a mess for the eye.,VisualAesthetics,25,2,0,
+143,_blank_ should be marked properly and organized better.,Functionality,8,3,0,Highs and lows
+144,This layout is plain,VisualAesthetics,4,2,0,
+145,_blank_ font color could be difference to make _blank_ clearer..,VisualAesthetics,10,3,0,"Days of week, optics"
+146,"When you move these to the center, increase the size as to promote them as the most important area of the design.",VisualAesthetics,22,3,0,
+148,Text is too small on these to read from a distance.,VisualAesthetics,11,2,0,
+149,There is no _blank_ indicated.,Functionality,5,2,0,city
+150,"Too much info, making to interface too cluttered. Delete _blank_ and _blank_ graphs.",Functionality,13,3,0,"""Today"", ""Next Month"""

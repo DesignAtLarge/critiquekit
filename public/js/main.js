@@ -1,7 +1,8 @@
-var design_link = "./design/design.html"; // LINK to the website to be evaluated
+// LINKs to the websites to be evaluated
+var design_links = ["./design/design1.html", "./design/design2.html", "./design/design3.html"]; 
+var design_num; // index of design currently being evaluated
 
-var full_sorted_comments = {"Readability": [], "Layout": [], "Balance": [], "Simplicity": [], "Emphasis": [], 
-	"Consistency": [], "Appropriateness": []};
+var full_sorted_comments = {"VisualAesthetics": [], "Functionality": [], "AdditionalFeedback": []};
 var rubric_categories = Object.keys(full_sorted_comments);
 var latest_comment_inserted = -1;
 var socket;
@@ -288,21 +289,29 @@ function selectLocation(element) {
 		"</div>"
 	);
 
+	cancelLocation();
+}
+
+function cancelLocation() {
 	choosing_location = false;
 	stopHighlightDOMElements();
+	$("#adding_location_modal").hide();
 }
 
 function addLocation(dom_container) {
 
+	$("#adding_location_modal").show();
 	highlightDOMElements();
 	choosing_location = true;
 }
 
 // activate when user is choosing where to place their comment
 function highlightDOMElements() {
+	console.log(iframe);
 	if (iframe != undefined) {
 		iframe.mouseover(function(element) {
 			var target = $(element.target);
+			console.log(target);
 			if (!(target.hasClass("comment_location") || target.parent().hasClass("comment_location"))) {
 				if (previous_highlight != undefined) {
 					previous_highlight.removeClass("highlight");
@@ -336,15 +345,79 @@ function stopHighlightDOMElements() {
 	}
 }
 
+function checkIcon(icon) {
+	if (!icon.hasClass("glyphicon-ok")) {
+		icon.addClass("glyphicon-ok").removeClass("glyphicon-remove");
+		icon.parent().css("background-color", "rgb(0, 128, 0, 0.3)");
+		icon.parent().animate({ "background-color": "transparent"}, 500);
+	}
+}
+
+function uncheckIcon(icon) {
+	if (!icon.hasClass("glyphicon-remove")) {
+		icon.addClass("glyphicon-remove").removeClass("glyphicon-ok");
+		icon.parent().css("background-color", "rgb(178, 0, 0, 0.3)");
+		icon.parent().animate({ "background-color": "transparent"}, 500);
+	}
+}
+
+function urlParam(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null){
+       return null;
+    }
+    else{
+       return results[1] || 0;
+    }
+}
+
 
 $(function(){
 	socket = io();
 
     $("#navbar_container").load("navbar.html"); 
+    $("#help_modal").load("help.html", function() {
+    	$("#next_help").click(function() {
+    		$("#help_page_1").hide();
+    		$("#help_page_2").show();
+    		$("#prev_help").show();
+    		$("#next_help").hide();
+    		$("#done_help").show();
+    	});
+    	$("#prev_help").click(function() {
+    		$("#help_page_2").hide();
+    		$("#help_page_1").show();
+    		$("#prev_help").hide();
+    		$("#next_help").show();
+    		$("#done_help").hide();
+    	});
 
-    $("#design_frame").attr("src", design_link);
+    });
+
+    $("#done_modal").load("done.html", function() {
+    	$("#confirm_done").click(function() {
+	    	// go to next design
+	    	socket.emit('done design', design_num);
+	    	var url_parts = window.location.href.split("=");
+	    	design_num++;
+	    	if (design_num < design_links.length) {
+	    		window.location.href = url_parts[0] + "=" + design_num
+	    	} else {
+	    		// show message that you're done
+	    		$("#done_modal").find(".modal-body").html(
+	    			"Thank you for the feedback! You have completed the study and may now close this window.");
+	    		$("#done_modal").find(".modal-footer").html("");
+	    		$("#done_modal").find(".close").hide();
+	    	}
+	    });
+    });
+
+    design_num = urlParam("design");
+
+    $("#design_frame").attr("src", design_links[design_num]);
 
     $("#design_frame").load(function() {
+    	socket.emit('loaded design', design_num);
     	iframe = $("#design_frame").contents();
     	console.log("iframe loaded");
     	// disable all clicks / links on iframe
@@ -355,6 +428,10 @@ $(function(){
 		    	selectLocation(e);
 		    }
 		}, true);
+    });
+
+    $("#location_cancel").click(function() {
+    	cancelLocation();
     });
 
     // event handlers for modal dialogs
@@ -418,7 +495,10 @@ $(function(){
 
     // load comment box for each rubric category
     rubric_categories.forEach(function(rubric_cat, i) {
-    	$("#rubrics_container").append("<h4>" + rubric_cat + "</h4><div id='" + rubric_cat + "' class='rubric_cat'></div>");
+    	rubric_cat_orig = rubric_cat;
+    	if (rubric_cat == "VisualAesthetics") rubric_cat_orig = "Visual Aesthetics";
+    	if (rubric_cat == "AdditionalFeedback") rubric_cat_orig = "Additional Feedback";
+    	$("#rubrics_container").append("<h4>" + rubric_cat_orig + "</h4><div id='" + rubric_cat + "' class='rubric_cat'></div>");
     	$("#" + rubric_cat).load("commenting.html", function() {
     		if (i == rubric_categories.length - 1) {
     			// last one added, so set all the event handlers
@@ -531,10 +611,10 @@ $(function(){
     		if (!icon.hasClass("corrected") || deleting == true) {
 	    		if (parseInt(data.category_string[i-1])) {
 	    			// category i is YES
-	    			icon.addClass("glyphicon-ok").removeClass("glyphicon-remove");
+	    			checkIcon(icon);
 	    		} else {
 	    			// category i is NO
-	    			icon.addClass("glyphicon-remove").removeClass("glyphicon-ok");
+	    			uncheckIcon(icon);
 	    		}
 	    		// save category
 	    		$("#" + rubric).find(".comment_text").attr("data-categorystring", data.category_string);

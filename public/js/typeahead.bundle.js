@@ -2070,7 +2070,6 @@
             },
             _onDownKeyed: function onDownKeyed() {
                 //this.moveCursor(+1); // ailie
-                //console.log("down. index = " + current_index);
                 if (current_index < this.menu.getSelectablesLength() - 1) {
                     this._hintAtIndex(current_index + 1);
                     current_index++;
@@ -2124,6 +2123,7 @@
                     match && this.input.setHint(val + match[1]);
                 } else {
                     this.input.clearHint();
+                    current_index = 0;
                 }
             },
             _hintAtIndex: function hintAtIndex(index) { // function added by ailie
@@ -2140,6 +2140,7 @@
                     match && this.input.setHint(val + match[1]);
                 } else {
                     this.input.clearHint();
+                    current_index = 0;
                 }
             },
             isEnabled: function isEnabled() {

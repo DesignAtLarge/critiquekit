@@ -164,8 +164,25 @@ io.on('connection', function(socket) {
 					"event": "new connection"});
 	updateJSON(log_file, logs);
 
+	socket.on('loaded design', function(design_num) {
+		logs.logs.push({ "time": new Date().toString(), 
+  						"user": address,
+  						"event": "loaded design", 
+  						"design num": design_num});
+  		updateJSON(log_file, logs);
+	});
+
+	socket.on('done design', function(design_num) {
+		logs.logs.push({ "time": new Date().toString(), 
+  						"user": address,
+  						"event": "done design", 
+  						"design num": design_num});
+  		updateJSON(log_file, logs);
+	});
+
   	// respond to request for comments for given rubric category
   	socket.on('get comments', function(rubric) {
+  		console.log(rubric);
   		var result = loadComments(rubric);
   		socket.emit('comments', {"rubric": rubric, "comments": result});
   	});
