@@ -524,27 +524,27 @@ io.on('connection', function(socket) {
 			  			console.log("error with category string length");
 			  		} else {
 			  			socket.emit('category', {rubric: data.rubric, category_string: body});
-			  			appendLog({ "time": new Date().toString(), 
+			  			/*appendLog({ "time": new Date().toString(), 
 				  						"user": address,
 				  						"event": "typing comment", 
 				  						"rubric": data.rubric,
 				  						"comment": data.comment,
 				  						"prediction": body,
 				  						"design_num": data.design_num});
-				  		updateJSON(log_file, logs);
+				  		updateJSON(log_file, logs);*/
 			  		}
 			  	}		  	
 			});
 		} else {
 			socket.emit('category', {rubric: data.rubric, category_string: "000"});
-			appendLog({ "time": new Date().toString(), 
+			/*appendLog({ "time": new Date().toString(), 
 	  						"user": address,
 	  						"event": "typing comment", 
 	  						"rubric": data.rubric,
 	  						"comment": data.comment,
 	  						"prediction": "000",
 	  						"design_num": data.design_num});
-	  		updateJSON(log_file, logs);
+	  		updateJSON(log_file, logs);*/
 		}
 
   	});

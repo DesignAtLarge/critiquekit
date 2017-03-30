@@ -460,6 +460,11 @@ function preloadImages(arrayOfImages) {
 
 
 $(function(){
+	if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
+		$("body").html("Please use a desktop or laptop computer. ");
+		return;
+	}
+
 	socket = io();
 
     $("#navbar_container").load("navbar.html"); 
