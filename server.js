@@ -167,11 +167,9 @@ function loadComments(rubric_category) {
 
 // Socket response to new connections
 io.on('connection', function(socket) {
-	var address = socket.handshake.address;
-
+	//var address = socket.handshake.address;
+	var address = socket.handshake.headers['x-forwarded-for'];
   	console.log('New connection from ' + address);
-  	console.log("socket.id: " + socket.id);
-  	console.log("socket.handshake.headers['x-forwarded-for']: " + socket.handshake.headers['x-forwarded-for']);
 
   	sockets[address] = socket.id;
 
