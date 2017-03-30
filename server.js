@@ -245,15 +245,19 @@ io.on('connection', function(socket) {
 
 
   	socket.on('set cookie', function(cookie_val) {
+  		console.log("setting cookie");
+  		console.log(cookie_val);
   		appendLog({ "time": new Date().toString(), 
 					"user": cookie_val,
 					"event": "new connection"});
 		updateJSON(log_file, logs);
-
-		console.log("starting new save");
-		user_data[cookie_val] = [];
-		updateUsers(cookie_val, user_data[cookie_val]);
-		updateJSON(user_file, user_data);
+		
+		if (user_data[cookie_val] == undefined) {
+			console.log("starting new save");
+			user_data[cookie_val] = [];
+			updateUsers(cookie_val, user_data[cookie_val]);
+			updateJSON(user_file, user_data);
+		}
   	});
 
 	socket.on('get saved', function(cookie_val) {
