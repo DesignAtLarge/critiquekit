@@ -139,7 +139,37 @@ button:hover {
     display: none;
 }
 
+#help_table {
+    border-collapse: separate;
+    border-spacing: 0px 10px;
+}
+
+.hide_help {
+    display: none;
+}
+
+.show_help:hover, .hide_help:hover {
+    background-color: #5eff5b;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
 .help_pages {
+    display: none;
+}
+
+
+.gotit {
+    white-space: nowrap;
+}
+
+.help_pic {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.instruction {
     display: none;
 }
 

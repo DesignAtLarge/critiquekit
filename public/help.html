@@ -35,8 +35,9 @@
 			</div>
 		</div>
 		<div id="help_page_1" class="help_pages modal-body">
+			<h4>Your task:</h4>
 			<p>This restaurant owner wants feedback on their new website design. 
-				Please be as helpful as you can! Consider the aesthetics &amp; visual 
+				Please be as helpful as you can! For your feedback, consider the aesthetics &amp; visual 
 				design of the site as well as the functionality and ease of finding 
 				information. </p>
 
@@ -50,11 +51,135 @@
 					Try adding a gradient to the background and making the text 
 					bolder so it stands out."</i></li>
 			</ul>
+			<p><b>Please note</b> that you are only giving feedback on the main page of the restaurant. 
+				To make this simple, all clicks have been disabled, so don't be surprised if you click a button
+				on the restaurant website and nothing happens.</p>
 
 		</div>
 		<div id="help_page_2" class="help_pages modal-body">
-			page 2
+			<h4>Using the feedback interface:</h4>
+			<div class="row">
+				<div class="col-sm-8">
+					<p>The interface you will be using to provide feedback is on the righthand side of the window.
+						To add a feedback comment, click "Add comment" under the category for which your feedback best applies.
+					</p>
+					<p>For example: 
+						<ul><li>if you want to give feedback on the font choices for the site, choose
+							the Visual Design category.</li>
+						<li>If you want to give feedback on the description of the restaurant, choose 
+							the Content / Functionality category</li>
+						<li>If you have feedback to give that doesn't seem to fall under either of the 
+							above categories, choose Additional Feedback</li>
+						</ul>
+					</p>
+				</div>
+				<div class="col-sm-4">
+					<img class="help_pic" src="help_pics/sidebar.png" />
+				</div>
+			</div>
 		</div>
+
+		<div id="help_page_3" class="help_pages modal-body">
+			<h4>Using the feedback interface:</h4>
+			<div class="row">
+				<div class="col-sm-8">
+					<p>Please check off each instruction as you read it.</p>
+					<table id="help_table">
+						<tr id="instruction_0">
+							<td>Once you click "Add a comment", the feedback interface will open as shown.</td>
+							<td class="gotit"><input type="checkbox" class="open_instruction" id="open_instruction_1"> Got it</td>
+						</tr>
+						<tr id="instruction_1" class="instruction">
+							<td>Type your feedback in the text box. As you type, the red checkboxes will turn green (
+							<span class="glyphicon glyphicon-ok"></span> ) when your feedback satisfies the criteria. Try
+							to write comments that are positive and specific, and/or that state a problem and provide a 
+							solution.
+							<span class="show_help"
+								onclick="switchHelpImage(3, 'feedback_checks.png', 'feedback_box.png', 'show');">
+								<span class="glyphicon glyphicon-circle-arrow-right"></span><b> Show Me</b></span>
+							<span class="hide_help" 
+								onclick="switchHelpImage(3, 'feedback_box.png', 'feedback_checks.png', 'hide');">
+								<span class="glyphicon glyphicon-circle-arrow-right"></span><b> Back</b></span>
+							</td>
+							<td class="gotit"><input type="checkbox" class="open_instruction" id="open_instruction_2"> Got it</td>
+						</tr>
+						<tr id="instruction_2" class="instruction">
+							<td>If you disagree with one of the checkboxes (e.g. you wrote something positive, but the 
+								positive checkbox stays red), simply click on it to correct it. This information will 
+								improve our algorithm!
+							</td>
+							<td class="gotit"><input type="checkbox" class="open_instruction" id="open_instruction_3"> Got it</td>
+						</tr>
+						<tr id="instruction_3" class="instruction">
+							<td>To attach your feedback comment to a specific location on the website, click "Attach to design".
+								You will then be prompted to choose a location.</td>
+							<td class="gotit"><input type="checkbox" class="open_instruction" id="open_instruction_4"> Got it</td>
+						</tr>
+						<tr id="instruction_4" class="instruction">
+							<td>The "Examples you can reuse" section shows feedback that has previously been given. You may 
+								browse these
+								for inspiration, or reuse feedback by clicking the arrow button beside it. This will insert it 
+								into the text box.
+								<span class="show_help"
+									onclick="switchHelpImage(3, 'feedback_insert.png', 'feedback_box.png', 'show');">
+									<span class="glyphicon glyphicon-circle-arrow-right"></span><b> Show Me</b></span>
+								<span class="hide_help" 
+									onclick="switchHelpImage(3, 'feedback_box.png', 'feedback_insert.png', 'hide');">
+									<span class="glyphicon glyphicon-circle-arrow-right"></span><b> Back</b></span>
+							</td>
+							<td class="gotit"><input type="checkbox" class="open_instruction" id="open_instruction_5"> Got it</td>
+						</tr>
+						<tr id="instruction_5" class="instruction">
+							<td>As you type, if your feedback matches one of the examples, it will show up as a suggested autocomplete.
+							<span class="show_help"
+								onclick="switchHelpImage(3, 'feedback_autocomplete.png', 'feedback_box.png', 'show');">
+								<span class="glyphicon glyphicon-circle-arrow-right"></span><b> Show Me</b></span>
+							<span class="hide_help" 
+								onclick="switchHelpImage(3, 'feedback_box.png', 'feedback_autocomplete.png', 'hide');">
+								<span class="glyphicon glyphicon-circle-arrow-right"></span><b> Back</b></span>
+							To use it, press the right arrow on your keyboard to do the autocomplete. 
+							There may be multiple matching examples, in
+							which case you can browse through them using the up and down arrow keys, before selecting one 
+							to autocomplete.</td>
+							<td class="gotit"><input type="checkbox" class="open_instruction" id="open_instruction_6"> Got it</td>
+						</tr>
+						<tr id="instruction_6" class="instruction">
+							<td>Some examples have blanks you can fill in where the original words were very specific. Click on 
+								the blank to type your own word before inserting the comment.
+							<span class="show_help"
+								onclick="switchHelpImage(3, 'feedback_blank.png', 'feedback_box.png', 'show');">
+								<span class="glyphicon glyphicon-circle-arrow-right"></span><b> Show Me</b></span>
+							<span class="hide_help" 
+								onclick="switchHelpImage(3, 'feedback_box.png', 'feedback_blank.png', 'hide');">
+								<span class="glyphicon glyphicon-circle-arrow-right"></span><b> Back</b></span>
+							</td>
+							<td class="gotit"><input type="checkbox" id="activate_next"> Got it</td>
+						</tr>
+					</table>
+					
+				</div>
+				<div class="col-sm-4">
+					<img class="help_pic" src="help_pics/feedback_box.png" />
+				</div>
+			</div>
+		</div>
+
+		<div id="help_page_4" class="help_pages modal-body">
+			<h4>Using the feedback interface:</h4>
+			<div class="row">
+				<div class="col-sm-8">
+					<p>You are ready to go! You will be giving feedback on <b>three different websites</b>,
+						so when you are finished with the current one, click "I'm done" on the top menu to
+						move on.</p>
+					<p>If you ever want to see these instructions again, click "Help" on the top menu.
+					</p>
+				</div>
+				<div class="col-sm-4">
+					<img class="help_pic" src="help_pics/menu.png" />
+				</div>
+			</div>
+		</div>
+
 		<div class="modal-footer">
 			<button id="prev_help" type="button" class="btn btn-secondary">Previous</button>
 	        <button id="next_help" type="button" class="btn btn-primary disabled">Next</button>

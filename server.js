@@ -186,8 +186,8 @@ io.on('connection', function(socket) {
 		console.log("starting new save");
 		user_comments[address] = [];
 		updateJSON(user_file, user_comments);
-		console.log("user commentS:");
-		console.log(user_comments);
+		//console.log("user commentS:");
+		//console.log(user_comments);
 	}
 
 
@@ -235,8 +235,8 @@ io.on('connection', function(socket) {
   									"design_num": data.design_num
   		});
   		updateJSON(user_file, user_comments);
-  		console.log("user comments: "); 
-  		console.log(user_comments);
+  		//console.log("user comments: "); 
+  		//console.log(user_comments);
 
   		// find the clicked comment in comments
   		if (data.comment_id != -1) {
