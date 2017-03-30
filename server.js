@@ -54,31 +54,10 @@ function updateJSON(file, obj) {
 	}
 }
 
-function curateComment(comment) {
-	console.log("curating " + comment);
-	// call curatecomment on python server
-	curate_options.body = "comment=" + comment;
-
-	request.post(curate_options, function (error, response, body) {
-	  	if (error) {
-	  		console.log('error:', error); // Print the error if one occurred
-	  	}
-	  	if (response && response.statusCode == 200) {
-	  		console.log("got result");
-	  		var result = JSON.parse(body);
-	  		console.log(result);
-	  	} else {
-	  		console.log(response.statusCode);
-	  		console.log(body);
-	  	}	  	
-	});
-
-	return comment;
-}
-
-function saveNewComment(data, category_string, address, new_comment) {
+function saveNewComment(data, category_string, address, new_comment, blank_values) {
 	var category = category_string.lastIndexOf("1") + 1;
 	var new_id;
+	blank_values = blank_values.join(", ");
 	if (category == 0) {
 		// comment sucks, don't add to corpus
 		new_id = null;
@@ -87,7 +66,7 @@ function saveNewComment(data, category_string, address, new_comment) {
 		new_id = parseInt(comments[comments.length-1]["ID"]) + 1;
 		comments.push({"comment": new_comment,
 	        "category": category,
-	        "blank values": "",
+	        "blank values": blank_values,
 	        "length": new_comment.split(" ").length,
 	        "frequency": 1,
 	        "rubric": data.rubric,
@@ -104,6 +83,7 @@ function saveNewComment(data, category_string, address, new_comment) {
 					"comment ID": new_id,
 					"category string": category_string,
 					"comment": data.comment_text,
+					"blank_values": blank_values,
 					"location style": data.location_style});
 	updateJSON(log_file, logs);
 	
@@ -267,44 +247,76 @@ io.on('connection', function(socket) {
 		  		updateJSON(log_file, logs);
 	  			return;
 	  		} else { // they are different
-	  			var new_comment = curateComment(data.comment_text);
-	  			if (new_category > old_category) {  // comment was supposedly improved
+	  			curate_options.body = "comment=" + data.comment_text;
 
-	  				logs.push({ "time": new Date().toString(), 
-			  						"user": address,
-			  						"event": "improved comment", 
-			  						"comment ID": data.comment_id,
-			  						"old category": old_category,
-			  						"new category": new_category,
-			  						"old comment": this_comment["comment"],
-			  						"new_comment": new_comment,
-			  						"location style": data.location_style,
-			  						"design_num": data.design_num});
-			  		updateJSON(log_file, logs);
+				request.post(curate_options, function (error, response, body) {
+				  	if (error) {
+				  		console.log('error:', error); // Print the error if one occurred
+				  	}
+				  	if (response && response.statusCode == 200) {
+				  		console.log("got result");
+				  		var curated = JSON.parse(body);
+				  		var new_comment = curated["comment"];
+				  		var blank_values = curated["blanks"];
+				  		if (new_category > old_category) {  // comment was supposedly improved
 
-			  		this_comment["comment"] = new_comment;
-	  				this_comment["category"] = new_category;
-	  			} else {
-	  				// comment was not improved, so leave it
-	  				logs.push({ "time": new Date().toString(), 
-			  						"user": address,
-			  						"event": "not improved comment", 
-			  						"comment ID": data.comment_id,
-			  						"old category": old_category,
-			  						"new category": new_category,
-			  						"old comment": this_comment["comment"],
-			  						"new_comment": new_comment,
-			  						"location style": data.location_style,
-			  						"design_num": data.design_num});
-			  		updateJSON(log_file, logs);
-	  			}
+			  				logs.push({ "time": new Date().toString(), 
+					  						"user": address,
+					  						"event": "improved comment", 
+					  						"comment ID": data.comment_id,
+					  						"old category": old_category,
+					  						"new category": new_category,
+					  						"old comment": this_comment["comment"],
+					  						"new_comment": new_comment,
+					  						"blank_values": blank_values,
+					  						"location style": data.location_style,
+					  						"design_num": data.design_num});
+					  		updateJSON(log_file, logs);
+
+					  		this_comment["comment"] = new_comment;
+			  				this_comment["category"] = new_category;
+			  			} else {
+			  				// comment was not improved, so leave it
+			  				logs.push({ "time": new Date().toString(), 
+					  						"user": address,
+					  						"event": "not improved comment", 
+					  						"comment ID": data.comment_id,
+					  						"old category": old_category,
+					  						"new category": new_category,
+					  						"old comment": this_comment["comment"],
+					  						"new_comment": new_comment,
+					  						"blank_values": blank_values,
+					  						"location style": data.location_style,
+					  						"design_num": data.design_num});
+					  		updateJSON(log_file, logs);
+			  			}
+				  	} else {
+				  		console.log(response.statusCode, body);
+				  	}	  	
+				});
+	  			
 	  		}
 	  	} else {
 	  		// no comment was clicked, it's new
 
 	  		// TODO check if it's a duplicate of existing comment, if so log but don't add it, &frequency++ for that comment
-	  		var new_comment = curateComment(data.comment_text);
-	  		saveNewComment(data, data.category_string, address, new_comment);
+	  		curate_options.body = "comment=" + data.comment_text;
+
+			request.post(curate_options, function (error, response, body) {
+			  	if (error) {
+			  		console.log('error:', error); // Print the error if one occurred
+			  	}
+			  	if (response && response.statusCode == 200) {
+			  		console.log("got result");
+			  		var curated = JSON.parse(body);
+			  		var new_comment = curated["comment"];
+			  		var blank_values = curated["blanks"];
+
+	  				saveNewComment(data, data.category_string, address, new_comment, blank_values);
+	  			} else {
+			  		console.log(response.statusCode, body);
+			  	}	  	
+			});
 	  		
 	  	}
 	  	// in both cases, yes_categories and no_categories hold the user-defined categories, so save those

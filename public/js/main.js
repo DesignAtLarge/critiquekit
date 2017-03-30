@@ -21,7 +21,7 @@ var choosing_location = false;
 var saved_comments;
 
 var current_help_page = 0;
-var num_help_pages = 5;
+var num_help_pages = 8;
 
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
@@ -472,9 +472,6 @@ $(function(){
     			$("#next_help").hide();
     			$("#done_help").show();
     		}
-    		if (current_help_page == 3 && !$("#activate_next").is(':checked')) {
-    			$("#next_help").addClass("disabled");
-    		}
     	});
     	$("#prev_help").click(function() {
     		$("#help_page_" + current_help_page).hide();
@@ -485,10 +482,6 @@ $(function(){
     		}
     		$("#done_help").hide();
     		$("#next_help").show();
-
-    		if (current_help_page == 3 && !$("#activate_next").is(':checked')) {
-    			$("#next_help").addClass("disabled");
-    		}
     	});
 
     	$("#consent_yes").change(function() {
@@ -508,18 +501,6 @@ $(function(){
 
     	$("#done_help").click(function() { // reset current page to first one after consent
     		resetHelp();
-    	});
-
-    	$(".open_instruction").change(function() {
-    		if ($(this).is(':checked')) {
-    			var instruction_id = $(this).attr("id").split("open_instruction_")[1];
-    			$("#instruction_" + instruction_id).show();
-    		}
-    	});
-    	$("#activate_next").change(function() {
-    		if ($(this).is(':checked')) {
-    			$("#next_help").removeClass("disabled");
-    		}
     	});
     });
 
