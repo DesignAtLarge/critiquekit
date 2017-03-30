@@ -52,7 +52,12 @@ function appendLog(log) {
 	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/log';
 	console.log(logging_options.url);
 
+	if (log["comment ID"] == null) {
+		log["comment ID"] = "";
+	}
+
 	logging_options.body = "log=" + JSON.stringify(log);
+	logging_options.headers["Content-Length"] = logging_options.body.length;
 	console.log(logging_options.body);
 
 	request.post(logging_options, function (error, response, body) {
@@ -75,8 +80,16 @@ function updateCommentLog(comment, append) {
 	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/comments';
 	console.log(logging_options.url);
 
+
+	if (comment.flagged == true) {
+		comment.flagged = 1;
+	} else {
+		comment.flagged = 0;
+	}
+
 	logging_options.body = "log=" + JSON.stringify(comment);
 	console.log(logging_options.body);
+	logging_options.headers["Content-Length"] = logging_options.body.length;
 
 	request.post(logging_options, function (error, response, body) {
 	  	if (error) {
@@ -100,6 +113,7 @@ function updateUsers(address, data) {
 
 	logging_options.body = "log=" + JSON.stringify(obj);
 	console.log(logging_options.body);
+	logging_options.headers["Content-Length"] = logging_options.body.length;
 
 	request.post(logging_options, function (error, response, body) {
 	  	if (error) {
@@ -328,6 +342,7 @@ io.on('connection', function(socket) {
 	  			return;
 	  		} else { // they are different
 	  			curate_options.body = "comment=" + data.comment_text;
+	  			curate_options.headers["Content-Length"] = curate_options.body.length;
 
 				request.post(curate_options, function (error, response, body) {
 				  	if (error) {
@@ -383,6 +398,7 @@ io.on('connection', function(socket) {
 
 	  		// TODO check if it's a duplicate of existing comment, if so log but don't add it, &frequency++ for that comment
 	  		curate_options.body = "comment=" + data.comment_text;
+	  		curate_options.headers["Content-Length"] = curate_options.body.length;
 
 			request.post(curate_options, function (error, response, body) {
 			  	if (error) {
@@ -508,11 +524,20 @@ io.on('connection', function(socket) {
   		updateJSON(log_file, logs);
   	});
 
+  	socket.on('done feedback', function(feedback) {
+  		appendLog({ "time": new Date().toString(), 
+  						"user": address,
+  						"event": "user feedback", 
+  						"feedback": feedback}); 
+  		updateJSON(log_file, logs);
+  	});
+
   	// user typed something, call real-time predictor and send result back
   	socket.on('comment update', function(data) {
 
   		if (data.comment && data.comment.length > 3) {
   			options.body = "comment=" + data.comment;
+  			options.headers["Content-Length"] = options.body.length;
 
 	  		request.post(options, function (error, response, body) {
 			  	if (error) {

@@ -17,6 +17,14 @@
     position: relative;
 }
 
+#done2 {
+    display: none;
+}
+
+#done_feedback {
+    width: 100%;
+}
+
 iframe {
     border: none;
 }

@@ -532,8 +532,14 @@ $(function(){
 	    		window.location.href = url_parts[0] + "=" + design_num
 	    	} else {
 	    		// show message that you're done
-	    		$("#done_modal").find(".modal-body").html(
-	    			"Thank you for the feedback! You have completed the study and may now close this window.");
+	    		$("#done1").hide();
+	    		$("#done2").show();
+	    		$("#submit_done").click(function() {
+	    			var feedback = $("#done_feedback").val();
+	    			socket.emit('done feedback', feedback);
+	    			$("#submit_done").hide();
+	    			$("#done_feedback").hide();
+	    		});
 	    		$("#done_modal").find(".modal-footer").html("");
 	    		$("#done_modal").find(".close").hide();
 	    	}
