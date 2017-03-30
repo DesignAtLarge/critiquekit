@@ -2,7 +2,7 @@
 var design_links = ["./design/design1.html", "./design/design2.html", "./design/design3.html"]; 
 var design_num; // index of design currently being evaluated
 
-var full_sorted_comments = {"VisualAesthetics": [], "Functionality": [], "AdditionalFeedback": []};
+var full_sorted_comments = {"VisualDesign": [], "ContentFunctionality": [], "AdditionalFeedback": []};
 var rubric_categories = Object.keys(full_sorted_comments);
 var latest_comment_inserted = -1;
 var socket;
@@ -18,7 +18,10 @@ var current_rubric = "";
 var iframe;
 var previous_highlight = undefined;
 var choosing_location = false;
-var location_words = ["this", "that", "there", "here"];
+var saved_comments;
+
+var current_help_page = 0;
+var num_help_pages = 3;
 
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
@@ -34,37 +37,17 @@ function submitComment(comment_text, dom_container) {
 		var category_string = dom_container.find(".comment_text").attr("data-categorystring");
 		var location = (comment_location.size() > 0); // whether this comment was pasted on somehwere
 		// send the location?
+		var location_style = "";
+		if (location) location_style = comment_location.attr("style");
 			
 		// send to server
 		socket.emit('comment submitted', 
 			{comment_id: latest_comment_inserted, new_comment_id: newest_comment_id, comment_text: comment_text, 
-				rubric: rubric, category_string: category_string, location: location});
+				rubric: rubric, category_string: category_string, location_style: location_style, design_num: design_num});
 		latest_comment_inserted = -1; // reset
 
 		var comments_section = dom_container.parents(".rubric_cat").find(".posted_comments");
-		comments_section.append("<div class='posted_comment' id='new_comment_" + newest_comment_id + "'>" + 
-			"<span class='new_comment_text'>" + comment_text + "</span>" +
-				"<span class='trash_comment glyphicon glyphicon-trash' title='Delete comment' " + 
-					"data-toggle='modal' data-target='#delete_modal'></span></div>");
-
-		$("#new_comment_" + newest_comment_id + " .trash_comment").click(function() {
-			var comment_text = $(this).parent().find(".new_comment_text").html();
-			$("#delete_text").html(comment_text);
-
-			deleting_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_")[1];
-			console.log(deleting_comment_id);
-		});
-
-		$("#new_comment_" + newest_comment_id).hover(function() {
-			commentHover($(this).attr("id").split("new_comment_")[1]);
-			}, function() {
-			commentUnHover($(this).attr("id").split("new_comment_")[1]);
-		});
-		iframe.find("#location_" + newest_comment_id).hover(function() {
-			commentHover($(this).attr("id").split("location_")[1]);
-			}, function() {
-			commentUnHover($(this).attr("id").split("location_")[1]);
-		});
+		appendNewComment(comments_section, newest_comment_id, comment_text);
 
 
 		dom_container.find(".comment_text").val("");
@@ -79,55 +62,87 @@ function submitComment(comment_text, dom_container) {
 	}
 }
 
+function appendNewComment(comments_section, comment_id, comment_text) {
+	comments_section.append("<div class='posted_comment' id='new_comment_" + comment_id + "'>" + 
+		"<span class='new_comment_text'>" + comment_text + "</span>" +
+			"<span class='trash_comment glyphicon glyphicon-trash' title='Delete comment' " + 
+				"data-toggle='modal' data-target='#delete_modal'></span></div>");
+
+	$("#new_comment_" + comment_id + " .trash_comment").click(function() {
+		var comment_text = $(this).parent().find(".new_comment_text").html();
+		$("#delete_text").html(comment_text);
+
+		deleting_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_")[1];
+		console.log(deleting_comment_id);
+	});
+
+	$("#new_comment_" + comment_id).hover(function() {
+		commentHover($(this).attr("id").split("new_comment_")[1]);
+		}, function() {
+		commentUnHover($(this).attr("id").split("new_comment_")[1]);
+	});
+}
+
 function commentHover(comment_id) {
-	$("#new_comment_" + comment_id).css("background-color", "rgba(28, 169, 196, 0.5)");
-	iframe.find("#location_" + comment_id).css("background-color", "rgba(177, 218, 226, 1.0)");
-	iframe.find("#location_" + comment_id).css("z-index", "1001");
+	if (!choosing_location) {
+		$("#new_comment_" + comment_id).css("background-color", "rgba(255, 156, 209, 1.0)");
+		iframe.find("#location_" + comment_id).css("background-color", "rgba(255, 156, 209, 1.0))");
+		iframe.find("#location_" + comment_id).css("z-index", "10001");
+	}
 }
 
 function commentUnHover(comment_id) {
-	$("#new_comment_" + comment_id).css("background-color", "white");
-	iframe.find("#location_" + comment_id).css("background-color", "rgba(200, 200, 200, 0.7)");
-	iframe.find("#location_" + comment_id).css("z-index", "1000");
+	if (!choosing_location) {
+		$("#new_comment_" + comment_id).css("background-color", "white");
+		iframe.find("#location_" + comment_id).css("background-color", "rgba(255, 156, 209, 0.7)");
+		iframe.find("#location_" + comment_id).css("z-index", "10000");
+	}
 }
 
 function updateComment(rubric) {
 	// get comment text
 	setTimeout(function() { // let it update
 		var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
+		iframe.find("#location_" + newest_comment_id + " .location_text").html(comment_text);
 
 		// send to server.js
-		socket.emit("comment update", {comment: comment_text, rubric: current_rubric});
+		socket.emit("comment update", {comment: comment_text, rubric: current_rubric, design_num: design_num});
 	}, 100);
 }
 
 // called everytime categories are updated 
 // update submit button colour to match
 function categoryUpdate(rubric) {
-	var num_green = 0;
-	for (var i = 1; i <=3; i++) {
-		var icon = $("#" + rubric).find(".indicator_" + i)
-		if (icon.hasClass("glyphicon-ok")) {
-			num_green++;
-		}
+	var color = "red";
+	var icon1 = $("#" + rubric).find(".indicator_1");
+	var icon2 = $("#" + rubric).find(".indicator_2");
+	var icon3 = $("#" + rubric).find(".indicator_3");
+	var icon4 = $("#" + rubric).find(".indicator_4");
+	if (icon1.hasClass("glyphicon-ok") && icon4.hasClass("glyphicon-ok") ||
+		icon2.hasClass("glyphicon-ok") && icon3.hasClass("glyphicon-ok")) {
+		color = "green";
+	} else if (icon1.hasClass("glyphicon-ok") || icon2.hasClass("glyphicon-ok") ||
+		icon3.hasClass("glyphicon-ok") || icon4.hasClass("glyphicon-ok")) {
+		color = "orange";
 	}
+
 	var selector = $("#" + rubric).find(".submit_comment");
 
-	if (num_green == 0) { // red
+	if (color == "red") { // red
 		selector.css("background-color", "rgba(139, 0, 0, 0.2)");
 		selector.hover(function() {
 		  	$(this).css("background-color","rgba(139, 0, 0, 0.5)")
 			}, function() {
 				$(this).css("background-color","rgba(139, 0, 0, 0.2)")
 		});
-	} else if (num_green == 3) { // green
+	} else if (color == "green") { // green
 		selector.css("background-color", "rgba(0, 150, 0, 0.2)");
 		selector.hover(function() {
 		  	$(this).css("background-color","rgba(0, 150, 0, 0.5)")
 			}, function() {
 			$(this).css("background-color","rgba(0, 150, 0, 0.2)")
 		});
-	} else { // orange
+	} else if (color == "orange") { // orange
 		selector.css("background-color", "rgba(186, 99, 0, 0.2)");
 		selector.hover(function() {
 		  	$(this).css("background-color","rgba(186, 99, 0, 0.5)")
@@ -148,25 +163,27 @@ function displayComments(rubric, comments) {
 	should_section.html("");
 
 	comments.forEach(function(comment, i) {
-		var shade = comment["shade"];
+		if (comment["flagged"] != true) {
+			var shade = comment["shade"];
 
-		var string = "<tr id='comment_" + comment["ID"] + 
-	        "' class='comment' style='color: rgb(" + shade + ", " + shade + ", " + shade + ")'>" + 
-	        	"<td><span class='insert_btn glyphicon glyphicon-circle-arrow-right' title='Insert this comment'></span></td>" +
-	        	"<td class='comment_val comment_" + i + "'>" + comment["comment"] + "</td>" + 
-	        	"<td><span class='glyphicon glyphicon-flag flag_btn' title='Flag this comment' " + 
-	        		"data-toggle='modal' data-target='#flag_modal'></span></td>" +
-	        "</tr>";
+			var string = "<tr id='comment_" + comment["ID"] + 
+		        "' class='comment' style='color: rgb(" + shade + ", " + shade + ", " + shade + ")'>" + 
+		        	"<td><span class='insert_btn glyphicon glyphicon-circle-arrow-right' title='Insert this comment'></span></td>" +
+		        	"<td class='comment_val comment_" + i + "'>" + comment["comment"] + "</td>" + 
+		        	"<td><span class='glyphicon glyphicon-flag flag_btn' title='Flag this comment' " + 
+		        		"data-toggle='modal' data-target='#flag_modal'></span></td>" +
+		        "</tr>";
 
-		if (comment["category"] == "1") {
-			good_section.append(string);
-		} else if (comment["category"] == "2")	{
-	        bad_section.append(string);
-	    } else if (comment["category"] == "3") {
-	        should_section.append(string);
-	    } else {
-	        good_section.append("error with comment category");
-	    }
+			if (comment["category"] == "1") {
+				good_section.append(string);
+			} else if (comment["category"] == "2")	{
+		        bad_section.append(string);
+		    } else if (comment["category"] == "3") {
+		        should_section.append(string);
+		    } else {
+		        good_section.append("error with comment category");
+		    }
+		}
 
 	});
 
@@ -202,7 +219,9 @@ function displayComments(rubric, comments) {
 		var blank_loc = comment.indexOf("<input");
 		var blank_i = 0;
 		while (blank_loc != -1) {
-			comment = comment.replace(/<input.*?>/, $(this).parents("tr").find(".blank").get(blank_i).value);
+			var blank_value = $(this).parents("tr").find(".blank").get(blank_i).value;
+			if (blank_value == "") blank_value = "______";
+			comment = comment.replace(/<input.*?>/, blank_value);
 			blank_i++;
 			blank_loc = comment.indexOf("<input");
 		}
@@ -228,7 +247,7 @@ function displayComments(rubric, comments) {
 		updateComment();
 
 		socket.emit("suggestion inserted", {rubric: current_rubric, comment_id: comment_id, 
-			comment_text: comment, selection_length: selection_end - selection_start});
+			comment_text: comment, selection_length: selection_end - selection_start, design_num: design_num});
 
 	});
 }
@@ -269,8 +288,8 @@ function selectLocation(element) {
 	var x_location;
 	var target = $(element.target);
 	console.log(target);
-	var targetX = target.offset().left;
-	var targetY = target.offset().top;
+	var targetX = element.pageX;
+	var targetY = element.pageY;
 
 	if (targetX < ($("#design_container").width() / 2)) {
 		side = "left";
@@ -280,16 +299,36 @@ function selectLocation(element) {
 		x_location = iframe.find("body").width() - targetX;
 	}
 
+	var style = "top: " + targetY + "px; " + side + ": " + x_location + "px;";
+	var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
+	appendLocationComment(current_rubric, newest_comment_id, comment_text, style);
+
+	cancelLocation();
+}
+
+function appendLocationComment(rubric, comment_id, comment_text, style) {
+	var side;
+	if (style.indexOf("left") != -1) {
+		side = "left";
+	} else {
+		side = "right";
+	}
+
+
 	iframe.find("body").append(
-		"<div id='location_" + newest_comment_id + 
-			"' class='comment_location' style='top: " + targetY + 
-			"px; " + side + ": " + x_location + "px;'><div class='location_text'>" + 
-				"<i>Press Submit to see your comment here.</i></div>" + 
+		"<div id='location_" + comment_id + 
+			"' class='comment_location' style='" + style + "'><div class='location_text'></div>" + 
 			"<div class='location_marker_" + side + "'></div>" + 
 		"</div>"
 	);
 
-	cancelLocation();
+	iframe.find("#location_" + comment_id + " .location_text").html(comment_text);
+
+	iframe.find("#location_" + comment_id).hover(function() {
+		commentHover($(this).attr("id").split("location_")[1]);
+		}, function() {
+		commentUnHover($(this).attr("id").split("location_")[1]);
+	});
 }
 
 function cancelLocation() {
@@ -371,27 +410,86 @@ function urlParam(name){
     }
 }
 
+function showSavedComments() {
+	saved_comments.forEach(function(comment) {
+		if (comment.design_num == design_num) {
+			if (comment.comment_id > newest_comment_id) {
+				newest_comment_id = comment.comment_id + 1;
+			}
+			var comments_section = $("#" + comment.rubric).find(".posted_comments");
+			appendNewComment(comments_section, comment.comment_id, comment.comment_text)
+			if (comment.location_style != "") {
+				appendLocationComment(comment.rubric, comment.comment_id, comment.comment_text, comment.location_style);
+			}
+		}
+	});	
+}
+
+function resetHelp() {
+	current_help_page = 1;
+	$("#done_help").hide();
+    $("#next_help").show();
+    $("#next_help").removeClass("disabled");
+    $("#prev_help").show();
+    for (var i = 0; i < num_help_pages; i++) {
+    	$("#help_page_" + i).hide();
+    }
+    $("#help_page_1").show();
+    $("#close_help").show();
+}
+
 
 $(function(){
 	socket = io();
 
     $("#navbar_container").load("navbar.html"); 
     $("#help_modal").load("help.html", function() {
+    	design_num = urlParam("design");
+		if (design_num != 0) {
+	    	resetHelp();
+	    }
+
     	$("#next_help").click(function() {
-    		$("#help_page_1").hide();
-    		$("#help_page_2").show();
-    		$("#prev_help").show();
-    		$("#next_help").hide();
-    		$("#done_help").show();
+    		$("#help_page_" + current_help_page).hide();
+    		current_help_page++;
+    		$("#help_page_" + current_help_page).show();
+    		if (current_help_page > 0) {
+    			$("#prev_help").show();
+    		}
+    		if (current_help_page == num_help_pages-1) {
+    			$("#next_help").hide();
+    			$("#done_help").show();
+    		}
     	});
     	$("#prev_help").click(function() {
-    		$("#help_page_2").hide();
-    		$("#help_page_1").show();
-    		$("#prev_help").hide();
-    		$("#next_help").show();
+    		$("#help_page_" + current_help_page).hide();
+    		current_help_page--;
+    		$("#help_page_" + current_help_page).show();
+    		if (current_help_page == 0) {
+    			$("#prev_help").hide();
+    		}
     		$("#done_help").hide();
+    		$("#next_help").show();
     	});
 
+    	$("#consent_yes").change(function() {
+    		if ($(this).is(':checked')) {
+    			$("#next_help").removeClass("disabled");
+    		} else {
+    			$("#next_help").addClass("disabled");
+    		}
+    	});
+    	$("#consent_no").change(function() {
+    		if ($(this).is(':checked')) {
+    			$("#next_help").addClass("disabled");
+    		} else {
+    			$("#next_help").removeClass("disabled");
+    		}
+    	});
+
+    	$("#done_help").click(function() { // reset current page to first one after consent
+    		resetHelp();
+    	});
     });
 
     $("#done_modal").load("done.html", function() {
@@ -416,6 +514,10 @@ $(function(){
 
     design_num = urlParam("design");
 
+    if (design_num == 0) {
+    	$('#help_modal').modal('show'); 
+    }
+
     $("#design_frame").attr("src", design_links[design_num]);
 
     $("#design_frame").load(function() {
@@ -430,22 +532,31 @@ $(function(){
 		    	selectLocation(e);
 		    }
 		}, true);
+
+		if (saved_comments) showSavedComments();
     });
 
-    $("#location_cancel").click(function() {
-    	cancelLocation();
+    $(window).keydown(function(e) {
+    	if (e.which == 27 && choosing_location == true) { // esc key while choosing location
+    		cancelLocation();
+    	}
     });
 
     // event handlers for modal dialogs
     $("#confirm_flag").click(function() {
-    	socket.emit('flag comment', {rubric: flagging_comment_rubric, comment_id: flagging_comment_id});
-    	$("#comment_" + flagging_comment_id).find(".flag_btn").css("color", "#CF0000");
+    	socket.emit('flag comment', {rubric: flagging_comment_rubric, comment_id: flagging_comment_id, design_num: design_num});
+    	$("#comment_" + flagging_comment_id).remove();
+    	full_sorted_comments[flagging_comment_rubric].forEach(function(comment) {
+    		if (comment["ID"] == flagging_comment_id) {
+    			comment["flagged"] = true;
+    		}
+    	});
     	flagging_comment_rubric = "";
     	flagging_comment_id = "";
     });
 
     $("#confirm_delete").click(function() {
-    	socket.emit('delete comment', {comment_id: deleting_comment_id});
+    	socket.emit('delete comment', {comment_id: deleting_comment_id, design_num: design_num});
     	$("#new_comment_" + deleting_comment_id).remove();
     	iframe.find("#location_" + deleting_comment_id).remove();
     	deleting_comment_id = "";
@@ -463,7 +574,7 @@ $(function(){
     		.removeClass("glyphicon-remove");
 
     	socket.emit('user category added', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
-    										category: correcting_category});
+    										category: correcting_category, design_num: design_num});
 
     	categoryUpdate(correcting_rubric);
     });
@@ -479,7 +590,7 @@ $(function(){
     		.addClass("glyphicon-remove corrected");
 
     	socket.emit('user category removed', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
-    										category: correcting_category});
+    										category: correcting_category, design_num: design_num});
 
     	categoryUpdate(correcting_rubric);
     });
@@ -489,7 +600,7 @@ $(function(){
     	full_sorted_comments[current_rubric].forEach(function(check_comment) {
     		if (check_comment["comment"].replace(/<input.*?>/g, "_____").toLowerCase() == comment_text.toLowerCase()) {
     			latest_comment_inserted = check_comment["ID"];
-    			socket.emit('autocompleted suggestion', {rubric: current_rubric, comment_id: latest_comment_inserted});
+    			socket.emit('autocompleted suggestion', {rubric: current_rubric, comment_id: latest_comment_inserted, design_num: design_num});
     			updateComment();
     		}
     	});
@@ -498,7 +609,8 @@ $(function(){
     // load comment box for each rubric category
     rubric_categories.forEach(function(rubric_cat, i) {
     	rubric_cat_orig = rubric_cat;
-    	if (rubric_cat == "VisualAesthetics") rubric_cat_orig = "Visual Aesthetics";
+    	if (rubric_cat == "VisualDesign") rubric_cat_orig = "Visual Design";
+    	if (rubric_cat == "ContentFunctionality") rubric_cat_orig = "Content / Functionality";
     	if (rubric_cat == "AdditionalFeedback") rubric_cat_orig = "Additional Feedback";
     	$("#rubrics_container").append("<h4>" + rubric_cat_orig + "</h4><div id='" + rubric_cat + "' class='rubric_cat'></div>");
     	$("#" + rubric_cat).load("commenting.html", function() {
@@ -618,10 +730,32 @@ $(function(){
 	    			// category i is NO
 	    			uncheckIcon(icon);
 	    		}
+
 	    		// save category
 	    		$("#" + rubric).find(".comment_text").attr("data-categorystring", data.category_string);
 	    		categoryUpdate(rubric);
 	    	}
+	    	if (i == 1) {
+	    		if (icon.hasClass("glyphicon-ok")) {
+		    		// 1 is true so check for 4
+		    		if ($("#" + rubric).find(".comment_text.tt-input").val().split(" ").length >= 4) {
+		    			// probably specific enough
+		    			checkIcon($("#" + rubric).find(".indicator_4"));
+		    		} else {
+		    			uncheckIcon($("#" + rubric).find(".indicator_4"));
+		    		}
+		    	} else {
+		    		uncheckIcon($("#" + rubric).find(".indicator_4"));
+		    	}
+	    	}
     	}
+    });
+
+    // got back comments saved from before
+    socket.on('saved comments', function(data) {
+    	console.log("got saved comments");
+    	console.log(data.comments);
+    	saved_comments = data.comments;
+    	
     });
 });

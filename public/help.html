@@ -4,7 +4,37 @@
 			<button id="close_help" type="button" class="close" data-dismiss="modal">&times;</button>
 			<h4 class="modal-title">Welcome to CritiqueKit!</h4>
 		</div>
-		<div id="help_page_1" class="modal-body">
+		<div id="help_page_0" class="modal-body first_help">
+			Thank you for participating in this study! Please take a moment to review the consent form below, 
+			and indicate your agreement at the bottom.
+			<div id="consent_form">
+				<h4>Informed Consent Form: Study of a learning system</h4>
+				<p>FOR QUESTIONS ABOUT THE STUDY, CONTACT: Scott Klemmer, 9500 Gilman Drive, La Jolla, CA 92093-0436, srk@ucsd.edu</p>
+				<p>DESCRIPTION: You are invited to participate in a research study on learning and creativity.
+				If you consent to participating in this study, we will log your interaction with our system, such as when you visit the program or website, and what pages you visit, written responses you submit through the system, etc. If you choose, you can also participate in surveys that will help us better understand your use of this tool, and improve the system. We will also correlate your software usage with class progress.</p>
+				<p>You may also complete some surveys related to the project (such as a post-project survey on your experience) that you fill out on a different website. If you complete these surveys we may correlate your system usage with information on such surveys. </p>
+				<p>You must be 18 or older to participate in this research study. If you are less than 18, you cannot participate in the research study. Please see ALTERNATIVES TO PARTICIPATION below. </p>
+				<p>The information you provide us will help us create better learning systems in the future. </p>
+				<p>RISKS AND BENEFITS: There are no risks associated with this study beyond those encountered in daily life.  We cannot and do not guarantee or promise that you will receive any benefits from this study. Your participation will help us improve learning systems, and hopefully, education in the future.</p>
+				<p>TIME INVOLVEMENT: Typically, you will spend between 15 min and an hour using this system.</p>
+				<p>PAYMENTS: You will be not be financially compensated for your participation.</p>
+				<p>COSTS: There are no costs for participating in this study.</p>
+				<p>DATA RETENTION, SHARING, AND DELETION: This system will record your work, interactions and other similar information. We will not share your personally identifying data (such as your name and email address) with people outside our research team.</p>
+				You can ask that we delete your data. To do so, delete your account, or email us. If you do, please understand that not all data can be deleted. For instance, if your peers’ grades are determined by your assessment, we cannot delete them.  </p>
+				<p>ALTERNATIVES TO PARTICIPATION: You are not required to participate in this study. </p>
+				<p>SUBJECT'S RIGHTS: If you have read this form and have decided to participate in this project, please understand your participation is voluntary and you have the right to withdraw your consent or discontinue participation at any time without penalty or loss of benefits to which you are otherwise entitled. You can choose to discontinue your participation by deleting your account, or by unchecking the “I consent to participating in this research study” box below.  You have the right to refuse to answer particular questions. Your individual privacy will be maintained in all published and written data resulting from the study. </p> 
+				<p>RIGHT TO DISCONTINUE STUDY: The protocol director reserves the right to discontinue your participation in the study at any point for any reason.</p>
+				<form>
+					<input name="consent" id="consent_yes" type="radio">
+						I am at least 18 years of age, and I consent to participating in this research study
+					</input><br/>
+					<input name="consent" id="consent_no" type="radio">
+						I do not consent to participating in this research study (or am under 18).
+					</input>
+				</form>
+			</div>
+		</div>
+		<div id="help_page_1" class="help_pages modal-body">
 			<p>This restaurant owner wants feedback on their new website design. 
 				Please be as helpful as you can! Consider the aesthetics &amp; visual 
 				design of the site as well as the functionality and ease of finding 
@@ -22,13 +52,13 @@
 			</ul>
 
 		</div>
-		<div id="help_page_2" class="modal-body">
+		<div id="help_page_2" class="help_pages modal-body">
 			page 2
 		</div>
 		<div class="modal-footer">
-			<button id="prev_help" type="button">Previous</button>
-	        <button id="next_help" type="button">Next</button>
-	        <button id="done_help" type="button" data-dismiss="modal">Done</button>
+			<button id="prev_help" type="button" class="btn btn-secondary">Previous</button>
+	        <button id="next_help" type="button" class="btn btn-primary disabled">Next</button>
+	        <button id="done_help" type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
       	</div>
 	</div>
 </div>

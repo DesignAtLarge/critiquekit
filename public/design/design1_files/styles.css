@@ -1,37 +1,78 @@
-body {margin: 0 auto; text-align: center; font-family: "freight-sans-pro", arial, sans-serif; font-size: 16px; line-height: 16px;}
+div.wpcf7 {
+	margin: 0;
+	padding: 0;
+}
 
-.container {max-width: 775px; margin: 0 auto;}
-h2 {font-size: 18px; margin: 0px 0 2px 0; font-weight: 500; color: #016a73;}
+div.wpcf7-response-output {
+	margin: 2em 0.5em 1em;
+	padding: 0.2em 1em;
+}
 
-.price {color: #016a73;}
+div.wpcf7 .screen-reader-response {
+	position: absolute;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 1px;
+	width: 1px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
 
-img.menu {background: #ffffff; padding: 5px; margin: 0 10px 0 0; border: 1px solid #eeeeee; border-radius: 5px;}
+div.wpcf7-mail-sent-ok {
+	border: 2px solid #398f14;
+}
 
-#h2title {clear: both; text-align: left; padding: 30px 5px 0 5px; color: #016a73; font-size: 26px; line-height: 26px; font-weight: 600; border-bottom: 1px solid #eeeeee; width: 100%;}
-.titlethin {font-weight: 300; color: #016a73;}
-a:hover, a:focus {text-decoration: none;}
+div.wpcf7-mail-sent-ng {
+	border: 2px solid #ff0000;
+}
 
-.hili {text-align: left; margin: 5px 0 0; border: 1px solid #ffffff;}
-.hili:hover {background: #fcf1e2; border: 1px solid #eeeeee;}
-.menurow {margin: 5px 0; clear: both;}
-.tablefade {background: url('g/tablefade.jpg');}
-.lower {margin-top: 15px;}
+div.wpcf7-spam-blocked {
+	border: 2px solid #ffa500;
+}
 
-.navbar, .navbar-inverse {margin-bottom: 0;}
-.navbar-inverse .navbar-nav > li > a {color: #dddddd; padding: 15px 9px;}
-.navbar-header > a {color: #ffffff;}
-.dropdown-menu > li > a {font-size: 16px;}
+div.wpcf7-validation-errors {
+	border: 2px solid #f7e700;
+}
 
-h3 {text-align: left;}
+span.wpcf7-form-control-wrap {
+	position: relative;
+}
 
-label {font-weight: 500;}
+span.wpcf7-not-valid-tip {
+	color: #f00;
+	font-size: 1em;
+	display: block;
+}
 
-input {width: 80px;}
+.use-floating-validation-tip span.wpcf7-not-valid-tip { 
+	position: absolute;
+	top: 20%;
+	left: 20%;
+	z-index: 100;
+	border: 1px solid #ff0000;
+	background: #fff;
+	padding: .2em .8em;
+}
 
-.shad {box-shadow: 3px 6px 5px #cccccc;}
+span.wpcf7-list-item {
+	margin-left: 0.5em;
+}
 
-h2.carousel-caption {font-size: 30px;}
+.wpcf7-display-none {
+	display: none;
+}
 
-p.menu1 {text-align: left; padding: 10px 5px 0; margin-bottom: 0;}
+div.wpcf7 img.ajax-loader {
+	border: none;
+	vertical-align: middle;
+	margin-left: 4px;
+}
 
-p.menu2 {text-align: left; padding: 10px 5px 5px; margin-bottom: 0; border-bottom: 1px solid #eeeeee;}
+div.wpcf7 div.ajax-error {
+	display: none;
+}
+
+div.wpcf7 .placeheld {
+	color: #888;
+}

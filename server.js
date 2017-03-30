@@ -18,8 +18,11 @@ var sockets = {};
 var comment_obj = require('./comments.json');
 var comments = comment_obj["comments"];
 var comment_update_file = "comments_update.json";
-var logs = {"logs": []};
+var logs = [];
 var log_file = "logs.json";
+
+var user_comments = {} // { address: array holding comment objects }
+var user_file = "users.json";
 
 var options = {
     url: 'http://arielweingarten.com:8000/rate/',
@@ -28,24 +31,54 @@ var options = {
     }
 };
 
+var curate_options = {
+	url: 'http://arielweingarten.com:8000/curate',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+}
+
 const io = socketIO(server);
 
 function updateJSON(file, obj) {
 	jsonfile.writeFile(file, obj, {spaces: 4}, function(err) {
-	  	console.error(err);
+	  	if (err) console.error(err);
 	});
+	console.log(file + ":");
+	if (file == user_file) {
+		console.log(obj);
+	} else {
+		obj.forEach(function(element) {
+			console.log(element);
+		});
+	}
 }
 
 function curateComment(comment) {
+	console.log("curating " + comment);
 	// call curatecomment on python server
+	curate_options.body = "comment=" + comment;
+
+	request.post(curate_options, function (error, response, body) {
+	  	if (error) {
+	  		console.log('error:', error); // Print the error if one occurred
+	  	}
+	  	if (response && response.statusCode == 200) {
+	  		console.log("got result");
+	  		var result = JSON.parse(body);
+	  		console.log(result);
+	  	} else {
+	  		console.log(response.statusCode);
+	  		console.log(body);
+	  	}	  	
+	});
 
 	return comment;
 }
 
-function saveNewComment(data, category_string, address) {
+function saveNewComment(data, category_string, address, new_comment) {
 	var category = category_string.lastIndexOf("1") + 1;
 	var new_id;
-	var new_comment = curateComment(data.comment_text);
 	if (category == 0) {
 		// comment sucks, don't add to corpus
 		new_id = null;
@@ -65,12 +98,13 @@ function saveNewComment(data, category_string, address) {
 	    updateJSON(comment_update_file, comments);
 	}
 
-    logs.logs.push({ "time": new Date().toString(), 
+    logs.push({ "time": new Date().toString(), 
 					"user": address,
 					"event": "new comment submitted", 
 					"comment ID": new_id,
 					"category string": category_string,
-					"comment": data.comment_text});
+					"comment": data.comment_text,
+					"location style": data.location_style});
 	updateJSON(log_file, logs);
 	
 }
@@ -103,30 +137,10 @@ function loadComments(rubric_category) {
 			return 1;
 		}
     });
-
-    // get max and min frequency
-    var max_freq = parseInt(output[0]["frequency"]);
-    var min_freq = parseInt(output[0]["frequency"]);
-    for (var i = 0; i < output.length; i++) {
-      	if (parseInt(output[i]["frequency"]) > max_freq) {
-        	max_freq = parseInt(output[i]["frequency"]);
-      	}
-      	if (parseInt(output[i]["frequency"]) < min_freq) {
-        	min_freq = parseInt(output[i]["frequency"]);
-      	} 
-    }
-    
-    // for determining what shade to use on text
-    var num_shades;
-    if ((max_freq - min_freq) == 0) {
-    	num_shades = 1;
-    } else {
-    	num_shades = 150 / (max_freq - min_freq);
-    }
     
     for (var i = 0; i < output.length; i++) {
       	var category = output[i]["category"];
-      	var shade = num_shades * (max_freq - parseInt(output[i]["frequency"]));
+      	var shade = 0;
       	output[i]["shade"] = shade;
 
       	var comment = output[i]["comment"];
@@ -159,13 +173,24 @@ io.on('connection', function(socket) {
 
   	sockets[address] = socket.id;
 
-  	logs.logs.push({ "time": new Date().toString(), 
+  	logs.push({ "time": new Date().toString(), 
 					"user": address,
 					"event": "new connection"});
 	updateJSON(log_file, logs);
 
+	if (user_comments[address]) {
+		// send back to user 
+		console.log("sending saved comments");
+		socket.emit('saved comments', {comments: user_comments[address]});
+	} else {
+		console.log("starting new save");
+		user_comments[address] = [];
+		updateJSON(user_file, user_comments);
+	}
+
+
 	socket.on('loaded design', function(design_num) {
-		logs.logs.push({ "time": new Date().toString(), 
+		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "loaded design", 
   						"design num": design_num});
@@ -173,7 +198,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('done design', function(design_num) {
-		logs.logs.push({ "time": new Date().toString(), 
+		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "done design", 
   						"design num": design_num});
@@ -182,14 +207,14 @@ io.on('connection', function(socket) {
 
   	// respond to request for comments for given rubric category
   	socket.on('get comments', function(rubric) {
-  		console.log(rubric);
+  		//console.log(rubric);
   		var result = loadComments(rubric);
   		socket.emit('comments', {"rubric": rubric, "comments": result});
   	});
 
   	// user opened comment interface for given rubric
   	socket.on('clicked add comment', function(rubric) {
-  		logs.logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "clicked add comment", 
   						"rubric": rubric});
@@ -198,6 +223,19 @@ io.on('connection', function(socket) {
 
   	// a suggestion was posted, save it and update frequency if a suggestion was clicked
   	socket.on('comment submitted', function(data) {
+
+  		// save to user data
+  		user_comments[address].push({"comment_id": data.new_comment_id,
+  									"comment_text": data.comment_text,
+  									"rubric": data.rubric,
+  									"category_string": data.category_string,
+  									"location_style": data.location_style,
+  									"design_num": data.design_num
+  		});
+  		updateJSON(user_file, user_comments);
+  		//console.log("user comments: "); 
+  		//console.log(user_comments);
+
   		// find the clicked comment in comments
   		if (data.comment_id != -1) {
   			// a suggestion was inserted
@@ -216,40 +254,46 @@ io.on('connection', function(socket) {
 	  			this_comment["category"] = new_category;
 	  			updateJSON(comment_update_file, comments);
 
-	  			logs.logs.push({ "time": new Date().toString(), 
+	  			logs.push({ "time": new Date().toString(), 
 		  						"user": address,
 		  						"event": "reused comment", 
 		  						"comment ID": data.comment_id,
 		  						"old category": old_category,
-		  						"new category": new_category});
+		  						"new category": new_category,
+		  						"location style": data.location_style,
+		  						"design_num": data.design_num});
 		  		updateJSON(log_file, logs);
 	  			return;
 	  		} else { // they are different
 	  			var new_comment = curateComment(data.comment_text);
 	  			if (new_category > old_category) {  // comment was supposedly improved
 
-	  				logs.logs.push({ "time": new Date().toString(), 
+	  				logs.push({ "time": new Date().toString(), 
 			  						"user": address,
 			  						"event": "improved comment", 
 			  						"comment ID": data.comment_id,
 			  						"old category": old_category,
 			  						"new category": new_category,
 			  						"old comment": this_comment["comment"],
-			  						"new_comment": new_comment});
+			  						"new_comment": new_comment,
+			  						"location style": data.location_style,
+			  						"design_num": data.design_num});
 			  		updateJSON(log_file, logs);
 
 			  		this_comment["comment"] = new_comment;
 	  				this_comment["category"] = new_category;
 	  			} else {
 	  				// comment was not improved, so leave it
-	  				logs.logs.push({ "time": new Date().toString(), 
+	  				logs.push({ "time": new Date().toString(), 
 			  						"user": address,
 			  						"event": "not improved comment", 
 			  						"comment ID": data.comment_id,
 			  						"old category": old_category,
 			  						"new category": new_category,
 			  						"old comment": this_comment["comment"],
-			  						"new_comment": new_comment});
+			  						"new_comment": new_comment,
+			  						"location style": data.location_style,
+			  						"design_num": data.design_num});
 			  		updateJSON(log_file, logs);
 	  			}
 	  		}
@@ -257,8 +301,8 @@ io.on('connection', function(socket) {
 	  		// no comment was clicked, it's new
 
 	  		// TODO check if it's a duplicate of existing comment, if so log but don't add it, &frequency++ for that comment
-	  		
-	  		saveNewComment(data, data.category_string, address);
+	  		var new_comment = curateComment(data.comment_text);
+	  		saveNewComment(data, data.category_string, address, new_comment);
 	  		
 	  	}
 	  	// in both cases, yes_categories and no_categories hold the user-defined categories, so save those
@@ -269,15 +313,16 @@ io.on('connection', function(socket) {
   		// find comment with this ID
   		comments.forEach(function(comment) {
   			if (comment["ID"] == data.comment_id) {
-  				console.log("found it, flagging comment ");
-  				console.log(comment["comment"]);
+  				//console.log("found it, flagging comment ");
+  				//console.log(comment["comment"]);
   				comment["flagged"] = true;
   				updateJSON(comment_update_file, comments);
 
-  				logs.logs.push({ "time": new Date().toString(), 
+  				logs.push({ "time": new Date().toString(), 
 		  						"user": address,
 		  						"event": "comment flag", 
-		  						"comment ID": data.comment_id});
+		  						"comment ID": data.comment_id,
+		  						"design_num": data.design_num});
 		  		updateJSON(log_file, logs);
   			}
   		});
@@ -285,6 +330,14 @@ io.on('connection', function(socket) {
 
   	// user deleted a comment
   	socket.on('delete comment', function(data) {
+
+  		user_comments[address] = user_comments[address].filter(function(comment) {
+  			return comment.comment_id != data.comment_id || comment.design_num != data.design_num;
+  		});
+  		updateJSON(user_file, user_comments);
+  		//console.log("user coments: ")
+  		//console.log(user_comments);
+
   		// find the actual id of the comment they deleted
   		var actual_id = "unknown";
   		comments.forEach(function(comment) {
@@ -293,16 +346,17 @@ io.on('connection', function(socket) {
   			}
   		})
 
-  		logs.logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "comment delete", 
-  						"comment ID": actual_id});
+  						"comment ID": actual_id, 
+  						"design_num": data.design_num});
   		updateJSON(log_file, logs);
   	});
 
   	// user canceled comment (closed comment window)
   	socket.on('cancel comment', function(rubric) {
-  		logs.logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "clicked cancel comment", 
   						"rubric": rubric});
@@ -311,44 +365,48 @@ io.on('connection', function(socket) {
 
   	// user inserted a suggested comment
   	socket.on('comment inserted', function(data) {
-		logs.logs.push({ "time": new Date().toString(), 
+		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "inserted suggestion", 
   						"rubric": data.rubric,
   						"comment ID": data.comment_id,
   						"comment text": data.comment_text,
   						// length of selection that was replaced by this comment:
-  						"selection length": data.selection_length}); 
+  						"selection length": data.selection_length,
+  						"design_num": data.design_num}); 
   		updateJSON(log_file, logs);
   	});
 
   	// user hit autocomplete on a comment
   	socket.on('autocompleted suggestion', function(data) {
-  		logs.logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "autocompleted suggestion", 
   						"rubric": data.rubric,
-  						"comment ID": data.comment_id}); 
+  						"comment ID": data.comment_id,
+  						"design_num": data.design_num}); 
   		updateJSON(log_file, logs);
   	});
 
   	// user manually overrode a category
   	socket.on('user category added', function(data) {
-  		logs.logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "added category", 
   						"comment text": data.comment_text,
-  						"category added": data.category}); 
+  						"category added": data.category,
+  						"design_num": data.design_num}); 
   		updateJSON(log_file, logs);
   	});
 
   	// user manually overrode a category
   	socket.on('user category removed', function(data) {
-  		logs.logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().toString(), 
   						"user": address,
   						"event": "added category", 
   						"comment text": data.comment_text,
-  						"category removed": data.category}); 
+  						"category removed": data.category,
+  						"design_num": data.design_num}); 
   		updateJSON(log_file, logs);
   	});
 
@@ -368,24 +426,26 @@ io.on('connection', function(socket) {
 			  			console.log("error with category string length");
 			  		} else {
 			  			socket.emit('category', {rubric: data.rubric, category_string: body});
-			  			logs.logs.push({ "time": new Date().toString(), 
+			  			logs.push({ "time": new Date().toString(), 
 				  						"user": address,
 				  						"event": "typing comment", 
 				  						"rubric": data.rubric,
 				  						"comment": data.comment,
-				  						"prediction": body});
+				  						"prediction": body,
+				  						"design_num": data.design_num});
 				  		updateJSON(log_file, logs);
 			  		}
 			  	}		  	
 			});
 		} else {
 			socket.emit('category', {rubric: data.rubric, category_string: "000"});
-			logs.logs.push({ "time": new Date().toString(), 
+			logs.push({ "time": new Date().toString(), 
 	  						"user": address,
 	  						"event": "typing comment", 
 	  						"rubric": data.rubric,
 	  						"comment": data.comment,
-	  						"prediction": "000"});
+	  						"prediction": "000",
+	  						"design_num": data.design_num});
 	  		updateJSON(log_file, logs);
 		}
 

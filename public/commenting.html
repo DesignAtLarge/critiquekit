@@ -7,6 +7,39 @@
 			<textarea class='comment_text typeahead' placeholder='Type your feedback...' data-categorystring="">
 			</textarea>
 			<div class='suggestion_box_inside'>
+				<div class="suggestion_tips">
+					<div class="first_header positive_indicators row">
+						<div class="col-sm-5 right_side indicator_container_1">
+							<span class="glyphicon glyphicon-remove indicator indicator_1" title="Click if you disagree."
+								data-toggle='modal' data-target='#correct_modal'></span>
+							&nbsp;Is positive
+						</div>
+						<div class="col-sm-1 indicator_arrow">
+							<span class="glyphicon glyphicon-arrow-right"></span>
+						</div>
+						<div class="col-sm-6 indicator_container_4">
+							<span class="glyphicon glyphicon-remove indicator indicator_4" title="Click if you disagree."
+								data-toggle='modal' data-target='#correct_modal'></span>
+							&nbsp;Is specific
+						</div>
+					</div>
+					<div class="indicator_line"></div>
+					<div class="critique_indicators row">
+						<div class="col-sm-5 right_side indicator_container_2">
+							<span class="glyphicon glyphicon-remove indicator indicator_2" title="Click if you disagree."
+								data-toggle='modal' data-target='#correct_modal'></span>
+							&nbsp;Identifies problem
+						</div>
+						<div class="col-sm-1 indicator_arrow">
+							<span class="glyphicon glyphicon-arrow-right"></span>
+						</div>
+						<div class="col-sm-6 indicator_container_3">
+							<span class="glyphicon glyphicon-remove indicator indicator_3" title="Click if you disagree."
+								data-toggle='modal' data-target='#correct_modal'></span>
+							&nbsp;Provides solution
+						</div>
+					</div>
+				</div>
 				<div class='suggestion_buttons'>
 					<button class="add_location">Attach to design</button>
 					<span class="right_buttons">
@@ -14,31 +47,14 @@
 						<button class="submit_comment">Submit</button>
 					</span>
 				</div>
-				<div class="suggestion_tips">
-					<div class="first_header suggestion_header">Contains:</div>
-					<div class="indicator_container_1">
-						&nbsp;<span class="glyphicon glyphicon-remove indicator indicator_1" title="Is this wrong?"
-							data-toggle='modal' data-target='#correct_modal'></span>
-						&nbsp;Positive statement <i>("I like...")</i>
-					</div>
-					<div class="indicator_container_2">
-						&nbsp;<span class="glyphicon glyphicon-remove indicator indicator_2" title="Is this wrong?"
-							data-toggle='modal' data-target='#correct_modal'></span>
-						&nbsp;Problem statement <i>("I wish...")</i>
-					</div>
-					<div class="indicator_container_3">
-						&nbsp;<span class="glyphicon glyphicon-remove indicator indicator_3" title="Is this wrong?"
-							data-toggle='modal' data-target='#correct_modal'></span>
-						&nbsp;Suggestion <i>("Here's how...")</i>
-					</div>
-				</div>
-				<div class="suggestion_header larger_header">Examples you can reuse:</div>
+				<div class="clear suggestion_header larger_header">Examples you can reuse:</div>
 				<div class="first_header suggestion_header">"I like..."</div>
 			      	<table class='comments_good comments_table'></table>
 				<div class="suggestion_header">"I wish..."</div>
 			      	<table class='comments_bad comments_table'></table>
 			    <div class="suggestion_header">"Here's how..."</div>
 			      	<table class='comments_should comments_table'></table>
+			    <div class="comment_box_footer"><i>Check the other rubric categories for more examples!</i></div>
 			</div>
 		</div>
 	</div>
