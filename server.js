@@ -172,7 +172,8 @@ io.on('connection', function(socket) {
   	console.log('New connection from ' + address);
   	console.log("socket.request.socket.remoteAddress: " + socket.request.socket.remoteAddress);
   	console.log("socket.request.connection.remoteAddress: " + socket.request.connection.remoteAddress);
-  	console.log("socket.request.connection._peername: " + socket.request.connection._peername );
+  	console.log("socket.request.connection._peername: ")
+  	console.log(socket.request.connection._peername );
 
   	sockets[address] = socket.id;
 
