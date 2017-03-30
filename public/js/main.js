@@ -462,7 +462,6 @@ function preloadImages(arrayOfImages) {
     });
 }
 
-
 $(function(){
 	if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
 		$("body").html("Please use a desktop or laptop computer. ");
@@ -476,8 +475,10 @@ $(function(){
 		cookie_val = Cookies.get('critiquekit-cookie');
 		socket.emit('set cookie', cookie_val);
 		socket.emit('get saved', cookie_val);
+		socket.emit('get design num', cookie_val);
 	} else {
 		cookie_val = Math.random().toString(10) + new Date().getTime();
+		design_num = 0;
 		Cookies.set('critiquekit-cookie', cookie_val, { expires: 7 });
 		socket.emit('set cookie', cookie_val);
 	}
@@ -487,8 +488,8 @@ $(function(){
     	preloadImages(["feedback_autocomplete.png", "feedback_blanks.png", "feedback_box.png",
     					"feedback_checks.png", "feedback_insert.png", "feedback_location.png",
     					"menu.png", "sidebar.png"]);
-    	design_num = urlParam("design");
-		if (design_num != 0) {
+    	//design_num = urlParam("design");
+		if (design_num != 0 && design_num != undefined) {
 	    	resetHelp();
 	    }
 
@@ -539,12 +540,10 @@ $(function(){
     	$("#confirm_done").click(function() {
 	    	// go to next design
 	    	socket.emit('done design', {design_num: design_num, cookie_val: cookie_val});
-	    	var url_parts = window.location.href.split("=");
 	    	design_num++;
-	    	if (url_parts.length == 1) {
-	    		window.location.href = url_parts[0] + "?design=" + design_num;
-	    	} else if (design_num < design_links.length) {
-	    		window.location.href = url_parts[0] + "=" + design_num
+	    	console.log("done design, num is" + design_num);
+	    	if (design_num < design_links.length) {
+	    		location.reload();
 	    	} else {
 	    		// show message that you're done
 	    		$("#done1").hide();
@@ -561,29 +560,40 @@ $(function(){
 	    });
     });
 
-    design_num = urlParam("design");
-
-    if (design_num == 0) {
-    	$('#help_modal').modal('show'); 
+    //design_num = urlParam("design");
+    if (design_num == undefined) {
+    	socket.emit('get design num', cookie_val);
     }
 
-    $("#design_frame").attr("src", design_links[design_num]);
+    socket.on('design num', function(design_numba) {
+    	design_num = design_numba;
+    	if (design_num == 0) {
+	    	$('#help_modal').modal('show'); 
+	    }
 
-    $("#design_frame").load(function() {
-    	socket.emit('loaded design', {design_num: design_num, cookie_val: cookie_val});
-    	iframe = $("#design_frame").contents();
-    	console.log("iframe loaded");
-    	// disable all clicks / links on iframe
-    	iframe.get(0).addEventListener("click", function(e) {
-		    e.stopPropagation();
-		    e.preventDefault();
-		    if (choosing_location) {
-		    	selectLocation(e);
-		    }
-		}, true);
+	    if (design_num != 0) {
+	    	resetHelp();
+	    }
 
-		if (saved_comments) showSavedComments();
+	    $("#design_frame").attr("src", design_links[design_num]);
+
+	    $("#design_frame").load(function() {
+	    	socket.emit('loaded design', {design_num: design_num, cookie_val: cookie_val});
+	    	iframe = $("#design_frame").contents();
+	    	console.log("iframe loaded");
+	    	// disable all clicks / links on iframe
+	    	iframe.get(0).addEventListener("click", function(e) {
+			    e.stopPropagation();
+			    e.preventDefault();
+			    if (choosing_location) {
+			    	selectLocation(e);
+			    }
+			}, true);
+
+			if (saved_comments) showSavedComments();
+	    });
     });
+    
 
     $(window).keydown(function(e) {
     	if (e.which == 27 && choosing_location == true) { // esc key while choosing location

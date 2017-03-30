@@ -24,6 +24,8 @@ var log_file = "logs.json";
 var user_data = {} // { address: array holding comment objects }
 var user_file = "user_data.json";
 
+var design_nums = {};
+
 var options = {
     url: 'http://arielweingarten.com:8000/rate/',
     headers: {
@@ -255,9 +257,21 @@ io.on('connection', function(socket) {
 		if (user_data[cookie_val] == undefined) {
 			console.log("starting new save");
 			user_data[cookie_val] = [];
+			design_nums[cookie_val] = 0;
 			updateUsers(cookie_val, user_data[cookie_val]);
 			updateJSON(user_file, user_data);
 		}
+  	});
+
+  	socket.on('get design num', function(cookie_val) {
+  		var design_num;
+  		if (design_nums[cookie_val] == undefined) {
+  			design_num = 0;
+  			design_nums[cookie_val] = 0;
+  		} else {
+  			design_num = design_nums[cookie_val];
+  		}
+  		socket.emit('design num', design_num);
   	});
 
 	socket.on('get saved', function(cookie_val) {
@@ -278,6 +292,8 @@ io.on('connection', function(socket) {
   						"event": "done design", 
   						"design num": data.design_num});
   		updateJSON(log_file, logs);
+  		design_nums[data.cookie_val]++;
+  		socket.emit('design num', design_nums[data.cookie_val]);
 	});
 
   	// respond to request for comments for given rubric category
