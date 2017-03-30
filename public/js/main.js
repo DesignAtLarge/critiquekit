@@ -450,12 +450,23 @@ function switchHelpImage(help_page_num, filename, orig_filename, action) {
 	}
 }
 
+function preloadImages(arrayOfImages) {
+    $(arrayOfImages).each(function(){
+        $('<img/>')[0].src = "help_pics" + this;
+        // Alternatively you could use:
+        // (new Image()).src = this;
+    });
+}
+
 
 $(function(){
 	socket = io();
 
     $("#navbar_container").load("navbar.html"); 
     $("#help_modal").load("help.html", function() {
+    	preloadImages(["feedback_autocomplete.png", "feedback_blanks.png", "feedback_box.png",
+    					"feedback_checks.png", "feedback_insert.png", "feedback_location.png",
+    					"menu.png", "sidebar.png"])
     	design_num = urlParam("design");
 		if (design_num != 0) {
 	    	resetHelp();
@@ -635,7 +646,7 @@ $(function(){
 			    });
 			    $(".cancel_comment").click(function() {
 			    	$(this).parents(".suggestion_box").find(".comment_text.tt-input").val("");
-			    	searchComments("", $(this).parents(".suggestion_box")); // clear search
+			    	//searchComments("", $(this).parents(".suggestion_box")); // clear search
 			    	updateComment();
 			    	$(this).parents(".comment_interface").hide();
 			    	$(this).parents(".rubric_cat").find(".add_comment").show();
@@ -724,7 +735,7 @@ $(function(){
 
 		// search functionality
 		$(".comment_text").on("input", function() {
-			searchComments($(this).val(), $(this).parent());
+			//searchComments($(this).val(), $(this).parent());
 		});
     });
 
