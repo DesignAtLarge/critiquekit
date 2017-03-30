@@ -170,6 +170,8 @@ io.on('connection', function(socket) {
 	var address = socket.handshake.address;
 
   	console.log('New connection from ' + address);
+  	console.log("socket.request.socket.remoteAddress: " + socket.request.socket.remoteAddress);
+  	console.log("socket.request.connection.remoteAddress: " + socket.request.connection.remoteAddress);
 
   	sockets[address] = socket.id;
 
