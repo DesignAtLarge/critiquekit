@@ -171,6 +171,8 @@ io.on('connection', function(socket) {
 
   	console.log('New connection from ' + address);
   	console.log("socket.id: " + socket.id);
+  	console.log("SOCKET:");
+  	console.log(socket);
 
   	sockets[address] = socket.id;
 
