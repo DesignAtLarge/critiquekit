@@ -172,6 +172,7 @@ io.on('connection', function(socket) {
   	console.log('New connection from ' + address);
   	console.log("socket.request.socket.remoteAddress: " + socket.request.socket.remoteAddress);
   	console.log("socket.request.connection.remoteAddress: " + socket.request.connection.remoteAddress);
+  	console.log("socket.request.connection._peername: " + socket.request.connection._peername );
 
   	sockets[address] = socket.id;
 
@@ -188,6 +189,8 @@ io.on('connection', function(socket) {
 		console.log("starting new save");
 		user_comments[address] = [];
 		updateJSON(user_file, user_comments);
+		console.log("user commentS:");
+		console.log(user_comments);
 	}
 
 
@@ -235,8 +238,8 @@ io.on('connection', function(socket) {
   									"design_num": data.design_num
   		});
   		updateJSON(user_file, user_comments);
-  		//console.log("user comments: "); 
-  		//console.log(user_comments);
+  		console.log("user comments: "); 
+  		console.log(user_comments);
 
   		// find the clicked comment in comments
   		if (data.comment_id != -1) {
