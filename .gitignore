@@ -4,3 +4,4 @@ npm-debug.log
 /*.env
 comments_update.json
 logs.json
+users.json

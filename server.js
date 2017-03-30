@@ -44,12 +44,12 @@ function updateJSON(file, obj) {
 	jsonfile.writeFile(file, obj, {spaces: 4}, function(err) {
 	  	if (err) console.error(err);
 	});
-	console.log(file + ":");
+	//console.log(file + ":");
 	if (file == user_file) {
-		console.log(obj);
+		//console.log(obj);
 	} else {
 		obj.forEach(function(element) {
-			console.log(element);
+			//console.log(element);
 		});
 	}
 }
