@@ -641,7 +641,7 @@ $(function(){
     			// last one added, so set all the event handlers
     			$(".add_comment").click(function() {
 	    			$(this).hide();
-			    	$(this).parent().find(".comment_interface").show();
+			    	$(this).parents(".rubric_cat").find(".comment_interface").show();
 			    	socket.emit("clicked add comment", $(this).parents(".rubric_cat").attr("id"));
 			    });
 			    $(".cancel_comment").click(function() {
