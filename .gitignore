@@ -2,6 +2,6 @@
 npm-debug.log
 .DS_Store
 /*.env
-comments_update.json
+comments.json
 logs.json
-users.json
+user_data.json

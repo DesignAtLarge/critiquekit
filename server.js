@@ -15,14 +15,14 @@ const server = express()
 var sockets = {}; 
 
 
-var comment_obj = require('./comments.json');
+var comment_obj = require('./original_comments.json');
 var comments = comment_obj["comments"];
-var comment_update_file = "comments_update.json";
+var comment_update_file = "comments.json";
 var logs = [];
 var log_file = "logs.json";
 
-var user_comments = {} // { address: array holding comment objects }
-var user_file = "users.json";
+var user_data = {} // { address: array holding comment objects }
+var user_file = "user_data.json";
 
 var options = {
     url: 'http://arielweingarten.com:8000/rate/',
@@ -33,6 +33,12 @@ var options = {
 
 var curate_options = {
 	url: 'http://arielweingarten.com:8000/curate',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+}
+
+var logging_options = {
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
@@ -52,6 +58,28 @@ function updateJSON(file, obj) {
 			//console.log(element);
 		});
 	}
+	console.log("LOGGING");
+	// send to logging server
+	var action = file.split(".")[0]
+	console.log(action);
+	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/' + action;
+	console.log(logging_options.url);
+
+	logging_options.body = "log=" + JSON.stringify(obj);
+
+	request.post(logging_options, function (error, response, body) {
+	  	if (error) {
+	  		console.log('error:', error); // Print the error if one occurred
+	  	}
+	  	if (response && response.statusCode == 200) {
+	  		console.log("all good");
+	  		// good
+			} else {
+	  		console.log(response.statusCode, body);
+	  	}	  	
+	});
+
+
 }
 
 function saveNewComment(data, category_string, address, new_comment, blank_values) {
@@ -158,16 +186,16 @@ io.on('connection', function(socket) {
 					"event": "new connection"});
 	updateJSON(log_file, logs);
 
-	if (user_comments[address]) {
+	if (user_data[address]) {
 		// send back to user 
 		console.log("sending saved comments");
-		socket.emit('saved comments', {comments: user_comments[address]});
+		socket.emit('saved comments', {comments: user_data[address]});
 	} else {
 		console.log("starting new save");
-		user_comments[address] = [];
-		updateJSON(user_file, user_comments);
+		user_data[address] = [];
+		updateJSON(user_file, user_data);
 		//console.log("user commentS:");
-		//console.log(user_comments);
+		//console.log(user_data);
 	}
 
 
@@ -207,16 +235,16 @@ io.on('connection', function(socket) {
   	socket.on('comment submitted', function(data) {
 
   		// save to user data
-  		user_comments[address].push({"comment_id": data.new_comment_id,
+  		user_data[address].push({"comment_id": data.new_comment_id,
   									"comment_text": data.comment_text,
   									"rubric": data.rubric,
   									"category_string": data.category_string,
   									"location_style": data.location_style,
   									"design_num": data.design_num
   		});
-  		updateJSON(user_file, user_comments);
+  		updateJSON(user_file, user_data);
   		//console.log("user comments: "); 
-  		//console.log(user_comments);
+  		//console.log(user_data);
 
   		// find the clicked comment in comments
   		if (data.comment_id != -1) {
@@ -345,12 +373,12 @@ io.on('connection', function(socket) {
   	// user deleted a comment
   	socket.on('delete comment', function(data) {
 
-  		user_comments[address] = user_comments[address].filter(function(comment) {
+  		user_data[address] = user_data[address].filter(function(comment) {
   			return comment.comment_id != data.comment_id || comment.design_num != data.design_num;
   		});
-  		updateJSON(user_file, user_comments);
+  		updateJSON(user_file, user_data);
   		//console.log("user coments: ")
-  		//console.log(user_comments);
+  		//console.log(user_data);
 
   		// find the actual id of the comment they deleted
   		var actual_id = "unknown";

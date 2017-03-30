@@ -6,7 +6,7 @@ import json
 if __name__ == '__main__':
 
 
-	input_filename = "comments.csv"
+	input_filename = "original_comments.csv"
 	
 	csv_infile = open(input_filename, 'r')
 	output_filename = "comments.json"
