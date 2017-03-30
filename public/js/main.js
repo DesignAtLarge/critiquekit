@@ -22,6 +22,7 @@ var saved_comments;
 
 var current_help_page = 0;
 var num_help_pages = 8;
+var cookie_val;
 
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
@@ -43,7 +44,8 @@ function submitComment(comment_text, dom_container) {
 		// send to server
 		socket.emit('comment submitted', 
 			{comment_id: latest_comment_inserted, new_comment_id: newest_comment_id, comment_text: comment_text, 
-				rubric: rubric, category_string: category_string, location_style: location_style, design_num: design_num});
+				rubric: rubric, category_string: category_string, location_style: location_style, 
+				design_num: design_num, cookie_val: cookie_val});
 		latest_comment_inserted = -1; // reset
 
 		var comments_section = dom_container.parents(".rubric_cat").find(".posted_comments");
@@ -106,7 +108,8 @@ function updateComment(rubric) {
 		iframe.find("#location_" + newest_comment_id + " .location_text").html(comment_text);
 
 		// send to server.js
-		socket.emit("comment update", {comment: comment_text, rubric: current_rubric, design_num: design_num});
+		socket.emit("comment update", {comment: comment_text, rubric: current_rubric, design_num: design_num,
+			cookie_val: cookie_val});
 	}, 100);
 }
 
@@ -245,7 +248,8 @@ function displayComments(rubric, comments) {
 		suggestion_box.animate({ scrollTop: 0 }, "fast");
 
 		socket.emit("suggestion inserted", {rubric: current_rubric, comment_id: comment_id, 
-			comment_text: comment, selection_length: selection_end - selection_start, design_num: design_num});
+			comment_text: comment, selection_length: selection_end - selection_start, design_num: design_num, 
+			cookie_val: cookie_val});
 
 		updateComment();
 
@@ -467,6 +471,16 @@ $(function(){
 
 	socket = io();
 
+	// check for cookie
+	if (Cookies.get('critiquekit-cookie') != undefined) {
+		cookie_val = Cookies.get('critiquekit-cookie');
+		socket.emit('get saved', cookie_val);
+	} else {
+		cookie_val = Math.random().toString(10) + new Date().getTime();
+		Cookies.set('critiquekit-cookie', cookie_val, { expires: 7 });
+		socket.emit('set cookie', cookie_val);
+	}
+
     $("#navbar_container").load("navbar.html"); 
     $("#help_modal").load("help.html", function() {
     	preloadImages(["feedback_autocomplete.png", "feedback_blanks.png", "feedback_box.png",
@@ -523,7 +537,7 @@ $(function(){
     $("#done_modal").load("done.html", function() {
     	$("#confirm_done").click(function() {
 	    	// go to next design
-	    	socket.emit('done design', design_num);
+	    	socket.emit('done design', {design_num: design_num, cookie_val: cookie_val});
 	    	var url_parts = window.location.href.split("=");
 	    	design_num++;
 	    	if (url_parts.length == 1) {
@@ -536,7 +550,7 @@ $(function(){
 	    		$("#done2").show();
 	    		$("#submit_done").click(function() {
 	    			var feedback = $("#done_feedback").val();
-	    			socket.emit('done feedback', feedback);
+	    			socket.emit('done feedback', {feedback: feedback, cookie_val: cookie_val});
 	    			$("#submit_done").hide();
 	    			$("#done_feedback").hide();
 	    		});
@@ -555,7 +569,7 @@ $(function(){
     $("#design_frame").attr("src", design_links[design_num]);
 
     $("#design_frame").load(function() {
-    	socket.emit('loaded design', design_num);
+    	socket.emit('loaded design', {design_num: design_num, cookie_val: cookie_val});
     	iframe = $("#design_frame").contents();
     	console.log("iframe loaded");
     	// disable all clicks / links on iframe
@@ -578,7 +592,8 @@ $(function(){
 
     // event handlers for modal dialogs
     $("#confirm_flag").click(function() {
-    	socket.emit('flag comment', {rubric: flagging_comment_rubric, comment_id: flagging_comment_id, design_num: design_num});
+    	socket.emit('flag comment', {rubric: flagging_comment_rubric, comment_id: flagging_comment_id, 
+    		design_num: design_num, cookie_val: cookie_val});
     	$("#comment_" + flagging_comment_id).remove();
     	full_sorted_comments[flagging_comment_rubric].forEach(function(comment) {
     		if (comment["ID"] == flagging_comment_id) {
@@ -590,7 +605,7 @@ $(function(){
     });
 
     $("#confirm_delete").click(function() {
-    	socket.emit('delete comment', {comment_id: deleting_comment_id, design_num: design_num});
+    	socket.emit('delete comment', {comment_id: deleting_comment_id, design_num: design_num, cookie_val: cookie_val});
     	$("#new_comment_" + deleting_comment_id).remove();
     	iframe.find("#location_" + deleting_comment_id).remove();
     	deleting_comment_id = "";
@@ -600,7 +615,9 @@ $(function(){
 
     	var category_string = $("#" + correcting_rubric).find(".comment_text").attr("data-categorystring");
     	var index = correcting_category - 1;
-    	category_string = category_string.substring(0, index) + "1" + category_string.substring(index+1);
+    	if (correcting_category < 4) {
+     		category_string = category_string.substring(0, index) + "1" + category_string.substring(index+1);
+     	}
     	$("#" + correcting_rubric).find(".comment_text").attr("data-categorystring", category_string);
 
     	$("#" + correcting_rubric).find(".indicator_" + correcting_category)
@@ -608,7 +625,8 @@ $(function(){
     		.removeClass("glyphicon-remove");
 
     	socket.emit('user category added', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
-    										category: correcting_category, design_num: design_num});
+    										category: correcting_category, design_num: design_num, 
+    									cookie_val: cookie_val});
 
     	categoryUpdate(correcting_rubric);
     });
@@ -616,7 +634,9 @@ $(function(){
 	$("#correct_no").click(function() {
     	var category_string = $("#" + correcting_rubric).find(".comment_text").attr("data-categorystring");
     	var index = correcting_category - 1;
-    	category_string = category_string.substring(0, index) + "0" + category_string.substring(index+1);
+    	if (correcting_category < 4) {
+    		category_string = category_string.substring(0, index) + "0" + category_string.substring(index+1);
+    	}
     	$("#" + correcting_rubric).find(".comment_text").attr("data-categorystring", category_string);
 
     	$("#" + correcting_rubric).find(".indicator_" + correcting_category)
@@ -624,7 +644,7 @@ $(function(){
     		.addClass("glyphicon-remove corrected");
 
     	socket.emit('user category removed', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
-    										category: correcting_category, design_num: design_num});
+    										category: correcting_category, design_num: design_num, cookie_val: cookie_val});
 
     	categoryUpdate(correcting_rubric);
     });
@@ -634,7 +654,8 @@ $(function(){
     	full_sorted_comments[current_rubric].forEach(function(check_comment) {
     		if (check_comment["comment"].replace(/<input.*?>/g, "_____").toLowerCase() == comment_text.toLowerCase()) {
     			latest_comment_inserted = check_comment["ID"];
-    			socket.emit('autocompleted suggestion', {rubric: current_rubric, comment_id: latest_comment_inserted, design_num: design_num});
+    			socket.emit('autocompleted suggestion', {rubric: current_rubric, comment_id: latest_comment_inserted, 
+    				design_num: design_num, cookie_val: cookie_val});
     			updateComment();
     		}
     	});
@@ -653,7 +674,7 @@ $(function(){
     			$(".add_comment").click(function() {
 	    			$(this).hide();
 			    	$(this).parents(".rubric_cat").find(".comment_interface").show();
-			    	socket.emit("clicked add comment", $(this).parents(".rubric_cat").attr("id"));
+			    	socket.emit("clicked add comment", {rubric: $(this).parents(".rubric_cat").attr("id"), cookie_val: cookie_val});
 			    });
 			    $(".cancel_comment").click(function() {
 			    	$(this).parents(".suggestion_box").find(".comment_text.tt-input").val("");
@@ -663,7 +684,7 @@ $(function(){
 			    	$(this).parents(".rubric_cat").find(".add_comment").show();
 			    	// delete location if one was made
 			    	iframe.find("#location_" + newest_comment_id).remove();
-			    	socket.emit('cancel comment', $(this).parents(".rubric_cat").attr("id"));
+			    	socket.emit('cancel comment', {rubric: $(this).parents(".rubric_cat").attr("id"), cookie_val: cookie_val});
 			    });
 			    $(".submit_comment").click(function() {
 			    	// get the contents of comment box
@@ -693,6 +714,8 @@ $(function(){
 			    		correcting_category = 2;
 			    	} else if ($(this).hasClass("indicator_3")) {
 			    		correcting_category = 3;
+			    	} else if ($(this).hasClass("indicator_4")) {
+			    		correcting_category = 4;
 			    	}
 			    	correcting_rubric = $(this).parents(".rubric_cat").attr("id");
 			    	var category_text = "";
@@ -702,7 +725,9 @@ $(function(){
 			    		category_text = "problem statement";
 			    	} else if (correcting_category == 3) {
 			    		category_text = "suggested solution";
-			    	}
+			    	} else if (correcting_category == 4) {
+			    		category_text = "specific statement";
+			    	} 
 			    	$("#correction_type").html(category_text);
 			    });
 
@@ -719,7 +744,7 @@ $(function(){
 					$(this).typeahead('val', '');
 
 					$(this).keydown(function(e) {
-						deleting = (e.which == 46 || e.which == 8) // true for delete or backspace
+						deleting = (e.which == 46 || e.which == 8); // true for delete or backspace
 
 						var this_rubric = $(this).parents(".rubric_cat").attr("id");
 						current_rubric = this_rubric;
@@ -734,7 +759,7 @@ $(function(){
 				});
     		}
 
-    		socket.emit('get comments', rubric_cat);
+    		socket.emit('get comments', {rubric: rubric_cat, cookie_val: cookie_val});
     	});
     });
 
@@ -776,10 +801,14 @@ $(function(){
 		    			// probably specific enough
 		    			checkIcon($("#" + rubric).find(".indicator_4"));
 		    		} else {
-		    			uncheckIcon($("#" + rubric).find(".indicator_4"));
+		    			if (!$("#" + rubric).find(".indicator_4").hasClass("corrected") || deleting == true) {
+		    				uncheckIcon($("#" + rubric).find(".indicator_4"));
+		    			}
 		    		}
 		    	} else {
-		    		uncheckIcon($("#" + rubric).find(".indicator_4"));
+		    		if (!$("#" + rubric).find(".indicator_4").hasClass("corrected") || deleting == true) {
+		    			uncheckIcon($("#" + rubric).find(".indicator_4"));
+		    		}
 		    	}
 	    	}
     	}

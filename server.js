@@ -243,54 +243,52 @@ io.on('connection', function(socket) {
 
   	sockets[address] = socket.id;
 
-  	appendLog({ "time": new Date().toString(), 
-					"user": address,
+
+  	socket.on('set cookie', function(cookie_val) {
+  		appendLog({ "time": new Date().toString(), 
+					"user": cookie_val,
 					"event": "new connection"});
-	updateJSON(log_file, logs);
+		updateJSON(log_file, logs);
 
-	if (user_data[address]) {
-		// send back to user 
-		console.log("sending saved comments");
-		socket.emit('saved comments', {comments: user_data[address]});
-	} else {
 		console.log("starting new save");
-		user_data[address] = [];
-		updateUsers(address, user_data[address]);
+		user_data[cookie_val] = [];
+		updateUsers(cookie_val, user_data[cookie_val]);
 		updateJSON(user_file, user_data);
-		//console.log("user commentS:");
-		//console.log(user_data);
-	}
+  	});
 
+	socket.on('get saved', function(cookie_val) {
+		socket.emit('saved comments', {comments: user_data[cookie_val]});
+	});
 
-	socket.on('loaded design', function(design_num) {
+	socket.on('loaded design', function(data) {
 		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "loaded design", 
-  						"design num": design_num});
+  						"design num": data.design_num});
   		updateJSON(log_file, logs);
 	});
 
-	socket.on('done design', function(design_num) {
+	socket.on('done design', function(data) {
 		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "done design", 
-  						"design num": design_num});
+  						"design num": data.design_num});
   		updateJSON(log_file, logs);
 	});
 
   	// respond to request for comments for given rubric category
-  	socket.on('get comments', function(rubric) {
+  	socket.on('get comments', function(data) {
   		//console.log(rubric);
-  		var result = loadComments(rubric);
-  		socket.emit('comments', {"rubric": rubric, "comments": result});
+  		var result = loadComments(data.rubric);
+  		socket.emit('comments', {"rubric": data.rubric, "comments": result});
   	});
 
   	// user opened comment interface for given rubric
-  	socket.on('clicked add comment', function(rubric) {
+  	socket.on('clicked add comment', function(data) {
   		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "clicked add comment", 
-  						"rubric": rubric});
+  						"rubric": data.rubric});
   		updateJSON(log_file, logs);
   	});
 
@@ -298,14 +296,14 @@ io.on('connection', function(socket) {
   	socket.on('comment submitted', function(data) {
 
   		// save to user data
-  		user_data[address].push({"comment_id": data.new_comment_id,
+  		user_data[data.cookie_val].push({"comment_id": data.new_comment_id,
   									"comment_text": data.comment_text,
   									"rubric": data.rubric,
   									"category_string": data.category_string,
   									"location_style": data.location_style,
   									"design_num": data.design_num
   		});
-  		updateUsers(address, user_data[address]);
+  		updateUsers(data.cookie_val, user_data[data.cookie_val]);
   		updateJSON(user_file, user_data);
   		//console.log("user comments: "); 
   		//console.log(user_data);
@@ -331,7 +329,7 @@ io.on('connection', function(socket) {
 	  			updateJSON(comment_update_file, comments);
 
 	  			appendLog({ "time": new Date().toString(), 
-		  						"user": address,
+		  						"user": data.cookie_val,
 		  						"event": "reused comment", 
 		  						"comment ID": data.comment_id,
 		  						"old category": old_category,
@@ -356,7 +354,7 @@ io.on('connection', function(socket) {
 				  		if (new_category > old_category) {  // comment was supposedly improved
 
 			  				appendLog({ "time": new Date().toString(), 
-					  						"user": address,
+					  						"user": data.cookie_val,
 					  						"event": "improved comment", 
 					  						"comment ID": data.comment_id,
 					  						"old category": old_category,
@@ -375,7 +373,7 @@ io.on('connection', function(socket) {
 			  			} else {
 			  				// comment was not improved, so leave it
 			  				appendLog({ "time": new Date().toString(), 
-					  						"user": address,
+					  						"user": data.cookie_val,
 					  						"event": "not improved comment", 
 					  						"comment ID": data.comment_id,
 					  						"old category": old_category,
@@ -410,7 +408,7 @@ io.on('connection', function(socket) {
 			  		var new_comment = curated["comment"];
 			  		var blank_values = curated["blanks"];
 
-	  				saveNewComment(data, data.category_string, address, new_comment, blank_values);
+	  				saveNewComment(data, data.category_string, data.cookie_val, new_comment, blank_values);
 	  			} else {
 			  		console.log(response.statusCode, body);
 			  	}	  	
@@ -432,7 +430,7 @@ io.on('connection', function(socket) {
   				updateJSON(comment_update_file, comments);
 
   				appendLog({ "time": new Date().toString(), 
-		  						"user": address,
+		  						"user": data.cookie_val,
 		  						"event": "comment flag", 
 		  						"comment ID": data.comment_id,
 		  						"design_num": data.design_num});
@@ -444,10 +442,10 @@ io.on('connection', function(socket) {
   	// user deleted a comment
   	socket.on('delete comment', function(data) {
 
-  		user_data[address] = user_data[address].filter(function(comment) {
+  		user_data[data.cookie_val] = user_data[data.cookie_val].filter(function(comment) {
   			return comment.comment_id != data.comment_id || comment.design_num != data.design_num;
   		});
-  		updateUsers(address, user_data[address]);
+  		updateUsers(data.cookie_val, user_data[data.cookie_val]);
   		updateJSON(user_file, user_data);
   		//console.log("user coments: ")
   		//console.log(user_data);
@@ -455,13 +453,13 @@ io.on('connection', function(socket) {
   		// find the actual id of the comment they deleted
   		var actual_id = "unknown";
   		comments.forEach(function(comment) {
-  			if (comment["user"] == address && comment["users ID"] == data.comment_id) {
+  			if (comment["user"] == data.cookie_val && comment["users ID"] == data.comment_id) {
   				actual_id = comment["ID"];
   			}
   		})
 
   		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "comment delete", 
   						"comment ID": actual_id, 
   						"design_num": data.design_num});
@@ -469,18 +467,18 @@ io.on('connection', function(socket) {
   	});
 
   	// user canceled comment (closed comment window)
-  	socket.on('cancel comment', function(rubric) {
+  	socket.on('cancel comment', function(data) {
   		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "clicked cancel comment", 
-  						"rubric": rubric});
+  						"rubric": data.rubric});
   		updateJSON(log_file, logs);
   	});
 
   	// user inserted a suggested comment
   	socket.on('suggestion inserted', function(data) {
 		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "inserted suggestion", 
   						"rubric": data.rubric,
   						"comment ID": data.comment_id,
@@ -494,7 +492,7 @@ io.on('connection', function(socket) {
   	// user hit autocomplete on a comment
   	socket.on('autocompleted suggestion', function(data) {
   		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "autocompleted suggestion", 
   						"rubric": data.rubric,
   						"comment ID": data.comment_id,
@@ -505,7 +503,7 @@ io.on('connection', function(socket) {
   	// user manually overrode a category
   	socket.on('user category added', function(data) {
   		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "added category", 
   						"comment text": data.comment_text,
   						"category added": data.category,
@@ -516,7 +514,7 @@ io.on('connection', function(socket) {
   	// user manually overrode a category
   	socket.on('user category removed', function(data) {
   		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "added category", 
   						"comment text": data.comment_text,
   						"category removed": data.category,
@@ -524,11 +522,11 @@ io.on('connection', function(socket) {
   		updateJSON(log_file, logs);
   	});
 
-  	socket.on('done feedback', function(feedback) {
+  	socket.on('done feedback', function(data) {
   		appendLog({ "time": new Date().toString(), 
-  						"user": address,
+  						"user": data.cookie_val,
   						"event": "user feedback", 
-  						"feedback": feedback}); 
+  						"feedback": data.feedback}); 
   		updateJSON(log_file, logs);
   	});
 
