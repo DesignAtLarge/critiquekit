@@ -244,10 +244,10 @@ function displayComments(rubric, comments) {
 		// scroll back to top of div so you can see inserted comment
 		suggestion_box.animate({ scrollTop: 0 }, "fast");
 
-		updateComment();
-
 		socket.emit("suggestion inserted", {rubric: current_rubric, comment_id: comment_id, 
 			comment_text: comment, selection_length: selection_end - selection_start, design_num: design_num});
+
+		updateComment();
 
 	});
 }
@@ -452,7 +452,7 @@ function switchHelpImage(help_page_num, filename, orig_filename, action) {
 
 function preloadImages(arrayOfImages) {
     $(arrayOfImages).each(function(){
-        $('<img/>')[0].src = "help_pics" + this;
+        $('<img/>')[0].src = "help_pics/" + this;
         // Alternatively you could use:
         // (new Image()).src = this;
     });
@@ -466,7 +466,7 @@ $(function(){
     $("#help_modal").load("help.html", function() {
     	preloadImages(["feedback_autocomplete.png", "feedback_blanks.png", "feedback_box.png",
     					"feedback_checks.png", "feedback_insert.png", "feedback_location.png",
-    					"menu.png", "sidebar.png"])
+    					"menu.png", "sidebar.png"]);
     	design_num = urlParam("design");
 		if (design_num != 0) {
 	    	resetHelp();

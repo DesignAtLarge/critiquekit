@@ -46,26 +46,14 @@ var logging_options = {
 
 const io = socketIO(server);
 
-function updateJSON(file, obj) {
-	jsonfile.writeFile(file, obj, {spaces: 4}, function(err) {
-	  	if (err) console.error(err);
-	});
-	//console.log(file + ":");
-	if (file == user_file) {
-		//console.log(obj);
-	} else {
-		obj.forEach(function(element) {
-			//console.log(element);
-		});
-	}
-	console.log("LOGGING");
-	// send to logging server
-	var action = file.split(".")[0]
-	console.log(action);
-	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/' + action;
+function appendLog(log) {
+
+	logs.push(log);
+	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/log';
 	console.log(logging_options.url);
 
-	logging_options.body = "log=" + JSON.stringify(obj);
+	logging_options.body = "log=" + JSON.stringify(log);
+	console.log(logging_options.body);
 
 	request.post(logging_options, function (error, response, body) {
 	  	if (error) {
@@ -78,7 +66,66 @@ function updateJSON(file, obj) {
 	  		console.log(response.statusCode, body);
 	  	}	  	
 	});
+}
 
+function updateCommentLog(comment, append) {
+	if (append) {
+		comments.push(comment);
+	}
+	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/comments';
+	console.log(logging_options.url);
+
+	logging_options.body = "log=" + JSON.stringify(comment);
+	console.log(logging_options.body);
+
+	request.post(logging_options, function (error, response, body) {
+	  	if (error) {
+	  		console.log('error:', error); // Print the error if one occurred
+	  	}
+	  	if (response && response.statusCode == 200) {
+	  		console.log("all good");
+	  		// good
+			} else {
+	  		console.log(response.statusCode, body);
+	  	}	  	
+	});
+}
+
+function updateUsers(address, data) {
+	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/user_data';
+	console.log(logging_options.url);
+
+	var obj = {}
+	obj[address] = data;
+
+	logging_options.body = "log=" + JSON.stringify(obj);
+	console.log(logging_options.body);
+
+	request.post(logging_options, function (error, response, body) {
+	  	if (error) {
+	  		console.log('error:', error); // Print the error if one occurred
+	  	}
+	  	if (response && response.statusCode == 200) {
+	  		console.log("all good");
+	  		// good
+			} else {
+	  		console.log(response.statusCode, body);
+	  	}	  	
+	});
+}
+
+function updateJSON(file, obj) {
+	jsonfile.writeFile(file, obj, {spaces: 4}, function(err) {
+	  	if (err) console.error(err);
+	});
+	//console.log(file + ":");
+	if (file == user_file) {
+		//console.log(obj);
+	} else {
+		obj.forEach(function(element) {
+			//console.log(element);
+		});
+	}
 
 }
 
@@ -92,7 +139,7 @@ function saveNewComment(data, category_string, address, new_comment, blank_value
 	} else {
 		// add comment to corpus
 		new_id = parseInt(comments[comments.length-1]["ID"]) + 1;
-		comments.push({"comment": new_comment,
+		updateCommentLog({"comment": new_comment,
 	        "category": category,
 	        "blank values": blank_values,
 	        "length": new_comment.split(" ").length,
@@ -101,11 +148,11 @@ function saveNewComment(data, category_string, address, new_comment, blank_value
 	        "ID": new_id,
 	        "user": address,
 	        "users ID": data.new_comment_id
-	    });
+	    }, true);
 	    updateJSON(comment_update_file, comments);
 	}
 
-    logs.push({ "time": new Date().toString(), 
+    appendLog({ "time": new Date().toString(), 
 					"user": address,
 					"event": "new comment submitted", 
 					"comment ID": new_id,
@@ -177,11 +224,12 @@ function loadComments(rubric_category) {
 io.on('connection', function(socket) {
 	//var address = socket.handshake.address;
 	var address = socket.handshake.headers['x-forwarded-for'];
+	if (address == undefined) address = "local";
   	console.log('New connection from ' + address);
 
   	sockets[address] = socket.id;
 
-  	logs.push({ "time": new Date().toString(), 
+  	appendLog({ "time": new Date().toString(), 
 					"user": address,
 					"event": "new connection"});
 	updateJSON(log_file, logs);
@@ -193,6 +241,7 @@ io.on('connection', function(socket) {
 	} else {
 		console.log("starting new save");
 		user_data[address] = [];
+		updateUsers(address, user_data[address]);
 		updateJSON(user_file, user_data);
 		//console.log("user commentS:");
 		//console.log(user_data);
@@ -200,7 +249,7 @@ io.on('connection', function(socket) {
 
 
 	socket.on('loaded design', function(design_num) {
-		logs.push({ "time": new Date().toString(), 
+		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "loaded design", 
   						"design num": design_num});
@@ -208,7 +257,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('done design', function(design_num) {
-		logs.push({ "time": new Date().toString(), 
+		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "done design", 
   						"design num": design_num});
@@ -224,7 +273,7 @@ io.on('connection', function(socket) {
 
   	// user opened comment interface for given rubric
   	socket.on('clicked add comment', function(rubric) {
-  		logs.push({ "time": new Date().toString(), 
+  		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "clicked add comment", 
   						"rubric": rubric});
@@ -242,6 +291,7 @@ io.on('connection', function(socket) {
   									"location_style": data.location_style,
   									"design_num": data.design_num
   		});
+  		updateUsers(address, user_data[address]);
   		updateJSON(user_file, user_data);
   		//console.log("user comments: "); 
   		//console.log(user_data);
@@ -254,6 +304,7 @@ io.on('connection', function(socket) {
 	  		});
 
 	  		this_comment["frequency"] = parseInt(this_comment["frequency"] + 1);
+	  		updateCommentLog(this_comment, false);
 	  		updateJSON(comment_update_file, comments);
 	  		var old_category = this_comment["category"];
 	  		var new_category = data.category_string.lastIndexOf("1") + 1;
@@ -262,9 +313,10 @@ io.on('connection', function(socket) {
 	  			// they are exactly the same, so don't add it again
 	  			// but do update category if it's different
 	  			this_comment["category"] = new_category;
+	  			updateCommentLog(this_comment, false);
 	  			updateJSON(comment_update_file, comments);
 
-	  			logs.push({ "time": new Date().toString(), 
+	  			appendLog({ "time": new Date().toString(), 
 		  						"user": address,
 		  						"event": "reused comment", 
 		  						"comment ID": data.comment_id,
@@ -288,7 +340,7 @@ io.on('connection', function(socket) {
 				  		var blank_values = curated["blanks"];
 				  		if (new_category > old_category) {  // comment was supposedly improved
 
-			  				logs.push({ "time": new Date().toString(), 
+			  				appendLog({ "time": new Date().toString(), 
 					  						"user": address,
 					  						"event": "improved comment", 
 					  						"comment ID": data.comment_id,
@@ -303,9 +355,11 @@ io.on('connection', function(socket) {
 
 					  		this_comment["comment"] = new_comment;
 			  				this_comment["category"] = new_category;
+			  				updateCommentLog(this_comment, false);
+			  				updateJSON(comment_update_file, comments);
 			  			} else {
 			  				// comment was not improved, so leave it
-			  				logs.push({ "time": new Date().toString(), 
+			  				appendLog({ "time": new Date().toString(), 
 					  						"user": address,
 					  						"event": "not improved comment", 
 					  						"comment ID": data.comment_id,
@@ -358,9 +412,10 @@ io.on('connection', function(socket) {
   				//console.log("found it, flagging comment ");
   				//console.log(comment["comment"]);
   				comment["flagged"] = true;
+  				updateCommentLog(comment, false);
   				updateJSON(comment_update_file, comments);
 
-  				logs.push({ "time": new Date().toString(), 
+  				appendLog({ "time": new Date().toString(), 
 		  						"user": address,
 		  						"event": "comment flag", 
 		  						"comment ID": data.comment_id,
@@ -376,6 +431,7 @@ io.on('connection', function(socket) {
   		user_data[address] = user_data[address].filter(function(comment) {
   			return comment.comment_id != data.comment_id || comment.design_num != data.design_num;
   		});
+  		updateUsers(address, user_data[address]);
   		updateJSON(user_file, user_data);
   		//console.log("user coments: ")
   		//console.log(user_data);
@@ -388,7 +444,7 @@ io.on('connection', function(socket) {
   			}
   		})
 
-  		logs.push({ "time": new Date().toString(), 
+  		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "comment delete", 
   						"comment ID": actual_id, 
@@ -398,7 +454,7 @@ io.on('connection', function(socket) {
 
   	// user canceled comment (closed comment window)
   	socket.on('cancel comment', function(rubric) {
-  		logs.push({ "time": new Date().toString(), 
+  		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "clicked cancel comment", 
   						"rubric": rubric});
@@ -406,8 +462,8 @@ io.on('connection', function(socket) {
   	});
 
   	// user inserted a suggested comment
-  	socket.on('comment inserted', function(data) {
-		logs.push({ "time": new Date().toString(), 
+  	socket.on('suggestion inserted', function(data) {
+		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "inserted suggestion", 
   						"rubric": data.rubric,
@@ -421,7 +477,7 @@ io.on('connection', function(socket) {
 
   	// user hit autocomplete on a comment
   	socket.on('autocompleted suggestion', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "autocompleted suggestion", 
   						"rubric": data.rubric,
@@ -432,7 +488,7 @@ io.on('connection', function(socket) {
 
   	// user manually overrode a category
   	socket.on('user category added', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "added category", 
   						"comment text": data.comment_text,
@@ -443,7 +499,7 @@ io.on('connection', function(socket) {
 
   	// user manually overrode a category
   	socket.on('user category removed', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		appendLog({ "time": new Date().toString(), 
   						"user": address,
   						"event": "added category", 
   						"comment text": data.comment_text,
@@ -468,7 +524,7 @@ io.on('connection', function(socket) {
 			  			console.log("error with category string length");
 			  		} else {
 			  			socket.emit('category', {rubric: data.rubric, category_string: body});
-			  			logs.push({ "time": new Date().toString(), 
+			  			appendLog({ "time": new Date().toString(), 
 				  						"user": address,
 				  						"event": "typing comment", 
 				  						"rubric": data.rubric,
@@ -481,7 +537,7 @@ io.on('connection', function(socket) {
 			});
 		} else {
 			socket.emit('category', {rubric: data.rubric, category_string: "000"});
-			logs.push({ "time": new Date().toString(), 
+			appendLog({ "time": new Date().toString(), 
 	  						"user": address,
 	  						"event": "typing comment", 
 	  						"rubric": data.rubric,
