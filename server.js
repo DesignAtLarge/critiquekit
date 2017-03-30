@@ -171,8 +171,7 @@ io.on('connection', function(socket) {
 
   	console.log('New connection from ' + address);
   	console.log("socket.id: " + socket.id);
-  	console.log("SOCKET:");
-  	console.log(socket);
+  	console.log("socket.handshake.headers['x-forwarded-for']: " + socket.handshake.headers['x-forwarded-for']);
 
   	sockets[address] = socket.id;
 
