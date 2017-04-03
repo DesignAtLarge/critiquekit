@@ -24,6 +24,8 @@ var current_help_page = 0;
 var num_help_pages = 8;
 var cookie_val;
 
+window.location.href = "http://critiquekit-study.herokuapp.com";
+
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
 

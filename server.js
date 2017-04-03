@@ -13,6 +13,7 @@ const server = express()
 // List of currently connected sockets and their users. 
 // Format = { <IP address>: <socketid> }
 var sockets = {}; 
+var logging = true;
 
 
 var comment_obj = require('./original_comments.json');
@@ -50,84 +51,91 @@ const io = socketIO(server);
 
 function appendLog(log) {
 
-	logs.push(log);
-	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/log';
-	console.log(logging_options.url);
+	if (logging) {
+		logs.push(log);
+		logging_options.url = 'http://arielweingarten.com:8000/log/experimental/log';
+		console.log(logging_options.url);
 
-	if (log["comment ID"] == null) {
-		log["comment ID"] = "";
+		if (log["comment ID"] == null) {
+			log["comment ID"] = "";
+		}
+
+		logging_options.body = "log=" + JSON.stringify(log);
+		logging_options.headers["Content-Length"] = logging_options.body.length;
+		console.log(logging_options.body);
+
+		request.post(logging_options, function (error, response, body) {
+		  	if (error) {
+		  		console.log('error:', error); // Print the error if one occurred
+		  	}
+		  	if (response && response.statusCode == 200) {
+		  		console.log("all good");
+		  		// good
+				} else {
+		  		console.log(response.statusCode, body);
+		  	}	  	
+		});
 	}
-
-	logging_options.body = "log=" + JSON.stringify(log);
-	logging_options.headers["Content-Length"] = logging_options.body.length;
-	console.log(logging_options.body);
-
-	request.post(logging_options, function (error, response, body) {
-	  	if (error) {
-	  		console.log('error:', error); // Print the error if one occurred
-	  	}
-	  	if (response && response.statusCode == 200) {
-	  		console.log("all good");
-	  		// good
-			} else {
-	  		console.log(response.statusCode, body);
-	  	}	  	
-	});
 }
 
 function updateCommentLog(comment, append) {
 	if (append) {
 		comments.push(comment);
 	}
-	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/comments';
-	console.log(logging_options.url);
+
+	if (logging) {
+		logging_options.url = 'http://arielweingarten.com:8000/log/experimental/comments';
+		console.log(logging_options.url);
 
 
-	if (comment.flagged == true) {
-		comment.flagged = 1;
-	} else {
-		comment.flagged = 0;
+		if (comment.flagged == true) {
+			comment.flagged = 1;
+		} else {
+			comment.flagged = 0;
+		}
+
+		logging_options.body = "log=" + JSON.stringify(comment);
+		console.log(logging_options.body);
+		logging_options.headers["Content-Length"] = logging_options.body.length;
+
+		request.post(logging_options, function (error, response, body) {
+		  	if (error) {
+		  		console.log('error:', error); // Print the error if one occurred
+		  	}
+		  	if (response && response.statusCode == 200) {
+		  		console.log("all good");
+		  		// good
+				} else {
+		  		console.log(response.statusCode, body);
+		  	}	  	
+		});
 	}
-
-	logging_options.body = "log=" + JSON.stringify(comment);
-	console.log(logging_options.body);
-	logging_options.headers["Content-Length"] = logging_options.body.length;
-
-	request.post(logging_options, function (error, response, body) {
-	  	if (error) {
-	  		console.log('error:', error); // Print the error if one occurred
-	  	}
-	  	if (response && response.statusCode == 200) {
-	  		console.log("all good");
-	  		// good
-			} else {
-	  		console.log(response.statusCode, body);
-	  	}	  	
-	});
 }
 
 function updateUsers(address, data) {
-	logging_options.url = 'http://arielweingarten.com:8000/log/experimental/user_data';
-	console.log(logging_options.url);
+	if (logging) {
+		logging_options.url = 'http://arielweingarten.com:8000/log/experimental/user_data';
+		console.log(logging_options.url);
 
-	var obj = {}
-	obj[address] = data;
+		var obj = {}
+		obj[address] = data;
 
-	logging_options.body = "log=" + JSON.stringify(obj);
-	console.log(logging_options.body);
-	logging_options.headers["Content-Length"] = logging_options.body.length;
+		logging_options.body = "log=" + JSON.stringify(obj);
+		console.log(logging_options.body);
+		logging_options.headers["Content-Length"] = logging_options.body.length;
 
-	request.post(logging_options, function (error, response, body) {
-	  	if (error) {
-	  		console.log('error:', error); // Print the error if one occurred
-	  	}
-	  	if (response && response.statusCode == 200) {
-	  		console.log("all good");
-	  		// good
-			} else {
-	  		console.log(response.statusCode, body);
-	  	}	  	
-	});
+		request.post(logging_options, function (error, response, body) {
+		  	if (error) {
+		  		console.log('error:', error); // Print the error if one occurred
+		  	}
+		  	if (response && response.statusCode == 200) {
+		  		console.log("all good");
+		  		// good
+				} else {
+		  		console.log(response.statusCode, body);
+		  	}	  	
+		});
+	}
 }
 
 function updateJSON(file, obj) {
