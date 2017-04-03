@@ -24,7 +24,7 @@ var current_help_page = 0;
 var num_help_pages = 8;
 var cookie_val;
 
-if (Math.random() < 0.75) {
+if (Math.random() < 0.5) {
 	window.location.href = "http://critiquekit-study.herokuapp.com";
 }
 
