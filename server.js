@@ -23,7 +23,10 @@ var log_file = "logs.json";
 var user_data = {} // { address: array holding comment objects }
 var user_file = "user_data.json";
 
-var design_nums = {};
+var design_data = {};
+
+var design_ids = {};
+
 
 const io = socketIO(server);
 
@@ -169,31 +172,20 @@ io.on('connection', function(socket) {
 		if (user_data[cookie_val] == undefined) {
 			console.log("starting new save");
 			user_data[cookie_val] = [];
-			design_nums[cookie_val] = 0;
 			updateJSON(user_file, user_data);
 		}
   	});
 
-  	socket.on('get design num', function(cookie_val) {
-  		var design_num;
-  		if (design_nums[cookie_val] == undefined) {
-  			design_num = 0;
-  			design_nums[cookie_val] = 0;
-  		} else {
-  			design_num = design_nums[cookie_val];
-  		}
-  		socket.emit('design num', design_num);
-  	});
 
-	socket.on('get saved', function(cookie_val) {
-		socket.emit('saved comments', {comments: user_data[cookie_val]});
+	socket.on('get saved', function(design_id) {
+		socket.emit('saved comments', {comments: design_data[design_id]});
 	});
 
 	socket.on('loaded design', function(data) {
 		logs.push({ "time": new Date().toString(), 
   						"user": data.cookie_val,
   						"event": "loaded design", 
-  						"design num": data.design_num});
+  						"design id": data.design_id});
   		updateJSON(log_file, logs);
 	});
 
@@ -201,10 +193,8 @@ io.on('connection', function(socket) {
 		logs.push({ "time": new Date().toString(), 
   						"user": data.cookie_val,
   						"event": "done design", 
-  						"design num": data.design_num});
+  						"design id": data.design_id});
   		updateJSON(log_file, logs);
-  		design_nums[data.cookie_val]++;
-  		socket.emit('design num', design_nums[data.cookie_val]);
 	});
 
   	// respond to request for comments for given rubric category
@@ -226,17 +216,23 @@ io.on('connection', function(socket) {
   	// a suggestion was posted, save it and update frequency if a suggestion was clicked
   	socket.on('comment submitted', function(data) {
 
-  		// save to user data
-  		user_data[data.cookie_val].push({"comment_id": data.new_comment_id,
+  		var new_com = {"comment_id": data.new_comment_id,
   									"comment_text": data.comment_text,
   									"rubric": data.rubric,
   									"category_string": data.category_string,
   									"location_style": data.location_style,
-  									"design_num": data.design_num
-  		});
+  									"design_id": data.design_id
+  		};
+
+  		// save to user data
+  		user_data[data.cookie_val].push(new_com);
   		updateJSON(user_file, user_data);
-  		//console.log("user comments: "); 
-  		//console.log(user_data);
+  		
+  		if (design_data[data.design_id] != undefined) {
+  			design_data[data.design_id].push(new_com);
+  		} else {
+  			design_data[data.design_id] = [new_com];
+  		}
 
   		// find the clicked comment in comments
   		if (data.comment_id != -1) {
@@ -263,7 +259,7 @@ io.on('connection', function(socket) {
 		  						"old category": old_category,
 		  						"new category": new_category,
 		  						"location style": data.location_style,
-		  						"design_num": data.design_num});
+		  						"design_id": data.design_id});
 		  		updateJSON(log_file, logs);
 	  			return;
 	  		} else { // they are different
@@ -291,7 +287,7 @@ io.on('connection', function(socket) {
 					  						"new_comment": new_comment,
 					  						"blank_values": blank_values,
 					  						"location style": data.location_style,
-					  						"design_num": data.design_num});
+					  						"design_id": data.design_id});
 					  		updateJSON(log_file, logs);
 
 					  		this_comment["comment"] = new_comment;
@@ -309,7 +305,7 @@ io.on('connection', function(socket) {
 					  						"new_comment": new_comment,
 					  						"blank_values": blank_values,
 					  						"location style": data.location_style,
-					  						"design_num": data.design_num});
+					  						"design_id": data.design_id});
 					  		updateJSON(log_file, logs);
 			  			}
 				  	} else {
@@ -359,7 +355,7 @@ io.on('connection', function(socket) {
 		  						"user": data.cookie_val,
 		  						"event": "comment flag", 
 		  						"comment ID": data.comment_id,
-		  						"design_num": data.design_num});
+		  						"design_id": data.design_id});
 		  		updateJSON(log_file, logs);
   			}
   		});
@@ -369,11 +365,13 @@ io.on('connection', function(socket) {
   	socket.on('delete comment', function(data) {
 
   		user_data[data.cookie_val] = user_data[data.cookie_val].filter(function(comment) {
-  			return comment.comment_id != data.comment_id || comment.design_num != data.design_num;
+  			return comment.comment_id != data.comment_id || comment.design_id != data.design_id;
   		});
   		updateJSON(user_file, user_data);
-  		//console.log("user coments: ")
-  		//console.log(user_data);
+  		
+  		design_data[data.design_id] = design_data[data.design_id].filter(function(comment) {
+  			return comment.comment_id != data.comment_id || comment.design_id != data.design_id;
+  		});
 
   		// find the actual id of the comment they deleted
   		var actual_id = "unknown";
@@ -387,7 +385,7 @@ io.on('connection', function(socket) {
   						"user": data.cookie_val,
   						"event": "comment delete", 
   						"comment ID": actual_id, 
-  						"design_num": data.design_num});
+  						"design_id": data.design_id});
   		updateJSON(log_file, logs);
   	});
 
@@ -410,7 +408,7 @@ io.on('connection', function(socket) {
   						"comment text": data.comment_text,
   						// length of selection that was replaced by this comment:
   						"selection length": data.selection_length,
-  						"design_num": data.design_num}); 
+  						"design_id": data.design_id}); 
   		updateJSON(log_file, logs);
   	});
 
@@ -421,7 +419,7 @@ io.on('connection', function(socket) {
   						"event": "autocompleted suggestion", 
   						"rubric": data.rubric,
   						"comment ID": data.comment_id,
-  						"design_num": data.design_num}); 
+  						"design_id": data.design_id}); 
   		updateJSON(log_file, logs);
   	});
 
@@ -432,7 +430,7 @@ io.on('connection', function(socket) {
   						"event": "added category", 
   						"comment text": data.comment_text,
   						"category added": data.category,
-  						"design_num": data.design_num}); 
+  						"design_id": data.design_id}); 
   		updateJSON(log_file, logs);
   	});
 
@@ -443,7 +441,7 @@ io.on('connection', function(socket) {
   						"event": "added category", 
   						"comment text": data.comment_text,
   						"category removed": data.category,
-  						"design_num": data.design_num}); 
+  						"design_id": data.design_id}); 
   		updateJSON(log_file, logs);
   	});
 
@@ -478,7 +476,7 @@ io.on('connection', function(socket) {
 				  						"rubric": data.rubric,
 				  						"comment": data.comment,
 				  						"prediction": body,
-				  						"design_num": data.design_num});
+				  						"design_id": data.design_id});
 				  		updateJSON(log_file, logs);*/
 			  		}
 			  	}		  	
@@ -491,7 +489,7 @@ io.on('connection', function(socket) {
 	  						"rubric": data.rubric,
 	  						"comment": data.comment,
 	  						"prediction": "000",
-	  						"design_num": data.design_num});
+	  						"design_id": data.design_id});
 	  		updateJSON(log_file, logs);*/
 		}
 

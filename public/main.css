@@ -17,6 +17,10 @@
     position: relative;
 }
 
+.peer_submission {
+    margin-bottom: 5px;
+}
+
 #done2 {
     display: none;
 }
@@ -27,6 +31,10 @@
 
 iframe {
     border: none;
+}
+
+#welcome_choose, #choose_footer {
+    display: none;
 }
 
 .comment_box_footer {
@@ -276,9 +284,13 @@ button:hover {
     color: gray;
 }
 
-.add_location {
+.add_location, .remove_location {
     float: left;
     margin-bottom: 5px;
+}
+
+.remove_location {
+    display: none;
 }
 
 .right_buttons {

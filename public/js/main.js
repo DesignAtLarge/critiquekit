@@ -1,6 +1,7 @@
-// LINKs to the websites to be evaluated
-var design_links = ["./design/design1.html", "./design/design2.html", "./design/design3.html"]; 
-var design_num; // index of design currently being evaluated
+var design_id; 
+var consent = false;
+var mode;
+var design_ids = ["A12345", "A54321", "A99999"];
 
 var full_sorted_comments = {"VisualDesign": [], "ContentFunctionality": [], "AdditionalFeedback": []};
 var rubric_categories = Object.keys(full_sorted_comments);
@@ -23,6 +24,10 @@ var saved_comments;
 var current_help_page = 0;
 var num_help_pages = 8;
 var cookie_val;
+
+var name = "Ailie";
+var pid = "A12345";
+//var pid = "A54321";
 
 /*if (Math.random() < 0.5) {
 	window.location.href = "http://critiquekit-study.herokuapp.com";
@@ -49,7 +54,7 @@ function submitComment(comment_text, dom_container) {
 		socket.emit('comment submitted', 
 			{comment_id: latest_comment_inserted, new_comment_id: newest_comment_id, comment_text: comment_text, 
 				rubric: rubric, category_string: category_string, location_style: location_style, 
-				design_num: design_num, cookie_val: cookie_val});
+				design_id: design_id, cookie_val: cookie_val});
 		latest_comment_inserted = -1; // reset
 
 		var comments_section = dom_container.parents(".rubric_cat").find(".posted_comments");
@@ -87,6 +92,10 @@ function appendNewComment(comments_section, comment_id, comment_text) {
 		}, function() {
 		commentUnHover($(this).attr("id").split("new_comment_")[1]);
 	});
+
+	if (mode == "view") {
+		$(".trash_comment").hide();
+	}
 }
 
 function commentHover(comment_id) {
@@ -112,7 +121,7 @@ function updateComment(rubric) {
 		iframe.find("#location_" + newest_comment_id + " .location_text").html(comment_text);
 
 		// send to server.js
-		socket.emit("comment update", {comment: comment_text, rubric: current_rubric, design_num: design_num,
+		socket.emit("comment update", {comment: comment_text, rubric: current_rubric, design_id: design_id,
 			cookie_val: cookie_val});
 	}, 100);
 }
@@ -252,7 +261,7 @@ function displayComments(rubric, comments) {
 		suggestion_box.animate({ scrollTop: 0 }, "fast");
 
 		socket.emit("suggestion inserted", {rubric: current_rubric, comment_id: comment_id, 
-			comment_text: comment, selection_length: selection_end - selection_start, design_num: design_num, 
+			comment_text: comment, selection_length: selection_end - selection_start, design_id: design_id, 
 			cookie_val: cookie_val});
 
 		updateComment();
@@ -311,6 +320,9 @@ function selectLocation(element) {
 	var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
 	appendLocationComment(current_rubric, newest_comment_id, comment_text, style);
 
+	$("#" + current_rubric).find(".add_location").hide();
+	$("#" + current_rubric).find(".remove_location").show();
+
 	cancelLocation();
 }
 
@@ -340,6 +352,7 @@ function appendLocationComment(rubric, comment_id, comment_text, style) {
 }
 
 function cancelLocation() {
+
 	choosing_location = false;
 	stopHighlightDOMElements();
 	$("#adding_location_modal").hide();
@@ -408,8 +421,8 @@ function uncheckIcon(icon) {
 	}
 }
 
-function urlParam(name){
-    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+function urlParam(param_name){
+    var results = new RegExp('[\?&]' + param_name + '=([^&#]*)').exec(window.location.href);
     if (results==null){
     	return 0;
     }
@@ -420,8 +433,8 @@ function urlParam(name){
 
 function showSavedComments() {
 	saved_comments.forEach(function(comment) {
-		if (comment.design_num == design_num) {
-			if (comment.comment_id > newest_comment_id) {
+		if (comment.design_id == design_id) {
+			if (comment.comment_id >= newest_comment_id) {
 				newest_comment_id = comment.comment_id + 1;
 			}
 			var comments_section = $("#" + comment.rubric).find(".posted_comments");
@@ -466,6 +479,12 @@ function preloadImages(arrayOfImages) {
     });
 }
 
+function loadDesign(d_id) {
+	design_id = d_id;
+	$("#design_frame").attr("src", "design/" + d_id + ".html");
+	mode = "review";
+}
+
 $(function(){
 	if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
 		$("body").html("Please use a desktop or laptop computer. ");
@@ -474,26 +493,61 @@ $(function(){
 
 	socket = io();
 
+	design_id = "A12345";
+
 	// check for cookie
 	if (Cookies.get('critiquekit-cookie') != undefined) {
 		cookie_val = Cookies.get('critiquekit-cookie');
 		socket.emit('set cookie', cookie_val);
-		socket.emit('get saved', cookie_val);
-		socket.emit('get design num', cookie_val);
+		consent = true;
 	} else {
-		cookie_val = Math.random().toString(10) + new Date().getTime();
-		design_num = 0;
-		Cookies.set('critiquekit-cookie', cookie_val, { expires: 7 });
+		cookie_val = pid;
+		Cookies.set('critiquekit-cookie', cookie_val, { expires: 52 });
 		socket.emit('set cookie', cookie_val);
+		consent = false;
 	}
 
     $("#navbar_container").load("navbar.html"); 
+
+    $("#welcome_modal").load("welcome.html", function() {
+    	$("#name_span").html(name);
+    	$("#view_submission").click(function() {
+    		$("#design_frame").attr("src", "design/" + pid + ".html");
+    		design_id = pid;
+    		mode = "view";
+    		$(".add_comment").hide();
+    	});
+    	$("#review_peers").click(function() {
+    		$("#welcome_intro").hide();
+    		$("#welcome_choose").show();
+    		$("#peer_submissions").html("");
+    		var peer_i = 1;
+    		design_ids.forEach(function(d_id) {
+    			if (d_id != pid) {
+	    			$("#peer_submissions").append(
+	    				"<button type='button' class='btn' data-dismiss='modal' onclick='loadDesign(\"" + d_id + "\")'>" +
+	    					"Peer &#35; " + peer_i + "</button><br/>");
+	    			peer_i++;
+	    		}
+    		});
+
+    		$("#welcome_footer").hide();
+    		$("#choose_footer").show();
+    	});
+    	$("#welcome_back").click(function() {
+			$("#welcome_intro").show();
+    		$("#welcome_choose").hide();
+    		$("#welcome_footer").show();
+    		$("#choose_footer").hide();
+    	});
+    });
+
     $("#help_modal").load("help.html", function() {
     	preloadImages(["feedback_autocomplete.png", "feedback_blanks.png", "feedback_box.png",
     					"feedback_checks.png", "feedback_insert.png", "feedback_location.png",
     					"menu.png", "sidebar.png"]);
-    	//design_num = urlParam("design");
-		if (design_num != 0 && design_num != undefined) {
+
+		if (consent) {
 	    	resetHelp();
 	    }
 
@@ -537,65 +591,41 @@ $(function(){
 
     	$("#done_help").click(function() { // reset current page to first one after consent
     		resetHelp();
+    		$("#welcome_modal").modal('show');
     	});
     });
 
     $("#done_modal").load("done.html", function() {
     	$("#confirm_done").click(function() {
-	    	// go to next design
-	    	socket.emit('done design', {design_num: design_num, cookie_val: cookie_val});
-	    	design_num++;
-	    	console.log("done design, num is" + design_num);
-	    	if (design_num < design_links.length) {
-	    		location.reload();
-	    	} else {
-	    		// show message that you're done
-	    		$("#done1").hide();
-	    		$("#done2").show();
-	    		$("#submit_done").click(function() {
-	    			var feedback = $("#done_feedback").val();
-	    			socket.emit('done feedback', {feedback: feedback, cookie_val: cookie_val});
-	    			$("#submit_done").hide();
-	    			$("#done_feedback").hide();
-	    		});
-	    		$("#done_modal").find(".modal-footer").html("");
-	    		$("#done_modal").find(".close").hide();
-	    	}
+    		// go back to initial modal
+	    	socket.emit('done design', {design_id: design_id, cookie_val: cookie_val});
+	    	// reload the page so welcome modal will appear again
+	    	location.reload();
 	    });
     });
 
-    //design_num = urlParam("design");
-    if (design_num == undefined) {
-    	socket.emit('get design num', cookie_val);
+
+    if (consent == false) {
+	    $('#help_modal').modal('show'); 
+    } else {
+    	resetHelp();
+    	$('#welcome_modal').modal('show');
     }
 
-    socket.on('design num', function(design_numba) {
-    	design_num = design_numba;
-    	if (design_num == 0) {
-	    	$('#help_modal').modal('show'); 
-	    }
+    $("#design_frame").load(function() {
+    	socket.emit('loaded design', {design_id: design_id, cookie_val: cookie_val});
+    	iframe = $("#design_frame").contents();
+    	console.log("iframe loaded");
+    	// disable all clicks / links on iframe
+    	iframe.get(0).addEventListener("click", function(e) {
+		    e.stopPropagation();
+		    e.preventDefault();
+		    if (choosing_location) {
+		    	selectLocation(e);
+		    }
+		}, true);
 
-	    if (design_num != 0) {
-	    	resetHelp();
-	    }
-
-	    $("#design_frame").attr("src", design_links[design_num]);
-
-	    $("#design_frame").load(function() {
-	    	socket.emit('loaded design', {design_num: design_num, cookie_val: cookie_val});
-	    	iframe = $("#design_frame").contents();
-	    	console.log("iframe loaded");
-	    	// disable all clicks / links on iframe
-	    	iframe.get(0).addEventListener("click", function(e) {
-			    e.stopPropagation();
-			    e.preventDefault();
-			    if (choosing_location) {
-			    	selectLocation(e);
-			    }
-			}, true);
-
-			if (saved_comments) showSavedComments();
-	    });
+		socket.emit('get saved', design_id);
     });
     
 
@@ -608,7 +638,7 @@ $(function(){
     // event handlers for modal dialogs
     $("#confirm_flag").click(function() {
     	socket.emit('flag comment', {rubric: flagging_comment_rubric, comment_id: flagging_comment_id, 
-    		design_num: design_num, cookie_val: cookie_val});
+    		design_id: design_id, cookie_val: cookie_val});
     	$("#comment_" + flagging_comment_id).remove();
     	full_sorted_comments[flagging_comment_rubric].forEach(function(comment) {
     		if (comment["ID"] == flagging_comment_id) {
@@ -620,7 +650,7 @@ $(function(){
     });
 
     $("#confirm_delete").click(function() {
-    	socket.emit('delete comment', {comment_id: deleting_comment_id, design_num: design_num, cookie_val: cookie_val});
+    	socket.emit('delete comment', {comment_id: deleting_comment_id, design_id: design_id, cookie_val: cookie_val});
     	$("#new_comment_" + deleting_comment_id).remove();
     	iframe.find("#location_" + deleting_comment_id).remove();
     	deleting_comment_id = "";
@@ -640,7 +670,7 @@ $(function(){
     		.removeClass("glyphicon-remove");
 
     	socket.emit('user category added', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
-    										category: correcting_category, design_num: design_num, 
+    										category: correcting_category, design_id: design_id, 
     									cookie_val: cookie_val});
 
     	categoryUpdate(correcting_rubric);
@@ -659,7 +689,7 @@ $(function(){
     		.addClass("glyphicon-remove corrected");
 
     	socket.emit('user category removed', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
-    										category: correcting_category, design_num: design_num, cookie_val: cookie_val});
+    										category: correcting_category, design_id: design_id, cookie_val: cookie_val});
 
     	categoryUpdate(correcting_rubric);
     });
@@ -670,7 +700,7 @@ $(function(){
     		if (check_comment["comment"].replace(/<input.*?>/g, "_____").toLowerCase() == comment_text.toLowerCase()) {
     			latest_comment_inserted = check_comment["ID"];
     			socket.emit('autocompleted suggestion', {rubric: current_rubric, comment_id: latest_comment_inserted, 
-    				design_num: design_num, cookie_val: cookie_val});
+    				design_id: design_id, cookie_val: cookie_val});
     			updateComment();
     		}
     	});
@@ -684,6 +714,10 @@ $(function(){
     	if (rubric_cat == "AdditionalFeedback") rubric_cat_orig = "Additional Feedback";
     	$("#rubrics_container").append("<h4>" + rubric_cat_orig + "</h4><div id='" + rubric_cat + "' class='rubric_cat'></div>");
     	$("#" + rubric_cat).load("commenting.html", function() {
+    		if (mode == "view") {
+    			$(".add_comment").hide();
+    		}
+
     		if (i == rubric_categories.length - 1) {
     			// last one added, so set all the event handlers
     			$(".add_comment").click(function() {
@@ -696,7 +730,7 @@ $(function(){
 			    	//searchComments("", $(this).parents(".suggestion_box")); // clear search
 			    	updateComment();
 			    	$(this).parents(".comment_interface").hide();
-			    	$(this).parents(".rubric_cat").find(".add_comment").show();
+			    	if (mode != "view") $(this).parents(".rubric_cat").find(".add_comment").show();
 			    	// delete location if one was made
 			    	iframe.find("#location_" + newest_comment_id).remove();
 			    	socket.emit('cancel comment', {rubric: $(this).parents(".rubric_cat").attr("id"), cookie_val: cookie_val});
@@ -711,6 +745,13 @@ $(function(){
 			    	var dom_container = $(this).parents(".rubric_cat");
 			    	addLocation(dom_container);
 			    });
+			    $(".remove_location").click(function() {
+			    	iframe.find("#location_" + newest_comment_id).remove();
+			    	var dom_container = $(this).parents(".rubric_cat");
+			    	dom_container.find(".add_location").show();
+					dom_container.find(".remove_location").hide();
+			    });
+
 			    $(".indicator").hover(function() {
 			    	// function for hovering in and out of button
 			    	if ($(this).hasClass("glyphicon-remove")) {
@@ -833,7 +874,9 @@ $(function(){
     socket.on('saved comments', function(data) {
     	console.log("got saved comments");
     	console.log(data.comments);
-    	saved_comments = data.comments;
-    	
+    	if (data.comments != undefined) {
+    		saved_comments = data.comments;
+    		showSavedComments();
+    	}
     });
 });
