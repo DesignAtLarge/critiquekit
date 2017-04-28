@@ -525,8 +525,9 @@ $(function(){
     		design_ids.forEach(function(d_id) {
     			if (d_id != pid) {
 	    			$("#peer_submissions").append(
-	    				"<button type='button' class='btn' data-dismiss='modal' onclick='loadDesign(\"" + d_id + "\")'>" +
-	    					"Peer &#35; " + peer_i + "</button><br/>");
+	    				"<button type='button' class='btn peer_submission' data-dismiss='modal' " + 
+	    					"onclick='loadDesign(\"" + d_id + "\")'>" +
+	    					"Peer &#35; " + peer_i + "</button>");
 	    			peer_i++;
 	    		}
     		});
@@ -591,7 +592,10 @@ $(function(){
 
     	$("#done_help").click(function() { // reset current page to first one after consent
     		resetHelp();
-    		$("#welcome_modal").modal('show');
+    		if (!consent) {
+    			$("#welcome_modal").modal('show');
+    			consent = true;
+    		}
     	});
     });
 
