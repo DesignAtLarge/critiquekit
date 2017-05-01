@@ -260,21 +260,21 @@ button:hover {
     border-radius: 5px;
     margin: 5px 0px;
     padding: 3px;
-    padding-right: 20px;
     position: relative;
 }
 
-.trash_comment {
-    position: absolute;
-    top: 0;
+.trash_comment, .edit_comment {
+    float: right;
+    top: -2px;
     right: 0;
     padding: 5px;
+    margin: 0px 5px;
     background-color: #fff;
     border-radius: 2px;
     border: none;
 }
 
-.trash_comment:hover {
+.trash_comment:hover, .edit_comment:hover {
     cursor: pointer;
     background-color: #ddd;
 }

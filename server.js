@@ -83,7 +83,7 @@ function saveNewComment(data, category_string, address, new_comment, blank_value
 	    updateJSON(comment_update_file, comments);
 	}
 
-    logs.push({ "time": new Date().toString(), 
+    logs.push({ "time": new Date().getTime(), 
 					"user": address,
 					"event": "new comment submitted", 
 					"comment ID": new_id,
@@ -164,7 +164,7 @@ io.on('connection', function(socket) {
   	socket.on('set cookie', function(cookie_val) {
   		console.log("setting cookie");
   		console.log(cookie_val);
-  		logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().getTime(), 
 					"user": cookie_val,
 					"event": "new connection"});
 		updateJSON(log_file, logs);
@@ -182,7 +182,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('loaded design', function(data) {
-		logs.push({ "time": new Date().toString(), 
+		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "loaded design", 
   						"design id": data.design_id});
@@ -190,7 +190,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('done design', function(data) {
-		logs.push({ "time": new Date().toString(), 
+		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "done design", 
   						"design id": data.design_id});
@@ -206,11 +206,67 @@ io.on('connection', function(socket) {
 
   	// user opened comment interface for given rubric
   	socket.on('clicked add comment', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "clicked add comment", 
   						"rubric": data.rubric});
   		updateJSON(log_file, logs);
+  	});
+
+  	// user opened comment interface to edit
+  	socket.on('clicked edit comment', function(data) {
+  		logs.push({ "time": new Date().getTime(), 
+  						"user": data.cookie_val,
+  						"event": "clicked edit comment", 
+  						"comment ID": data.comment_id,
+  						"rubric": data.rubric});
+  		updateJSON(log_file, logs);
+  	});
+
+  	// a comment was edited
+  	socket.on('edit submitted', function(data) {
+
+  		var new_category = data.category_string.lastIndexOf("1") + 1;
+ 	
+	 	user_data[data.cookie_val].forEach(function(comment) {
+	 		if (comment["comment_id"] == data.new_comment_id) {
+	 			comment["comment_text"] = data.comment_text;
+	 			comment["location_style"] = data.location_style;
+	 			comment["category_string"] = data.category_string;
+	 		}
+	 	});
+	 	updateJSON(user_file, user_data);
+
+	 	design_data[data.design_id].forEach(function(comment) {
+	 		if (comment["comment_id"] == data.new_comment_id) {
+	 			comment["comment_text"] = data.comment_text;
+	 			comment["location_style"] = data.location_style;
+	 			comment["category_string"] = data.category_string;
+	 		}
+	 	});
+
+	 	var this_comment = comments.find(function(element) {
+  			return element["users ID"] == data.new_comment_id;
+  		});
+
+  		/*var edited_id = this_comment["ID"];
+  		this_comment["comment"] = data.comment_text;
+  		this_comment["category"] = new_category;
+  		this_comment["length"] = data.comment_text.split(" ").length;
+  		updateJSON(comment_update_file, comments);*/
+
+	 	// log it
+	 	logs.push({ "time": new Date().getTime(), 
+			"user": data.cookie_val,
+			"event": "comment edited", 
+			"users ID": data.new_comment_id,
+			"category": data.category_string,
+			"comment": data.comment_text,
+			"location style": data.location_style,
+			"design_id": data.design_id
+		});
+		updateJSON(log_file, logs);
+
   	});
 
   	// a suggestion was posted, save it and update frequency if a suggestion was clicked
@@ -252,7 +308,7 @@ io.on('connection', function(socket) {
 	  			this_comment["category"] = new_category;
 	  			updateJSON(comment_update_file, comments);
 
-	  			logs.push({ "time": new Date().toString(), 
+	  			logs.push({ "time": new Date().getTime(), 
 		  						"user": data.cookie_val,
 		  						"event": "reused comment", 
 		  						"comment ID": data.comment_id,
@@ -277,7 +333,7 @@ io.on('connection', function(socket) {
 				  		var blank_values = curated["blanks"];
 				  		if (new_category > old_category) {  // comment was supposedly improved
 
-			  				logs.push({ "time": new Date().toString(), 
+			  				logs.push({ "time": new Date().getTime(), 
 					  						"user": data.cookie_val,
 					  						"event": "improved comment", 
 					  						"comment ID": data.comment_id,
@@ -295,7 +351,7 @@ io.on('connection', function(socket) {
 			  				updateJSON(comment_update_file, comments);
 			  			} else {
 			  				// comment was not improved, so leave it
-			  				logs.push({ "time": new Date().toString(), 
+			  				logs.push({ "time": new Date().getTime(), 
 					  						"user": data.cookie_val,
 					  						"event": "not improved comment", 
 					  						"comment ID": data.comment_id,
@@ -351,7 +407,7 @@ io.on('connection', function(socket) {
   				comment["flagged"] = true;
   				updateJSON(comment_update_file, comments);
 
-  				logs.push({ "time": new Date().toString(), 
+  				logs.push({ "time": new Date().getTime(), 
 		  						"user": data.cookie_val,
 		  						"event": "comment flag", 
 		  						"comment ID": data.comment_id,
@@ -381,17 +437,18 @@ io.on('connection', function(socket) {
   			}
   		})
 
-  		logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "comment delete", 
   						"comment ID": actual_id, 
+  						"users ID": data.comment_id,
   						"design_id": data.design_id});
   		updateJSON(log_file, logs);
   	});
 
   	// user canceled comment (closed comment window)
   	socket.on('cancel comment', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "clicked cancel comment", 
   						"rubric": data.rubric});
@@ -400,7 +457,7 @@ io.on('connection', function(socket) {
 
   	// user inserted a suggested comment
   	socket.on('suggestion inserted', function(data) {
-		logs.push({ "time": new Date().toString(), 
+		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "inserted suggestion", 
   						"rubric": data.rubric,
@@ -414,7 +471,7 @@ io.on('connection', function(socket) {
 
   	// user hit autocomplete on a comment
   	socket.on('autocompleted suggestion', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "autocompleted suggestion", 
   						"rubric": data.rubric,
@@ -425,7 +482,7 @@ io.on('connection', function(socket) {
 
   	// user manually overrode a category
   	socket.on('user category added', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "added category", 
   						"comment text": data.comment_text,
@@ -436,7 +493,7 @@ io.on('connection', function(socket) {
 
   	// user manually overrode a category
   	socket.on('user category removed', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "added category", 
   						"comment text": data.comment_text,
@@ -446,7 +503,7 @@ io.on('connection', function(socket) {
   	});
 
   	socket.on('done feedback', function(data) {
-  		logs.push({ "time": new Date().toString(), 
+  		logs.push({ "time": new Date().getTime(), 
   						"user": data.cookie_val,
   						"event": "user feedback", 
   						"feedback": data.feedback}); 
@@ -470,7 +527,7 @@ io.on('connection', function(socket) {
 			  			console.log("error with category string length");
 			  		} else {
 			  			socket.emit('category', {rubric: data.rubric, category_string: body});
-			  			/*logs.push({ "time": new Date().toString(), 
+			  			/*logs.push({ "time": new Date().getTime(), 
 				  						"user": address,
 				  						"event": "typing comment", 
 				  						"rubric": data.rubric,
@@ -483,7 +540,7 @@ io.on('connection', function(socket) {
 			});
 		} else {
 			socket.emit('category', {rubric: data.rubric, category_string: "000"});
-			/*logs.push({ "time": new Date().toString(), 
+			/*logs.push({ "time": new Date().getTime(), 
 	  						"user": address,
 	  						"event": "typing comment", 
 	  						"rubric": data.rubric,

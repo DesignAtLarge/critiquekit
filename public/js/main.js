@@ -20,6 +20,8 @@ var iframe;
 var previous_highlight = undefined;
 var choosing_location = false;
 var saved_comments;
+var editing_comment = false;
+var editing_comment_id;
 
 var current_help_page = 0;
 var num_help_pages = 8;
@@ -36,8 +38,15 @@ var pid = "A12345";
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
 
+	var update_comment_id;
+	if (editing_comment) {
+		update_comment_id = editing_comment_id;
+	} else {
+		update_comment_id = newest_comment_id;
+	}
+
 	var rubric = dom_container.parents(".rubric_cat").attr("id");
-	var comment_location = iframe.find("#location_" + newest_comment_id);
+	var comment_location = iframe.find("#location_" + update_comment_id);
 	if (comment_location.size() > 0) {
 		comment_location.find(".location_text").html(comment_text);
 	}
@@ -51,23 +60,41 @@ function submitComment(comment_text, dom_container) {
 		if (location) location_style = comment_location.attr("style");
 			
 		// send to server
-		socket.emit('comment submitted', 
-			{comment_id: latest_comment_inserted, new_comment_id: newest_comment_id, comment_text: comment_text, 
-				rubric: rubric, category_string: category_string, location_style: location_style, 
-				design_id: design_id, cookie_val: cookie_val});
-		latest_comment_inserted = -1; // reset
+		if (editing_comment) {
+			socket.emit('edit submitted', 
+				{comment_id: latest_comment_inserted, new_comment_id: update_comment_id, comment_text: comment_text, 
+					rubric: rubric, category_string: category_string, location_style: location_style, 
+					design_id: design_id, cookie_val: cookie_val});
+		} else {
+			socket.emit('comment submitted', 
+				{comment_id: latest_comment_inserted, new_comment_id: update_comment_id, comment_text: comment_text, 
+					rubric: rubric, category_string: category_string, location_style: location_style, 
+					design_id: design_id, cookie_val: cookie_val});
+			latest_comment_inserted = -1; // reset
+		}
 
 		var comments_section = dom_container.parents(".rubric_cat").find(".posted_comments");
-		appendNewComment(comments_section, newest_comment_id, comment_text);
+		if (editing_comment) {
+			$("#new_comment_" + update_comment_id).find(".new_comment_text").html(comment_text);
+		} else {
+			appendNewComment(comments_section, update_comment_id, comment_text);
+		}
 
 
 		dom_container.find(".comment_text").val("");
+		dom_container.find(".add_location").show();
+		dom_container.find(".remove_location").hide();
 		displayComments(rubric, full_sorted_comments[rubric]);
 
 		dom_container.parents(".comment_interface").hide();
 		dom_container.parents(".rubric_cat").find(".add_comment").show();
 
-		newest_comment_id++;
+		if (editing_comment) {
+			editing_comment = false;
+			$("#new_comment_" + editing_comment_id).show();
+		} else {
+			newest_comment_id++;
+		}
 	} else if (comment_text == "") {
 		alert("You can't submit an empty comment!");
 	}
@@ -75,9 +102,11 @@ function submitComment(comment_text, dom_container) {
 
 function appendNewComment(comments_section, comment_id, comment_text) {
 	comments_section.append("<div class='posted_comment' id='new_comment_" + comment_id + "'>" + 
-		"<span class='new_comment_text'>" + comment_text + "</span>" +
+			"<span class='new_comment_text'>" + comment_text + "</span>" +
 			"<span class='trash_comment glyphicon glyphicon-trash' title='Delete comment' " + 
-				"data-toggle='modal' data-target='#delete_modal'></span></div>");
+				"data-toggle='modal' data-target='#delete_modal'></span>" + 
+			"<span class='edit_comment glyphicon glyphicon-pencil' title='Edit comment' ></span>" +
+			"<span class='clear'></span></div>");
 
 	$("#new_comment_" + comment_id + " .trash_comment").click(function() {
 		var comment_text = $(this).parent().find(".new_comment_text").html();
@@ -85,6 +114,35 @@ function appendNewComment(comments_section, comment_id, comment_text) {
 
 		deleting_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_")[1];
 		console.log(deleting_comment_id);
+	});
+
+	$("#new_comment_" + comment_id + " .edit_comment").click(function() {
+		var comment_text = $(this).parent().find(".new_comment_text").html();
+		editing_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_")[1];
+		editing_comment = true;
+
+		$(this).parents(".rubric_cat").find(".add_comment").hide();
+    	$(this).parents(".rubric_cat").find(".comment_interface").show();
+
+    	var comment_textarea = $(this).parents(".rubric_cat").find(".comment_text.tt-input");
+
+		comment_textarea.val(comment_text);
+		comment_textarea.select();
+
+		// if the comment had a location, make button say remove location and update location as they type
+		var comment_location = iframe.find("#location_" + editing_comment_id);
+		if (comment_location.size() > 0) {
+			console.log("iz there");
+			comment_location.find(".location_text").html(comment_text);
+			$(this).parents(".rubric_cat").find(".add_location").hide();
+			$(this).parents(".rubric_cat").find(".remove_location").show();
+		}
+
+		// temporarily hide the comment until they repost it
+		$("#new_comment_" + editing_comment_id).hide();
+
+    	socket.emit("clicked edit comment", {rubric: $(this).parents(".rubric_cat").attr("id"),
+    		comment_id: editing_comment_id, cookie_val: cookie_val});
 	});
 
 	$("#new_comment_" + comment_id).hover(function() {
@@ -118,7 +176,11 @@ function updateComment(rubric) {
 	// get comment text
 	setTimeout(function() { // let it update
 		var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
-		iframe.find("#location_" + newest_comment_id + " .location_text").html(comment_text);
+		if (editing_comment) {
+			iframe.find("#location_" + editing_comment_id + " .location_text").html(comment_text);
+		} else {
+			iframe.find("#location_" + newest_comment_id + " .location_text").html(comment_text);
+		}
 
 		// send to server.js
 		socket.emit("comment update", {comment: comment_text, rubric: current_rubric, design_id: design_id,
@@ -301,6 +363,14 @@ function getMatchingComments(query, rubric) {
 }
 
 function selectLocation(element) {
+
+	var update_comment_id;
+	if (editing_comment) {
+		update_comment_id = editing_comment_id;
+	} else {
+		update_comment_id = newest_comment_id;
+	}
+
 	var side;
 	var x_location;
 	var target = $(element.target);
@@ -318,7 +388,7 @@ function selectLocation(element) {
 
 	var style = "top: " + targetY + "px; " + side + ": " + x_location + "px;";
 	var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
-	appendLocationComment(current_rubric, newest_comment_id, comment_text, style);
+	appendLocationComment(current_rubric, update_comment_id, comment_text, style);
 
 	$("#" + current_rubric).find(".add_location").hide();
 	$("#" + current_rubric).find(".remove_location").show();
@@ -367,11 +437,9 @@ function addLocation(dom_container) {
 
 // activate when user is choosing where to place their comment
 function highlightDOMElements() {
-	console.log(iframe);
 	if (iframe != undefined) {
 		iframe.mouseover(function(element) {
 			var target = $(element.target);
-			console.log(target);
 			if (!(target.hasClass("comment_location") || target.parent().hasClass("comment_location"))) {
 				if (previous_highlight != undefined) {
 					previous_highlight.removeClass("highlight");
@@ -731,6 +799,11 @@ $(function(){
 			    });
 			    $(".cancel_comment").click(function() {
 			    	$(this).parents(".suggestion_box").find(".comment_text.tt-input").val("");
+			    	if (editing_comment) {
+			    		editing_comment = false;
+			    		var unedited_comment_text = $("#new_comment_" + editing_comment_id).find(".new_comment_text").html();
+			    		iframe.find("#location_" + editing_comment_id).find(".location_text").html(unedited_comment_text);
+			    	}
 			    	//searchComments("", $(this).parents(".suggestion_box")); // clear search
 			    	updateComment();
 			    	$(this).parents(".comment_interface").hide();
@@ -750,7 +823,11 @@ $(function(){
 			    	addLocation(dom_container);
 			    });
 			    $(".remove_location").click(function() {
-			    	iframe.find("#location_" + newest_comment_id).remove();
+			    	if (editing_comment) {
+			    		iframe.find("#location_" + editing_comment_id).remove();
+			    	} else {
+			    		iframe.find("#location_" + newest_comment_id).remove();
+			    	}
 			    	var dom_container = $(this).parents(".rubric_cat");
 			    	dom_container.find(".add_location").show();
 					dom_container.find(".remove_location").hide();
