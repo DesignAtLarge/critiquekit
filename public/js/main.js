@@ -124,6 +124,7 @@ function appendNewComment(comments_section, comment_user_string, comment_id, com
 	});
 
 	$("#new_comment_" + comment_user_string + comment_id + " .edit_comment").click(function() {
+		current_rubric = $(this).parents(".rubric_cat").attr("id");
 		var comment_text = $(this).parent().find(".new_comment_text").html();
 		editing_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_" + comment_user_string)[1];
 		editing_comment = true;
