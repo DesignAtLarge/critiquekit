@@ -591,17 +591,8 @@ $(function(){
     	$("#review_peers").click(function() {
     		$("#welcome_intro").hide();
     		$("#welcome_choose").show();
-    		$("#peer_submissions").html("");
-    		var peer_i = 1;
-    		design_ids.forEach(function(d_id) {
-    			if (d_id != pid) {
-	    			$("#peer_submissions").append(
-	    				"<button type='button' class='btn peer_submission' data-dismiss='modal' " + 
-	    					"onclick='loadDesign(\"" + d_id + "\")'>" +
-	    					"Peer &#35; " + peer_i + "</button>");
-	    			peer_i++;
-	    		}
-    		});
+    		$("#peer_submissions").html("<i>Loading...</i>");
+    		socket.emit('get peers', userid);     		
 
     		$("#welcome_footer").hide();
     		$("#choose_footer").show();
@@ -612,6 +603,19 @@ $(function(){
     		$("#welcome_footer").show();
     		$("#choose_footer").hide();
     	});
+    });
+
+    socket.on('peers', function(data) {
+		design_ids = data.design_ids;
+		var peer_i = 1;
+		$("#peer_submissions").html("");
+		design_ids.forEach(function(d_id) {
+			$("#peer_submissions").append(
+				"<button type='button' class='btn peer_submission' data-dismiss='modal' " + 
+					"onclick='loadDesign(\"" + d_id + "\")'>" +
+					"Peer &#35; " + peer_i + "</button>");
+			peer_i++;
+		});
     });
 
     $("#help_modal").load("help.html", function() {

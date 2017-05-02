@@ -25,7 +25,9 @@ var user_file = "user_data.json";
 
 var design_data = {};
 
-var design_ids = {};
+var user_ids = ["A12345", "A54321", "A99999"];
+var user_assignments = {};
+var assignment_file = "user_assignments.json";
 
 
 const io = socketIO(server);
@@ -49,15 +51,6 @@ function updateJSON(file, obj) {
 	jsonfile.writeFile(file, obj, {spaces: 4}, function(err) {
 	  	if (err) console.error(err);
 	});
-	//console.log(file + ":");
-	if (file == user_file) {
-		//console.log(obj);
-	} else {
-		obj.forEach(function(element) {
-			//console.log(element);
-		});
-	}
-
 }
 
 function saveNewComment(data, category_string, address, new_comment, blank_values) {
@@ -151,6 +144,26 @@ function loadComments(rubric_category) {
 	return output;
 }
 
+function getRandomArbitrary(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// randomly shuffle user_ids
+user_ids.sort(function(a, b){return 0.5 - Math.random()});
+
+// make users evaluate the person before and after them
+user_ids.forEach(function(user_id, i) {
+	if (i != 0 && i != user_ids.length - 1) { // not last one or first one
+		user_assignments[user_id] = [user_ids[i+1], user_ids[i-1]];
+	} else if (i != 0) { // last one
+		user_assignments[user_id] = [user_ids[0], user_ids[i-1]];
+	} else { // first one
+		user_assignments[user_id] = [user_ids[i+1], user_ids[user_ids.length-1]];
+	}
+});
+
+updateJSON(assignment_file, user_assignments);
+
 // Socket response to new connections
 io.on('connection', function(socket) {
 	//var address = socket.handshake.address;
@@ -174,6 +187,10 @@ io.on('connection', function(socket) {
 			user_data[userid] = {consent: null, comments: []};
 			updateJSON(user_file, user_data);
 		}
+  	});
+
+  	socket.on('get peers', function(userid) {
+  		socket.emit('peers', {design_ids: user_assignments[userid]});
   	});
 
   	socket.on('consent', function(data) {
