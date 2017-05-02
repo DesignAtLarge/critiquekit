@@ -24,6 +24,7 @@ var user_data = {} // { user id: {comments: <array holding comment objects>, con
 var user_file = "user_data.json";
 
 var design_data = {};
+var design_file = "design_data.json";
 
 var user_ids = ["A12345", "A54321", "A99999"];
 var user_assignments = {};
@@ -199,8 +200,17 @@ io.on('connection', function(socket) {
   	});
 
 
-	socket.on('get saved', function(design_id) {
-		socket.emit('saved comments', {comments: design_data[design_id]});
+	socket.on('get saved', function(data) {
+		var comments_to_send = design_data[data.design_id]; // all comments made by everyone
+
+		if (data.mode == "review" && comments_to_send != undefined) {
+			// return only comments made by the given user
+			comments_to_send = comments_to_send.filter(function(comment) {
+				return comment.userid == data.userid;
+			});
+		} 
+		// otherwise mode is view so send all comments made by everyone
+		socket.emit('saved comments', {comments: comments_to_send});
 	});
 
 	socket.on('loaded design', function(data) {
@@ -260,12 +270,13 @@ io.on('connection', function(socket) {
 	 	updateJSON(user_file, user_data);
 
 	 	design_data[data.design_id].forEach(function(comment) {
-	 		if (comment["comment_id"] == data.new_comment_id) {
+	 		if (comment["comment_id"] == data.new_comment_id && comment["userid"] == data.userid) {
 	 			comment["comment_text"] = data.comment_text;
 	 			comment["location_style"] = data.location_style;
 	 			comment["category_string"] = data.category_string;
 	 		}
 	 	});
+	 	updateJSON(design_file, design_data);
 
 	 	var this_comment = comments.find(function(element) {
   			return element["users ID"] == data.new_comment_id;
@@ -299,7 +310,8 @@ io.on('connection', function(socket) {
   									"rubric": data.rubric,
   									"category_string": data.category_string,
   									"location_style": data.location_style,
-  									"design_id": data.design_id
+  									"design_id": data.design_id,
+  									"userid": data.userid
   		};
 
   		// save to user data
@@ -311,6 +323,7 @@ io.on('connection', function(socket) {
   		} else {
   			design_data[data.design_id] = [new_com];
   		}
+  		updateJSON(design_file, design_data);
 
   		// find the clicked comment in comments
   		if (data.comment_id != -1) {
@@ -448,8 +461,9 @@ io.on('connection', function(socket) {
   		updateJSON(user_file, user_data);
   		
   		design_data[data.design_id] = design_data[data.design_id].filter(function(comment) {
-  			return comment.comment_id != data.comment_id || comment.design_id != data.design_id;
+  			return comment.comment_id != data.comment_id || comment.design_id != data.design_id || comment.userid != data.userid;
   		});
+  		updateJSON(design_file, design_data);
 
   		// find the actual id of the comment they deleted
   		var actual_id = "unknown";

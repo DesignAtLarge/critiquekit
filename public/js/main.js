@@ -36,6 +36,11 @@ var pid = "A12345";
 	window.location.href = "http://critiquekit-study.herokuapp.com";
 }*/
 
+// unique number for this user that hides what their actual PID is
+function getUserNumber(id_string) {
+	return "" + (parseInt(id_string.split("A")[1]) + 111111);
+}
+
 // user submitted a comment, add it to the posted comments and notify the server
 function submitComment(comment_text, dom_container) {
 
@@ -47,7 +52,7 @@ function submitComment(comment_text, dom_container) {
 	}
 
 	var rubric = dom_container.parents(".rubric_cat").attr("id");
-	var comment_location = iframe.find("#location_" + update_comment_id);
+	var comment_location = iframe.find("#location_" + getUserNumber(pid) + "_" + update_comment_id);
 	if (comment_location.size() > 0) {
 		comment_location.find(".location_text").html(comment_text);
 	}
@@ -76,9 +81,9 @@ function submitComment(comment_text, dom_container) {
 
 		var comments_section = dom_container.parents(".rubric_cat").find(".posted_comments");
 		if (editing_comment) {
-			$("#new_comment_" + update_comment_id).find(".new_comment_text").html(comment_text);
+			$("#new_comment_" + getUserNumber(pid) + "_" + update_comment_id).find(".new_comment_text").html(comment_text);
 		} else {
-			appendNewComment(comments_section, update_comment_id, comment_text);
+			appendNewComment(comments_section, getUserNumber(pid) + "_", update_comment_id, comment_text);
 		}
 
 
@@ -92,7 +97,7 @@ function submitComment(comment_text, dom_container) {
 
 		if (editing_comment) {
 			editing_comment = false;
-			$("#new_comment_" + editing_comment_id).show();
+			$("#new_comment_" + getUserNumber(pid) + "_" + editing_comment_id).show();
 		} else {
 			newest_comment_id++;
 		}
@@ -101,25 +106,26 @@ function submitComment(comment_text, dom_container) {
 	}
 }
 
-function appendNewComment(comments_section, comment_id, comment_text) {
-	comments_section.append("<div class='posted_comment' id='new_comment_" + comment_id + "'>" + 
+function appendNewComment(comments_section, comment_user_string, comment_id, comment_text) {
+
+	comments_section.append("<div class='posted_comment' id='new_comment_" + comment_user_string + comment_id + "'>" + 
 			"<span class='new_comment_text'>" + comment_text + "</span>" +
 			"<span class='trash_comment glyphicon glyphicon-trash' title='Delete comment' " + 
 				"data-toggle='modal' data-target='#delete_modal'></span>" + 
 			"<span class='edit_comment glyphicon glyphicon-pencil' title='Edit comment' ></span>" +
 			"<span class='clear'></span></div>");
 
-	$("#new_comment_" + comment_id + " .trash_comment").click(function() {
+	$("#new_comment_" + comment_user_string + comment_id + " .trash_comment").click(function() {
 		var comment_text = $(this).parent().find(".new_comment_text").html();
 		$("#delete_text").html(comment_text);
 
-		deleting_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_")[1];
+		deleting_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_" + comment_user_string)[1];
 		console.log(deleting_comment_id);
 	});
 
-	$("#new_comment_" + comment_id + " .edit_comment").click(function() {
+	$("#new_comment_" + comment_user_string + comment_id + " .edit_comment").click(function() {
 		var comment_text = $(this).parent().find(".new_comment_text").html();
-		editing_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_")[1];
+		editing_comment_id = $(this).parents(".posted_comment").attr("id").split("new_comment_" + comment_user_string)[1];
 		editing_comment = true;
 
 		$(this).parents(".rubric_cat").find(".add_comment").hide();
@@ -131,7 +137,7 @@ function appendNewComment(comments_section, comment_id, comment_text) {
 		comment_textarea.select();
 
 		// if the comment had a location, make button say remove location and update location as they type
-		var comment_location = iframe.find("#location_" + editing_comment_id);
+		var comment_location = iframe.find("#location_" + comment_user_string + editing_comment_id);
 		if (comment_location.size() > 0) {
 			console.log("iz there");
 			comment_location.find(".location_text").html(comment_text);
@@ -140,13 +146,13 @@ function appendNewComment(comments_section, comment_id, comment_text) {
 		}
 
 		// temporarily hide the comment until they repost it
-		$("#new_comment_" + editing_comment_id).hide();
+		$("#new_comment_" + comment_user_string + editing_comment_id).hide();
 
     	socket.emit("clicked edit comment", {rubric: $(this).parents(".rubric_cat").attr("id"),
     		comment_id: editing_comment_id, userid: userid});
 	});
 
-	$("#new_comment_" + comment_id).hover(function() {
+	$("#new_comment_" + comment_user_string + comment_id).hover(function() {
 		commentHover($(this).attr("id").split("new_comment_")[1]);
 		}, function() {
 		commentUnHover($(this).attr("id").split("new_comment_")[1]);
@@ -154,22 +160,23 @@ function appendNewComment(comments_section, comment_id, comment_text) {
 
 	if (mode == "view") {
 		$(".trash_comment").hide();
+		$(".edit_comment").hide();
 	}
 }
 
-function commentHover(comment_id) {
+function commentHover(comment_str) {
 	if (!choosing_location) {
-		$("#new_comment_" + comment_id).css("background-color", "rgba(255, 156, 209, 1.0)");
-		iframe.find("#location_" + comment_id).css("background-color", "rgba(255, 156, 209, 1.0))");
-		iframe.find("#location_" + comment_id).css("z-index", "10001");
+		$("#new_comment_" + comment_str).css("background-color", "rgba(255, 156, 209, 1.0)");
+		iframe.find("#location_" + comment_str).css("background-color", "rgba(255, 156, 209, 1.0))");
+		iframe.find("#location_" + comment_str).css("z-index", "10001");
 	}
 }
 
-function commentUnHover(comment_id) {
+function commentUnHover(comment_str) {
 	if (!choosing_location) {
-		$("#new_comment_" + comment_id).css("background-color", "white");
-		iframe.find("#location_" + comment_id).css("background-color", "rgba(255, 156, 209, 0.7)");
-		iframe.find("#location_" + comment_id).css("z-index", "10000");
+		$("#new_comment_" + comment_str).css("background-color", "white");
+		iframe.find("#location_" + comment_str).css("background-color", "rgba(255, 156, 209, 0.7)");
+		iframe.find("#location_" + comment_str).css("z-index", "10000");
 	}
 }
 
@@ -178,9 +185,9 @@ function updateComment(rubric) {
 	setTimeout(function() { // let it update
 		var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
 		if (editing_comment) {
-			iframe.find("#location_" + editing_comment_id + " .location_text").html(comment_text);
+			iframe.find("#location_" + getUserNumber(pid) + "_" + editing_comment_id + " .location_text").html(comment_text);
 		} else {
-			iframe.find("#location_" + newest_comment_id + " .location_text").html(comment_text);
+			iframe.find("#location_" + getUserNumber(pid) + "_" + newest_comment_id + " .location_text").html(comment_text);
 		}
 
 		// send to server.js
@@ -389,7 +396,7 @@ function selectLocation(element) {
 
 	var style = "top: " + targetY + "px; " + side + ": " + x_location + "px;";
 	var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
-	appendLocationComment(current_rubric, update_comment_id, comment_text, style);
+	appendLocationComment(current_rubric, getUserNumber(pid) + "_", update_comment_id, comment_text, style);
 
 	$("#" + current_rubric).find(".add_location").hide();
 	$("#" + current_rubric).find(".remove_location").show();
@@ -397,7 +404,7 @@ function selectLocation(element) {
 	cancelLocation();
 }
 
-function appendLocationComment(rubric, comment_id, comment_text, style) {
+function appendLocationComment(rubric, comment_user_string, comment_id, comment_text, style) {
 	var side;
 	if (style.indexOf("left") != -1) {
 		side = "left";
@@ -407,15 +414,15 @@ function appendLocationComment(rubric, comment_id, comment_text, style) {
 
 
 	iframe.find("body").append(
-		"<div id='location_" + comment_id + 
+		"<div id='location_" + comment_user_string + comment_id + 
 			"' class='comment_location' style='" + style + "'><div class='location_text'></div>" + 
 			"<div class='location_marker_" + side + "'></div>" + 
 		"</div>"
 	);
 
-	iframe.find("#location_" + comment_id + " .location_text").html(comment_text);
+	iframe.find("#location_" + comment_user_string + comment_id + " .location_text").html(comment_text);
 
-	iframe.find("#location_" + comment_id).hover(function() {
+	iframe.find("#location_" + comment_user_string + comment_id).hover(function() {
 		commentHover($(this).attr("id").split("location_")[1]);
 		}, function() {
 		commentUnHover($(this).attr("id").split("location_")[1]);
@@ -507,9 +514,10 @@ function showSavedComments() {
 				newest_comment_id = comment.comment_id + 1;
 			}
 			var comments_section = $("#" + comment.rubric).find(".posted_comments");
-			appendNewComment(comments_section, comment.comment_id, comment.comment_text)
+			appendNewComment(comments_section, getUserNumber(comment.userid) + "_", comment.comment_id, comment.comment_text)
 			if (comment.location_style != "") {
-				appendLocationComment(comment.rubric, comment.comment_id, comment.comment_text, comment.location_style);
+				appendLocationComment(comment.rubric, getUserNumber(comment.userid) + "_", comment.comment_id, 
+					comment.comment_text, comment.location_style);
 			}
 		}
 	});	
@@ -543,15 +551,13 @@ function switchHelpImage(help_page_num, filename, orig_filename, action) {
 function preloadImages(arrayOfImages) {
     $(arrayOfImages).each(function(){
         $('<img/>')[0].src = "help_pics/" + this;
-        // Alternatively you could use:
-        // (new Image()).src = this;
     });
 }
 
 function loadDesign(d_id) {
+	mode = "review";
 	design_id = d_id;
 	$("#design_frame").attr("src", "design/" + d_id + ".html");
-	mode = "review";
 }
 
 $(function(){
@@ -692,19 +698,23 @@ $(function(){
     }
 
     $("#design_frame").load(function() {
-    	socket.emit('loaded design', {design_id: design_id, userid: userid});
-    	iframe = $("#design_frame").contents();
-    	console.log("iframe loaded");
-    	// disable all clicks / links on iframe
-    	iframe.get(0).addEventListener("click", function(e) {
-		    e.stopPropagation();
-		    e.preventDefault();
-		    if (choosing_location) {
-		    	selectLocation(e);
-		    }
-		}, true);
+    	console.log("loaded " + $("#design_frame").attr("src"));
+    	console.log("mode is " + mode);
+    	if ($("#design_frame").attr("src") != "iframe_alt.html") {
+	    	socket.emit('loaded design', {design_id: design_id, userid: userid});
+	    	iframe = $("#design_frame").contents();
+	    	console.log("iframe loaded");
+	    	// disable all clicks / links on iframe
+	    	iframe.get(0).addEventListener("click", function(e) {
+			    e.stopPropagation();
+			    e.preventDefault();
+			    if (choosing_location) {
+			    	selectLocation(e);
+			    }
+			}, true);
 
-		socket.emit('get saved', design_id);
+			socket.emit('get saved', {design_id: design_id, mode: mode, userid: userid});
+		}
     });
     
 
@@ -730,8 +740,8 @@ $(function(){
 
     $("#confirm_delete").click(function() {
     	socket.emit('delete comment', {comment_id: deleting_comment_id, design_id: design_id, userid: userid});
-    	$("#new_comment_" + deleting_comment_id).remove();
-    	iframe.find("#location_" + deleting_comment_id).remove();
+    	$("#new_comment_" + getUserNumber(pid) + "_" + deleting_comment_id).remove();
+    	iframe.find("#location_" + getUserNumber(pid) + "_" + deleting_comment_id).remove();
     	deleting_comment_id = "";
     });
 
@@ -808,15 +818,18 @@ $(function(){
 			    	$(this).parents(".suggestion_box").find(".comment_text.tt-input").val("");
 			    	if (editing_comment) {
 			    		editing_comment = false;
-			    		var unedited_comment_text = $("#new_comment_" + editing_comment_id).find(".new_comment_text").html();
-			    		iframe.find("#location_" + editing_comment_id).find(".location_text").html(unedited_comment_text);
+			    		var unedited_comment_text = 
+			    			$("#new_comment_" + getUserNumber(pid) + "_" + editing_comment_id).find(".new_comment_text").html();
+
+			    		iframe.find("#location_" + getUserNumber(pid) + "_" + editing_comment_id)
+			    			.find(".location_text").html(unedited_comment_text);
 			    	}
 			    	//searchComments("", $(this).parents(".suggestion_box")); // clear search
 			    	updateComment();
 			    	$(this).parents(".comment_interface").hide();
 			    	if (mode != "view") $(this).parents(".rubric_cat").find(".add_comment").show();
 			    	// delete location if one was made
-			    	iframe.find("#location_" + newest_comment_id).remove();
+			    	iframe.find("#location_" + getUserNumber(pid) + "_" + newest_comment_id).remove();
 			    	socket.emit('cancel comment', {rubric: $(this).parents(".rubric_cat").attr("id"), userid: userid});
 			    });
 			    $(".submit_comment").click(function() {
@@ -831,9 +844,9 @@ $(function(){
 			    });
 			    $(".remove_location").click(function() {
 			    	if (editing_comment) {
-			    		iframe.find("#location_" + editing_comment_id).remove();
+			    		iframe.find("#location_" + getUserNumber(pid) + "_" + editing_comment_id).remove();
 			    	} else {
-			    		iframe.find("#location_" + newest_comment_id).remove();
+			    		iframe.find("#location_" + getUserNumber(pid) + "_" + newest_comment_id).remove();
 			    	}
 			    	var dom_container = $(this).parents(".rubric_cat");
 			    	dom_container.find(".add_location").show();
