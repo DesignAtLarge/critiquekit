@@ -1,5 +1,6 @@
 var design_id; 
 var consent = false;
+var consent_done = false;
 var mode;
 var design_ids = ["A12345", "A54321", "A99999"];
 
@@ -25,7 +26,7 @@ var editing_comment_id;
 
 var current_help_page = 0;
 var num_help_pages = 8;
-var cookie_val;
+var userid;
 
 var name = "Ailie";
 var pid = "A12345";
@@ -64,12 +65,12 @@ function submitComment(comment_text, dom_container) {
 			socket.emit('edit submitted', 
 				{comment_id: latest_comment_inserted, new_comment_id: update_comment_id, comment_text: comment_text, 
 					rubric: rubric, category_string: category_string, location_style: location_style, 
-					design_id: design_id, cookie_val: cookie_val});
+					design_id: design_id, userid: userid});
 		} else {
 			socket.emit('comment submitted', 
 				{comment_id: latest_comment_inserted, new_comment_id: update_comment_id, comment_text: comment_text, 
 					rubric: rubric, category_string: category_string, location_style: location_style, 
-					design_id: design_id, cookie_val: cookie_val});
+					design_id: design_id, userid: userid});
 			latest_comment_inserted = -1; // reset
 		}
 
@@ -142,7 +143,7 @@ function appendNewComment(comments_section, comment_id, comment_text) {
 		$("#new_comment_" + editing_comment_id).hide();
 
     	socket.emit("clicked edit comment", {rubric: $(this).parents(".rubric_cat").attr("id"),
-    		comment_id: editing_comment_id, cookie_val: cookie_val});
+    		comment_id: editing_comment_id, userid: userid});
 	});
 
 	$("#new_comment_" + comment_id).hover(function() {
@@ -184,7 +185,7 @@ function updateComment(rubric) {
 
 		// send to server.js
 		socket.emit("comment update", {comment: comment_text, rubric: current_rubric, design_id: design_id,
-			cookie_val: cookie_val});
+			userid: userid});
 	}, 100);
 }
 
@@ -324,7 +325,7 @@ function displayComments(rubric, comments) {
 
 		socket.emit("suggestion inserted", {rubric: current_rubric, comment_id: comment_id, 
 			comment_text: comment, selection_length: selection_end - selection_start, design_id: design_id, 
-			cookie_val: cookie_val});
+			userid: userid});
 
 		updateComment();
 
@@ -561,18 +562,20 @@ $(function(){
 
 	socket = io();
 
-	design_id = "A12345";
-
 	// check for cookie
 	if (Cookies.get('critiquekit-cookie') != undefined) {
-		cookie_val = Cookies.get('critiquekit-cookie');
-		socket.emit('set cookie', cookie_val);
-		consent = true;
+		var cookie = Cookies.getJSON('critiquekit-cookie');
+		userid = cookie.userid;
+		consent = cookie.consent;
+		socket.emit('set cookie', userid);
+		if (consent != null) {
+			consent_done = true;
+		}
 	} else {
-		cookie_val = pid;
-		Cookies.set('critiquekit-cookie', cookie_val, { expires: 52 });
-		socket.emit('set cookie', cookie_val);
-		consent = false;
+		userid = pid;
+		Cookies.set('critiquekit-cookie', {userid: userid, consent: null}, { expires: 52 });
+		socket.emit('set cookie', userid);
+		consent_done = false;
 	}
 
     $("#navbar_container").load("navbar.html"); 
@@ -612,11 +615,11 @@ $(function(){
     });
 
     $("#help_modal").load("help.html", function() {
-    	preloadImages(["feedback_autocomplete.png", "feedback_blanks.png", "feedback_box.png",
+    	preloadImages(["feedback_autocomplete.png", "feedback_blank.png", "feedback_box.png",
     					"feedback_checks.png", "feedback_insert.png", "feedback_location.png",
     					"menu.png", "sidebar.png"]);
 
-		if (consent) {
+		if (consent_done) {
 	    	resetHelp();
 	    }
 
@@ -645,24 +648,24 @@ $(function(){
 
     	$("#consent_yes").change(function() {
     		if ($(this).is(':checked')) {
+    			socket.emit('consent', {userid: userid, consent: true});
+    			Cookies.set('critiquekit-cookie', {userid: userid, consent: true}, { expires: 52 });
     			$("#next_help").removeClass("disabled");
-    		} else {
-    			$("#next_help").addClass("disabled");
     		}
     	});
     	$("#consent_no").change(function() {
     		if ($(this).is(':checked')) {
-    			$("#next_help").addClass("disabled");
-    		} else {
+    			socket.emit('consent', {userid: userid, consent: false});
+    			Cookies.set('critiquekit-cookie', {userid: userid, consent: false}, { expires: 52 });
     			$("#next_help").removeClass("disabled");
     		}
     	});
 
     	$("#done_help").click(function() { // reset current page to first one after consent
     		resetHelp();
-    		if (!consent) {
+    		if (!consent_done) {
     			$("#welcome_modal").modal('show');
-    			consent = true;
+    			consent_done = true;
     		}
     	});
     });
@@ -670,14 +673,14 @@ $(function(){
     $("#done_modal").load("done.html", function() {
     	$("#confirm_done").click(function() {
     		// go back to initial modal
-	    	socket.emit('done design', {design_id: design_id, cookie_val: cookie_val});
+	    	socket.emit('done design', {design_id: design_id, userid: userid});
 	    	// reload the page so welcome modal will appear again
 	    	location.reload();
 	    });
     });
 
 
-    if (consent == false) {
+    if (consent_done == false) {
 	    $('#help_modal').modal('show'); 
     } else {
     	resetHelp();
@@ -685,7 +688,7 @@ $(function(){
     }
 
     $("#design_frame").load(function() {
-    	socket.emit('loaded design', {design_id: design_id, cookie_val: cookie_val});
+    	socket.emit('loaded design', {design_id: design_id, userid: userid});
     	iframe = $("#design_frame").contents();
     	console.log("iframe loaded");
     	// disable all clicks / links on iframe
@@ -710,7 +713,7 @@ $(function(){
     // event handlers for modal dialogs
     $("#confirm_flag").click(function() {
     	socket.emit('flag comment', {rubric: flagging_comment_rubric, comment_id: flagging_comment_id, 
-    		design_id: design_id, cookie_val: cookie_val});
+    		design_id: design_id, userid: userid});
     	$("#comment_" + flagging_comment_id).remove();
     	full_sorted_comments[flagging_comment_rubric].forEach(function(comment) {
     		if (comment["ID"] == flagging_comment_id) {
@@ -722,7 +725,7 @@ $(function(){
     });
 
     $("#confirm_delete").click(function() {
-    	socket.emit('delete comment', {comment_id: deleting_comment_id, design_id: design_id, cookie_val: cookie_val});
+    	socket.emit('delete comment', {comment_id: deleting_comment_id, design_id: design_id, userid: userid});
     	$("#new_comment_" + deleting_comment_id).remove();
     	iframe.find("#location_" + deleting_comment_id).remove();
     	deleting_comment_id = "";
@@ -743,7 +746,7 @@ $(function(){
 
     	socket.emit('user category added', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
     										category: correcting_category, design_id: design_id, 
-    									cookie_val: cookie_val});
+    									userid: userid});
 
     	categoryUpdate(correcting_rubric);
     });
@@ -761,7 +764,7 @@ $(function(){
     		.addClass("glyphicon-remove corrected");
 
     	socket.emit('user category removed', {comment_text: $("#" + correcting_rubric).find(".comment_text.tt-input").val(),
-    										category: correcting_category, design_id: design_id, cookie_val: cookie_val});
+    										category: correcting_category, design_id: design_id, userid: userid});
 
     	categoryUpdate(correcting_rubric);
     });
@@ -772,7 +775,7 @@ $(function(){
     		if (check_comment["comment"].replace(/<input.*?>/g, "_____").toLowerCase() == comment_text.toLowerCase()) {
     			latest_comment_inserted = check_comment["ID"];
     			socket.emit('autocompleted suggestion', {rubric: current_rubric, comment_id: latest_comment_inserted, 
-    				design_id: design_id, cookie_val: cookie_val});
+    				design_id: design_id, userid: userid});
     			updateComment();
     		}
     	});
@@ -795,7 +798,7 @@ $(function(){
     			$(".add_comment").click(function() {
 	    			$(this).hide();
 			    	$(this).parents(".rubric_cat").find(".comment_interface").show();
-			    	socket.emit("clicked add comment", {rubric: $(this).parents(".rubric_cat").attr("id"), cookie_val: cookie_val});
+			    	socket.emit("clicked add comment", {rubric: $(this).parents(".rubric_cat").attr("id"), userid: userid});
 			    });
 			    $(".cancel_comment").click(function() {
 			    	$(this).parents(".suggestion_box").find(".comment_text.tt-input").val("");
@@ -810,7 +813,7 @@ $(function(){
 			    	if (mode != "view") $(this).parents(".rubric_cat").find(".add_comment").show();
 			    	// delete location if one was made
 			    	iframe.find("#location_" + newest_comment_id).remove();
-			    	socket.emit('cancel comment', {rubric: $(this).parents(".rubric_cat").attr("id"), cookie_val: cookie_val});
+			    	socket.emit('cancel comment', {rubric: $(this).parents(".rubric_cat").attr("id"), userid: userid});
 			    });
 			    $(".submit_comment").click(function() {
 			    	// get the contents of comment box
@@ -896,7 +899,7 @@ $(function(){
 				});
     		}
 
-    		socket.emit('get comments', {rubric: rubric_cat, cookie_val: cookie_val});
+    		socket.emit('get comments', {rubric: rubric_cat, userid: userid});
     	});
     });
 
