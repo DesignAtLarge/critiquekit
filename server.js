@@ -43,7 +43,7 @@ var user_assignments = {};
 var assignment_file = "user_assignments.json";
 
 
-const io = socketIO(server, {path: 'api/critiquekit/'});
+const io = socketIO(server, {path: 'api/critiquekit/', secure: true});
 
 var options = {
     url: 'http://arielweingarten.com:8000/rate/',
