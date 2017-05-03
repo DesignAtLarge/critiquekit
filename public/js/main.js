@@ -567,7 +567,7 @@ $(function(){
 		return;
 	}
 
-	socket = io.connect('api/critiquekit/', {secure: true, rejectUnauthorized: false});
+	socket = io.connect('api/critiquekit/', {secure: true});
 	//socket = io();
 
 	// check for cookie
