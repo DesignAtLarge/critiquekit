@@ -11,8 +11,9 @@ const INDEX = path.join(__dirname, '/public');
 //var app = express();
 
 var options = {
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.crt'),
+    key: fs.readFileSync('/etc/ssl/private/d.ucsd.edu.key'),
+    cert: fs.readFileSync('/etc/ssl/certs/d.ucsd.edu.crt'),
+    ca: fs.readFileSync('/etc/ssl/certs/incommon-interim.crt')
 };
 
 var app = express()
