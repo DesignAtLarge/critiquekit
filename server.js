@@ -44,8 +44,8 @@ var user_assignments = {};
 var assignment_file = "user_assignments.json";
 
 
-//const io = socketIO(server, {path: 'api/critiquekit/', secure: true});
-const io = socketIO(server);
+const io = socketIO(server, {path: 'api/critiquekit/', secure: false});
+//const io = socketIO(server);
 
 var options = {
     url: 'http://arielweingarten.com:8000/rate/',
