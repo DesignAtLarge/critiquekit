@@ -10,18 +10,18 @@ const PORT = process.env.PORT || 8080;
 const INDEX = path.join(__dirname, '/public');
 //var app = express();
 
-var options = {
+/*var options = {
     key: fs.readFileSync('/etc/ssl/private/d.ucsd.edu.key'),
     cert: fs.readFileSync('/etc/ssl/certs/d.ucsd.edu.crt'),
     ca: fs.readFileSync('/etc/ssl/certs/incommon-interim.crt')
-};
+};*/
 
-var app = express()
-	.use(express.static(__dirname + '/public'));
-	//.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-
-var server = https.createServer(options, app)
+var server = express()
+	.use(express.static(__dirname + '/public'))
 	.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+//var server = https.createServer(options, app)
+//	.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 // List of currently connected sockets and their users. 
 // Format = { <IP address>: <socketid> }
@@ -44,7 +44,8 @@ var user_assignments = {};
 var assignment_file = "user_assignments.json";
 
 
-const io = socketIO(server, {path: 'api/critiquekit/', secure: true});
+//const io = socketIO(server, {path: 'api/critiquekit/', secure: true});
+const io = socketIO(server);
 
 var options = {
     url: 'http://arielweingarten.com:8000/rate/',
