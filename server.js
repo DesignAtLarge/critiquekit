@@ -13,6 +13,7 @@ const INDEX = path.join(__dirname, '/public');
 var options = {
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.crt'),
+    ca: fs.readFileSync('server.csr')
 };
 
 var app = express()
