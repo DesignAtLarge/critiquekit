@@ -1,13 +1,25 @@
 var express = require('express');
 var request = require('request');
 var jsonfile = require('jsonfile');
+var fs = require('fs');
+var https = require('https');
+
 const socketIO = require('socket.io');
 const path = require('path');
 const PORT = process.env.PORT || 8080;
 const INDEX = path.join(__dirname, '/public');
 //var app = express();
-const server = express()
-	.use(express.static(__dirname + '/public'))
+
+var options = {
+    key: fs.readFileSync('/etc/ssl/certs/wildcard.my_example.com.no_pass.key'),
+    cert: fs.readFileSync('/etc/ssl/certs/wildcard.my_example.com.crt'),
+    ca: fs.readFileSync('/etc/ssl/certs/bundle.crt')
+};
+
+var app = express()
+	.use(express.static(__dirname + '/public'));
+
+var server = https.createServer(options, app)
 	.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 // List of currently connected sockets and their users. 
