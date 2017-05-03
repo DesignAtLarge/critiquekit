@@ -11,16 +11,16 @@ const INDEX = path.join(__dirname, '/public');
 //var app = express();
 
 var options = {
-    //key: fs.readFileSync('server.key'),
-    //cert: fs.readFileSync('server.crt'),
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.crt'),
 };
 
-var server = express()
-	.use(express.static(__dirname + '/public'))
-	.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-
-//var server = https.createServer(options, app)
+var app = express()
+	.use(express.static(__dirname + '/public'));
 	//.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+var server = https.createServer(options, app)
+	.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 // List of currently connected sockets and their users. 
 // Format = { <IP address>: <socketid> }
