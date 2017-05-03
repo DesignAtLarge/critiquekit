@@ -567,7 +567,8 @@ $(function(){
 		return;
 	}
 
-	socket = io.connect('api/critiquekit/', {secure: true});
+	socket = io.connect('https://d.ucsd.edu/api/critiquekit/', {secure: true});
+	//socket = io();
 
 	// check for cookie
 	if (Cookies.get('critiquekit-cookie') != undefined) {
