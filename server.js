@@ -11,9 +11,8 @@ const INDEX = path.join(__dirname, '/public');
 //var app = express();
 
 var options = {
-    key: fs.readFileSync('/etc/ssl/certs/wildcard.my_example.com.no_pass.key'),
-    cert: fs.readFileSync('/etc/ssl/certs/wildcard.my_example.com.crt'),
-    ca: fs.readFileSync('/etc/ssl/certs/bundle.crt')
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.crt'),
 };
 
 var app = express()
