@@ -17,6 +17,11 @@ const INDEX = path.join(__dirname, '/public');
 };*/
 
 var server = express()
+	.all('/', function(req, res, next) {
+	    res.header("Access-Control-Allow-Origin", "*");
+	    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	    next();
+	})
 	.use(express.static(__dirname + '/public'))
 	.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
@@ -44,8 +49,8 @@ var user_assignments = {};
 var assignment_file = "user_assignments.json";
 
 
-const io = socketIO(server, {path: 'api/critiquekit/', secure: false});
-//const io = socketIO(server);
+//const io = socketIO(server, {path: 'api/critiquekit/', secure: false});
+const io = socketIO(server);
 
 var options = {
     url: 'http://arielweingarten.com:8000/rate/',
