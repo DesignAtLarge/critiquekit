@@ -567,7 +567,7 @@ $(function(){
 		return;
 	}
 
-	socket = io.connect('/api/critiquekit/');
+	socket = io.connect('https://localhost:8080');
 
 	// check for cookie
 	if (Cookies.get('critiquekit-cookie') != undefined) {
