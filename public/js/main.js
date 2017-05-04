@@ -611,6 +611,8 @@ $(function(){
 			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, consent: null}, { expires: 52 });
 			socket.emit('set cookie', userid);
 			logged_in = true;
+			$("#name_span").html(name);
+			$("#name_span2").html(name);
 			getStarted();
 		} else {
 			// your userid is wrong!
