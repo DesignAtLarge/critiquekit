@@ -102,7 +102,7 @@ function submitComment(comment_text, dom_container) {
 function appendNewComment(comments_section, comment_user_string, comment_id, comment_text) {
 
 	comments_section.append("<div class='posted_comment' id='new_comment_" + comment_user_string + comment_id + "'>" + 
-			"<div class='new_comment_text'>" + comment_text + "</div>" +
+			"<span class='new_comment_text'>" + comment_text + "</span>" +
 			"<span class='trash_comment glyphicon glyphicon-trash' title='Delete comment' " + 
 				"data-toggle='modal' data-target='#delete_modal'></span>" + 
 			"<span class='edit_comment glyphicon glyphicon-pencil' title='Edit comment' ></span>" +

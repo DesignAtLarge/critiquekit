@@ -270,8 +270,7 @@ button:hover {
 
 .new_comment_text {
     padding-right: 60px;
-    float: left;
-    display: inline;
+    display: inline-block;
 }
 
 .trash_comment, .edit_comment {
