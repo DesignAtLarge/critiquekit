@@ -856,6 +856,7 @@ $(function(){
     		if (i == rubric_categories.length - 1) {
     			// last one added, so set all the event handlers
     			$(".add_comment").click(function() {
+    				$(".cancel_comment").click();
 	    			$(this).hide();
 			    	$(this).parents(".rubric_cat").find(".comment_interface").show();
 			    	socket.emit("clicked add comment", {rubric: $(this).parents(".rubric_cat").attr("id"), userid: userid});
