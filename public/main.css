@@ -268,13 +268,8 @@ button:hover {
     position: relative;
 }
 
-.new_comment_text {
-    padding-right: 60px;
-    display: inline-block;
-}
-
 .trash_comment, .edit_comment {
-    float: right;
+    /*float: right;*/
     top: -2px;
     right: 0;
     padding: 5px;
