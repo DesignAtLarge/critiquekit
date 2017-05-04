@@ -597,6 +597,7 @@ $(function(){
 		$("#login_submit").click(function() {
 			// disable submit button
 			$(this).prop("disabled", true);
+			$(this).html("Loading...");
 			$("#login_bad").hide();
 			socket.emit('student id', $("#pid").val());
 		});
@@ -618,6 +619,7 @@ $(function(){
 			// your userid is wrong!
 			$("#login_bad").show();
 			$("#login_submit").prop("disabled", false);
+			$("#login_submit").html("Submit");
 		}
 	});
 
