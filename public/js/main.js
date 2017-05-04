@@ -142,6 +142,8 @@ function appendNewComment(comments_section, comment_user_string, comment_id, com
 		// temporarily hide the comment until they repost it
 		$("#new_comment_" + comment_user_string + editing_comment_id).hide();
 
+		updateComment();
+
     	socket.emit("clicked edit comment", {rubric: $(this).parents(".rubric_cat").attr("id"),
     		comment_id: editing_comment_id, userid: userid});
 	});
@@ -174,7 +176,7 @@ function commentUnHover(comment_str) {
 	}
 }
 
-function updateComment(rubric) {
+function updateComment() {
 	// get comment text
 	setTimeout(function() { // let it update
 		var comment_text = $("#" + current_rubric).find(".comment_text.tt-input").val();
