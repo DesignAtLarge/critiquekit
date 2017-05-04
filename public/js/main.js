@@ -29,14 +29,6 @@ var current_help_page = 0;
 var num_help_pages = 8;
 var userid;
 
-var name = "Ailie";
-var pid = "A12345";
-//var pid = "A54321";
-
-/*if (Math.random() < 0.5) {
-	window.location.href = "http://critiquekit-study.herokuapp.com";
-}*/
-
 // unique number for this user that hides what their actual PID is
 function getUserNumber(id_string) {
 	return "" + (parseInt(id_string.split("A")[1]) + 111111);
@@ -615,7 +607,7 @@ $(function(){
 		if (data.confirmed) {
 			userid = data.pid;
 			pid = data.pid;
-			name = data.firstname
+			name = data.firstname;
 			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, consent: null}, { expires: 52 });
 			socket.emit('set cookie', userid);
 			logged_in = true;
@@ -668,6 +660,7 @@ $(function(){
     });
 
     $("#help_modal").load("help.html", function() {
+    	$("#name_span2").html(name);
     	preloadImages(["feedback_autocomplete.png", "feedback_blank.png", "feedback_box.png",
     					"feedback_checks.png", "feedback_insert.png", "feedback_location.png",
     					"menu.png", "sidebar.png"]);
