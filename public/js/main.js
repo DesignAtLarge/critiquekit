@@ -728,6 +728,15 @@ $(function(){
 	    	// reload the page so welcome modal will appear again
 	    	location.reload();
 	    });
+	    $("#done_button").click(function() {
+	    	if (mode == "view") {
+	    		$("#done0").show();
+	    		$("#done1").hide();
+	    	} else {
+	    		$("#done0").hide();
+	    		$("#done1").show();
+	    	}
+	    });
     });
 
     getStarted();
