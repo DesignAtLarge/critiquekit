@@ -269,7 +269,9 @@ button:hover {
 }
 
 .new_comment_text {
-    padding-right: 40px;
+    padding-right: 60px;
+    float: left;
+    display: inline;
 }
 
 .trash_comment, .edit_comment {
