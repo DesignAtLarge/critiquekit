@@ -580,6 +580,7 @@ $(function(){
 	// check for cookie
 	if (Cookies.get('critiquekit-cookie') != undefined) {
 		var cookie = Cookies.getJSON('critiquekit-cookie');
+		pid = cookie.userid;
 		userid = cookie.userid;
 		name = cookie.firstname;
 		consent = cookie.consent;
