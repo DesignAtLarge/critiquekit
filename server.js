@@ -44,7 +44,8 @@ var user_file = "user_data.json";
 var design_data = {};
 var design_file = "design_data.json";
 
-var user_ids = ["A12345", "A54321", "A99999"];
+var students = require('students.json');
+var user_ids = Object.keys(students);
 var user_assignments = {};
 var assignment_file = "user_assignments.json";
 
