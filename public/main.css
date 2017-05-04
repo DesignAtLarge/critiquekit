@@ -269,7 +269,7 @@ button:hover {
 }
 
 .new_comment_text {
-    width: 80%;
+    padding-right: 40px;
 }
 
 .trash_comment, .edit_comment {
