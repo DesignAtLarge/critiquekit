@@ -194,6 +194,16 @@ io.on('connection', function(socket) {
 
   	sockets[address] = socket.id;
 
+  	socket.on('student id', function(pid) {
+  		var pid_index = user_ids.indexOf(pid);
+  		if (pid_index == -1) {
+  			socket.emit('student name', {confirmed: false});
+  		} else {
+  			var fullname = students[pid];
+  			var firstname = fullname.split(",")[1];
+  			socket.emit('student name', {confirmed: true, pid: pid, firstname: firstname});
+  		}
+  	});
 
   	socket.on('set cookie', function(userid) {
   		console.log("setting cookie");

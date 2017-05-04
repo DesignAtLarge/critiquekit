@@ -1,6 +1,7 @@
 var design_id; 
 var consent = false;
 var consent_done = false;
+var logged_in = false;
 var mode;
 var design_ids = ["A12345", "A54321", "A99999"];
 
@@ -561,6 +562,20 @@ function loadDesign(d_id) {
 	$("#design_frame").attr("src", "design/" + d_id + ".html");
 }
 
+function getStarted() {
+	if (logged_in) {
+		$('#login_modal').modal('hide'); 
+		if (consent_done == false) {
+		    $('#help_modal').modal('show'); 
+	    } else {
+	    	resetHelp();
+	    	$('#welcome_modal').modal('show');
+	    }
+	} else {
+		$('#login_modal').modal('show'); 
+	}
+}
+
 $(function(){
 	if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
 		$("body").html("Please use a desktop or laptop computer. ");
@@ -574,17 +589,43 @@ $(function(){
 	if (Cookies.get('critiquekit-cookie') != undefined) {
 		var cookie = Cookies.getJSON('critiquekit-cookie');
 		userid = cookie.userid;
+		name = cookie.firstname;
 		consent = cookie.consent;
 		socket.emit('set cookie', userid);
 		if (consent != null) {
 			consent_done = true;
 		}
+		logged_in = true;
 	} else {
-		userid = pid;
-		Cookies.set('critiquekit-cookie', {userid: userid, consent: null}, { expires: 52 });
-		socket.emit('set cookie', userid);
+		logged_in = false;
 		consent_done = false;
 	}
+
+	$("#login_modal").load("login.html", function() {
+		$("#login_submit").click(function() {
+			// disable submit button
+			$(this).prop("disabled", true);
+			$("#login_bad").hide();
+			socket.emit('student id', $("#pid").val());
+		});
+	});
+
+	socket.on('student name', function(data) {
+
+		if (data.confirmed) {
+			userid = data.pid;
+			pid = data.pid;
+			name = data.firstname
+			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, consent: null}, { expires: 52 });
+			socket.emit('set cookie', userid);
+			logged_in = true;
+			getStarted();
+		} else {
+			// your userid is wrong!
+			$("#login_bad").show();
+			$("#login_submit").prop("disabled", false);
+		}
+	});
 
     $("#navbar_container").load("navbar.html"); 
 
@@ -691,13 +732,7 @@ $(function(){
 	    });
     });
 
-
-    if (consent_done == false) {
-	    $('#help_modal').modal('show'); 
-    } else {
-    	resetHelp();
-    	$('#welcome_modal').modal('show');
-    }
+    getStarted();
 
     $("#design_frame").load(function() {
     	console.log("loaded " + $("#design_frame").attr("src"));

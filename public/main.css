@@ -17,6 +17,11 @@
     position: relative;
 }
 
+#login_bad {
+    color: darkred;
+    display: none;
+}
+
 .peer_submission {
     margin: 5px;
 }
