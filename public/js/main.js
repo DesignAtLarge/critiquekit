@@ -867,6 +867,7 @@ $(function(){
 
 			    		iframe.find("#location_" + getUserNumber(pid) + "_" + editing_comment_id)
 			    			.find(".location_text").html(unedited_comment_text);
+						$("#new_comment_" + getUserNumber(pid) + "_" + editing_comment_id).show();
 			    	}
 			    	//searchComments("", $(this).parents(".suggestion_box")); // clear search
 			    	updateComment();
