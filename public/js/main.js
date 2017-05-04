@@ -874,6 +874,8 @@ $(function(){
 			    	if (mode != "view") $(this).parents(".rubric_cat").find(".add_comment").show();
 			    	// delete location if one was made
 			    	iframe.find("#location_" + getUserNumber(pid) + "_" + newest_comment_id).remove();
+			    	$(this).parents(".suggestion_box").find(".add_location").show();
+					$(this).parents(".suggestion_box").find(".remove_location").hide();
 			    	socket.emit('cancel comment', {rubric: $(this).parents(".rubric_cat").attr("id"), userid: userid});
 			    });
 			    $(".submit_comment").click(function() {
