@@ -245,7 +245,7 @@ function displayComments(rubric, comments) {
 	should_section.html("");
 
 	comments.forEach(function(comment, i) {
-		if (comment["flagged"] != true) {
+		if (comment["flagged"] != true && comment["category"] != 0) {
 			var shade = comment["shade"];
 
 			var string = "<tr id='comment_" + comment["ID"] + 
