@@ -699,14 +699,14 @@ $(function(){
     	$("#consent_yes").change(function() {
     		if ($(this).is(':checked')) {
     			socket.emit('consent', {userid: userid, consent: true});
-    			Cookies.set('critiquekit-cookie', {userid: userid, consent: true}, { expires: 52 });
+    			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, consent: true}, { expires: 52 });
     			$("#next_help").removeClass("disabled");
     		}
     	});
     	$("#consent_no").change(function() {
     		if ($(this).is(':checked')) {
     			socket.emit('consent', {userid: userid, consent: false});
-    			Cookies.set('critiquekit-cookie', {userid: userid, consent: false}, { expires: 52 });
+    			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, consent: false}, { expires: 52 });
     			$("#next_help").removeClass("disabled");
     		}
     	});
