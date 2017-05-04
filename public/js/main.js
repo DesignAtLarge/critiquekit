@@ -103,9 +103,9 @@ function appendNewComment(comments_section, comment_user_string, comment_id, com
 
 	comments_section.append("<div class='posted_comment row' id='new_comment_" + comment_user_string + comment_id + "'>" + 
 			"<div class='new_comment_text col-sm-10'>" + comment_text + "</div>" +
+			"<div class='col-sm-1'><span class='edit_comment glyphicon glyphicon-pencil' title='Edit comment' ></span></div>" +
 			"<div class='col-sm-1'><span class='trash_comment glyphicon glyphicon-trash' title='Delete comment' " + 
 				"data-toggle='modal' data-target='#delete_modal'></span></div>" + 
-			"<div class='col-sm-1'><span class='edit_comment glyphicon glyphicon-pencil' title='Edit comment' ></span></div>" +
 			"</div>");
 
 	$("#new_comment_" + comment_user_string + comment_id + " .trash_comment").click(function() {
