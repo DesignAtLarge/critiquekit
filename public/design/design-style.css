@@ -1,0 +1,45 @@
+* {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+}
+p {
+    margin: 0;
+}
+.highlight {
+    background-color: rgba(201, 242, 255, 0.6) !important;
+    outline: 10px solid rgba(201, 242, 255, 0.6) !important;
+    cursor: pointer !important;
+}
+.comment_location {
+    position: absolute;
+    background-color: rgba(255, 156, 209, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 400px;
+    z-index: 10000;
+}
+.location_text {
+  font-family: "helvetica", sans-serif;
+  font-size: 14px;
+}
+.location_marker_right, .location_marker_left {
+    width: 5px;
+    height: 5px;
+    position: absolute;
+    top: 0;
+    background-color: black;
+}
+
+.location_marker_right {
+    right: 0;
+}
+
+.location_marker_left {
+    left: 0;
+}
+
+img {
+	max-width: 100%;
+    max-height: 100%;
+}

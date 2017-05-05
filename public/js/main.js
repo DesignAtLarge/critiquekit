@@ -31,7 +31,11 @@ var userid;
 
 // unique number for this user that hides what their actual PID is
 function getUserNumber(id_string) {
-	return "" + (parseInt(id_string.split("A")[1]) + 111111);
+	var letter_number = id_string.split("A");
+	if (letter_number.length == 1) {
+		letter_number = id_string.split("U");
+	}
+	return "" + (parseInt(letter_number[1]) + 111111);
 }
 
 // user submitted a comment, add it to the posted comments and notify the server
