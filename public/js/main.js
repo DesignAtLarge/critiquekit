@@ -570,13 +570,16 @@ function viewDesign(d_id) {
 }
 
 function getStarted() {
+	console.log("getting started, mode is "+ mode);
 	if (mode == "admin") {
 		$('#login_modal').modal('hide');
 		$('#welcome_modal').modal('show');
 		$("#welcome_admin").show();
+		console.log("mode is admin, showing welcome_admin");
 
 		$("#welcome_intro").hide();
 		$("#student_submissions").html("<i>Loading...</i>");
+		console.log("time to get all students");
 		socket.emit('get all students');     		
 
 		$("#welcome_footer").hide();
