@@ -571,6 +571,7 @@ function viewDesign(d_id) {
 
 function getStarted() {
 	if (mode == "admin") {
+		$('#login_modal').modal('hide');
 		$('#welcome_modal').modal('show');
 		$("#welcome_admin").show();
 
