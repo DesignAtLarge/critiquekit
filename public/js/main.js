@@ -709,6 +709,7 @@ $(function(){
     });
 
     socket.on('peers', function(data) {
+    	mode = "review";
 		design_ids = data.design_ids;
 		var peer_i = 1;
 		$("#peer_submissions").html("");
