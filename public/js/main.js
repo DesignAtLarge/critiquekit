@@ -705,6 +705,7 @@ $(function(){
     		$("#welcome_footer").show();
     		$("#choose_footer").hide();
     	});
+    	getStarted();
     });
 
     socket.on('peers', function(data) {
