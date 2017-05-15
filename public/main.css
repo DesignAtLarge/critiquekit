@@ -38,7 +38,7 @@ iframe {
     border: none;
 }
 
-#welcome_choose, #choose_footer {
+#welcome_choose, #choose_footer, #welcome_admin {
     display: none;
 }
 

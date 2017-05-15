@@ -49,6 +49,8 @@ var user_ids = Object.keys(students);
 var user_assignments = {};
 var assignment_file = "user_assignments.json";
 
+var admin_id = "SecretAdmin";
+
 
 //const io = socketIO(server, {path: 'api/critiquekit/', secure: false});
 const io = socketIO(server);
@@ -195,14 +197,21 @@ io.on('connection', function(socket) {
   	sockets[address] = socket.id;
 
   	socket.on('student id', function(pid) {
-  		var pid_index = user_ids.indexOf(pid);
-  		if (pid_index == -1) {
-  			socket.emit('student name', {confirmed: false});
+  		if (pid == admin_id) {
+  			socket.emit('admin', {confirmed: true});
+  			logs.push({ "time": new Date().getTime(), 
+					"event": "admin login"});
+  			updateJSON(log_file, logs);
   		} else {
-  			var fullname = students[pid];
-  			var firstname = fullname.split(",")[1];
-  			socket.emit('student name', {confirmed: true, pid: pid, firstname: firstname});
-  		}
+	  		var pid_index = user_ids.indexOf(pid);
+	  		if (pid_index == -1) {
+	  			socket.emit('student name', {confirmed: false});
+	  		} else {
+	  			var fullname = students[pid];
+	  			var firstname = fullname.split(",")[1];
+	  			socket.emit('student name', {confirmed: true, pid: pid, firstname: firstname});
+	  		}
+	  	}
   	});
 
   	socket.on('set cookie', function(userid) {
@@ -224,6 +233,10 @@ io.on('connection', function(socket) {
   		socket.emit('peers', {design_ids: user_assignments[userid]});
   	});
 
+  	socket.on('get all students', function() {
+  		socket.emit('all students', {students: Object.keys(user_assignments)});
+  	});
+
   	socket.on('consent', function(data) {
   		user_data[data.userid]["consent"] = data.consent;
   		updateJSON(user_file, user_data);
@@ -239,7 +252,7 @@ io.on('connection', function(socket) {
 				return comment.userid == data.userid;
 			});
 		} 
-		// otherwise mode is view so send all comments made by everyone
+		// otherwise mode is view or admin so send all comments made by everyone
 		socket.emit('saved comments', {comments: comments_to_send});
 	});
 

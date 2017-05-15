@@ -560,8 +560,26 @@ function loadDesign(d_id) {
 	$("#design_frame").attr("src", "design/" + d_id + ".html");
 }
 
+function viewDesign(d_id) {
+	mode = "view";
+	design_id = d_id;
+	$(".add_comment").hide();
+	$("#design_frame").attr("src", "design/" + d_id + ".html");
+}
+
 function getStarted() {
-	if (logged_in) {
+	if (mode == "admin") {
+		$('#welcome_modal').modal('show');
+		$("#welcome_admin").show();
+
+		$("#welcome_intro").hide();
+		$("#student_submissions").html("<i>Loading...</i>");
+		socket.emit('get all students');     		
+
+		$("#welcome_footer").hide();
+		$("#choose_footer").hide();
+
+	} else if (logged_in) {
 		$('#login_modal').modal('hide'); 
 		if (consent_done == false) {
 		    $('#help_modal').modal('show'); 
@@ -591,7 +609,10 @@ $(function(){
 		name = cookie.firstname;
 		consent = cookie.consent;
 		socket.emit('set cookie', userid);
-		if (consent != null) {
+		if (pid == admin_id) {
+			mode = "admin";
+			logged_in = true;
+		} else if (consent != null) {
 			consent_done = true;
 		}
 		logged_in = true;
@@ -621,6 +642,29 @@ $(function(){
 			logged_in = true;
 			$("#name_span").html(name);
 			$("#name_span2").html(name);
+			getStarted();
+		} else {
+			// your userid is wrong!
+			$("#login_bad").show();
+			$("#login_submit").prop("disabled", false);
+			$("#login_submit").html("Submit");
+		}
+	});
+
+	socket.on('admin', function(data) {
+		if (data.confirmed) {
+			mode = "admin";
+			logged_in = true;
+
+			userid = admin_id;
+			pid = admin_id;
+			name = "Admin";
+			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, consent: null}, { expires: 52 });
+			socket.emit('set cookie', userid);
+			logged_in = true;
+			$("#name_span").html(name);
+			$("#name_span2").html(name);
+
 			getStarted();
 		} else {
 			// your userid is wrong!
@@ -666,6 +710,18 @@ $(function(){
 				"<button type='button' class='btn peer_submission' data-dismiss='modal' " + 
 					"onclick='loadDesign(\"" + d_id + "\")'>" +
 					"Peer &#35; " + peer_i + "</button>");
+			peer_i++;
+		});
+    });
+
+    socket.on('all students', function(data) {
+    	design_ids = data.students;
+    	var peer_i = 1;
+		$("#student_submissions").html("");
+		design_ids.forEach(function(d_id) {
+			$("#student_submissions").append(
+				"<button type='button' class='btn peer_submission' data-dismiss='modal' " + 
+					"onclick='loadDesign(\"" + d_id + "\")'>" + d_id + "</button>");
 			peer_i++;
 		});
     });
