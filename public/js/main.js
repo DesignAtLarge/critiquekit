@@ -28,6 +28,8 @@ var editing_comment_id;
 var current_help_page = 0;
 var num_help_pages = 8;
 var userid;
+var admin_id = "SecretAdmin";
+
 
 // unique number for this user that hides what their actual PID is
 function getUserNumber(id_string) {
