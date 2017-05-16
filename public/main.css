@@ -301,7 +301,8 @@ button:hover {
 
 .instructor_header {
     color: #A38B00;
-    font-size: 0.6em;
+    font-size: 0.8em;
+    margin-top: -5px;
 }
 
 .right_buttons {
