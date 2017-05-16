@@ -253,10 +253,14 @@ function displayComments(rubric, comments) {
 	comments.forEach(function(comment, i) {
 		if (comment["flagged"] != true && comment["category"] != 0) {
 			var shade = comment["shade"];
+			if (comment["user"] == admin_id) {
+				shade = "#A38B00";
+			}
 
 			var string = "<tr id='comment_" + comment["ID"] + 
-		        "' class='comment' style='color: rgb(" + shade + ", " + shade + ", " + shade + ")'>" + 
-		        	"<td><span class='insert_btn glyphicon glyphicon-circle-arrow-right' title='Insert this comment'></span></td>" +
+		        "' class='comment' style='color: " + shade + "'><td>" +
+		        	"<span class='insert_btn glyphicon glyphicon-circle-arrow-right' style='color: " + shade + "' title='Insert this comment'>" + 
+		        	"</span></td>" +
 		        	"<td class='comment_val comment_" + i + "'>" + comment["comment"] + "</td>" + 
 		        	"<td><span class='glyphicon glyphicon-flag flag_btn' title='Flag this comment' " + 
 		        		"data-toggle='modal' data-target='#flag_modal'></span></td>" +

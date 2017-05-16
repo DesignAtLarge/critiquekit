@@ -142,7 +142,7 @@ function loadComments(rubric_category) {
     
     for (var i = 0; i < output.length; i++) {
       	var category = output[i]["category"];
-      	var shade = 0;
+      	var shade = "#000000";
       	output[i]["shade"] = shade;
 
       	var comment = output[i]["comment"];

@@ -299,6 +299,11 @@ button:hover {
     display: none;
 }
 
+.instructor_header {
+    color: #A38B00;
+    font-size: 0.6em;
+}
+
 .right_buttons {
     float: right;
     margin-bottom: 5px;
