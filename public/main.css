@@ -140,15 +140,11 @@ button:hover {
     background-color: rgba(139, 0, 0, 0.5);
 }
 
-.help_icon {
+.help_icon, .done_icon, .logout_icon {
     color: #1CA9C4;
 }
 
-.done_icon {
-    color: #1CA9C4;
-}
-
-#help_button, #done_button {
+#help_button, #done_button, #logout_button {
     cursor: pointer;
 }
 
