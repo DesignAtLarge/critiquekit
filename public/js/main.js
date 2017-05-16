@@ -557,7 +557,6 @@ function preloadImages(arrayOfImages) {
 }
 
 function loadDesign(d_id) {
-	mode = "review";
 	design_id = d_id;
 	$("#design_frame").attr("src", "design/" + d_id + ".html");
 }
