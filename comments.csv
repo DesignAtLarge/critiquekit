@@ -1,9 +1,3 @@
 ID,Comment,Rubric,Length,Category,Frequency,Blank values
-0,"This task may not be best suited for the _blank_, maybe better for the _blank_.",ContentFunctionality,15,3,0,"yard, tablet"
-1,"I like your tasks, they are very specific and they make sense as a whole. ",ContentFunctionality,15,1,0,
-2,So many interactions might be too much for a watch. Try and have the watch only help with key tasks. ,ContentFunctionality,20,3,0,
-3,The watch can use more interactions styles - like flick of the wrist instead of actually tapping on it. ,ContentFunctionality,18,3,0,
-4,There are too many colors,VisualDesign,5,2,0,
-5,Text is not readable,VisualDesign,4,2,0,
-6,"This provides the user with too many choices, try to make choices for the user whenever appropriate. ",ContentFunctionality,17,3,0,
-7,Could collapse menus you don't need often,VisualDesign,7,3,0,
+0,A solution to this already exists,ContentFunctionality,15,3,0,
+1,It's a little too broad,ContentFunctionality,15,1,0,
