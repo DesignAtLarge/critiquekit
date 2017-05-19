@@ -6,10 +6,10 @@ import json
 if __name__ == '__main__':
 
 
-	input_filename = "original_comments.csv"
+	input_filename = "comments.csv"
 	
 	csv_infile = open(input_filename, 'r')
-	output_filename = "comments.json"
+	output_filename = "original_comments.json"
 
 	comment_obj = {"comments": []}
 

@@ -1,3 +1,3 @@
 ID,Comment,Rubric,Length,Category,Frequency,Blank values
-0,A solution to this already exists,ContentFunctionality,15,3,0,
-1,It's a little too broad,ContentFunctionality,15,1,0,
+0,This is interesting but not novel enough,ContentFunctionality,7,2,0,
+1,There is no clear lead user here,ContentFunctionality,7,2,0,
