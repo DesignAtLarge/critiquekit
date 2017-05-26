@@ -1,3 +1,8 @@
 ID,Comment,Rubric,Length,Category,Frequency,Blank values
 0,This is interesting but not novel enough,ContentFunctionality,7,2,0,
 1,There is no clear lead user here,ContentFunctionality,7,2,0,
+2,The elements aren't lined up,VisualDesign,5,2,0,
+3,Could use space better ,VisualDesign,4,2,0,
+4,The page looks crowded,VisualDesign,4,2,0,
+5,There are too many _blank_ ,VisualDesign,5,2,0,lines
+6,Good use of space,VisualDesign,4,1,0,
