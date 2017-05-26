@@ -301,6 +301,11 @@ io.on('connection', function(socket) {
   	// a comment was edited
   	socket.on('edit submitted', function(data) {
 
+  		console.log("edit submitted by " + data.userid + " for design " + data.design_id);
+  		console.log("comment is:");
+  		console.log(data.comment_text);
+  		console.log("---------");
+
   		var new_category = data.category_string.lastIndexOf("1") + 1;
  	
 	 	user_data[data.userid].comments.forEach(function(comment) {
@@ -347,6 +352,11 @@ io.on('connection', function(socket) {
 
   	// a suggestion was posted, save it and update frequency if a suggestion was clicked
   	socket.on('comment submitted', function(data) {
+
+  		console.log("comment submitted by " + data.userid + " for design " + data.design_id);
+  		console.log("comment is:");
+  		console.log(data.comment_text);
+  		console.log("---------");
 
   		var new_com = {"comment_id": data.new_comment_id,
   									"comment_text": data.comment_text,
@@ -403,6 +413,7 @@ io.on('connection', function(socket) {
 				request.post(curate_options, function (error, response, body) {
 				  	if (error) {
 				  		console.log('error:', error); // Print the error if one occurred
+				  		console.log(curate_options.body);
 				  	}
 				  	if (response && response.statusCode == 200) {
 				  		console.log("got result");
@@ -412,16 +423,16 @@ io.on('connection', function(socket) {
 				  		if (new_category > old_category) {  // comment was supposedly improved
 
 			  				logs.push({ "time": new Date().getTime(), 
-					  						"user": data.userid,
-					  						"event": "improved comment", 
-					  						"comment ID": data.comment_id,
-					  						"old category": old_category,
-					  						"new category": new_category,
-					  						"old comment": this_comment["comment"],
-					  						"new_comment": new_comment,
-					  						"blank_values": blank_values,
-					  						"location style": data.location_style,
-					  						"design_id": data.design_id});
+				  						"user": data.userid,
+				  						"event": "improved comment", 
+				  						"comment ID": data.comment_id,
+				  						"old category": old_category,
+				  						"new category": new_category,
+				  						"old comment": this_comment["comment"],
+				  						"new_comment": new_comment,
+				  						"blank_values": blank_values,
+				  						"location style": data.location_style,
+				  						"design_id": data.design_id});
 					  		updateJSON(log_file, logs);
 
 					  		this_comment["comment"] = new_comment;
@@ -430,20 +441,34 @@ io.on('connection', function(socket) {
 			  			} else {
 			  				// comment was not improved, so leave it
 			  				logs.push({ "time": new Date().getTime(), 
-					  						"user": data.userid,
-					  						"event": "not improved comment", 
-					  						"comment ID": data.comment_id,
-					  						"old category": old_category,
-					  						"new category": new_category,
-					  						"old comment": this_comment["comment"],
-					  						"new_comment": new_comment,
-					  						"blank_values": blank_values,
-					  						"location style": data.location_style,
-					  						"design_id": data.design_id});
+				  						"user": data.userid,
+				  						"event": "not improved comment", 
+				  						"comment ID": data.comment_id,
+				  						"old category": old_category,
+				  						"new category": new_category,
+				  						"old comment": this_comment["comment"],
+				  						"new_comment": new_comment,
+				  						"blank_values": blank_values,
+				  						"location style": data.location_style,
+				  						"design_id": data.design_id});
 					  		updateJSON(log_file, logs);
 			  			}
 				  	} else {
 				  		console.log(response.statusCode, body);
+				  		console.log(curate_options.body);
+				  		// submit changed comment
+				  		logs.push({ "time": new Date().getTime(), 
+			  						"user": data.userid,
+			  						"event": "maybe improved comment", 
+			  						"comment ID": data.comment_id,
+			  						"old category": old_category,
+			  						"new category": new_category,
+			  						"old comment": this_comment["comment"],
+			  						"new_comment": data.comment_text,
+			  						"blank_values": "",
+			  						"location style": data.location_style,
+			  						"design_id": data.design_id});
+				  		updateJSON(log_file, logs);
 				  	}	  	
 				});
 	  			
@@ -458,6 +483,7 @@ io.on('connection', function(socket) {
 			request.post(curate_options, function (error, response, body) {
 			  	if (error) {
 			  		console.log('error:', error); // Print the error if one occurred
+			  		console.log(curate_options.body);
 			  	}
 			  	if (response && response.statusCode == 200) {
 			  		console.log("got result");
@@ -467,7 +493,11 @@ io.on('connection', function(socket) {
 
 	  				saveNewComment(data, data.category_string, data.userid, new_comment, blank_values);
 	  			} else {
+	  				// there was an error from the server
 			  		console.log(response.statusCode, body);
+			  		console.log(curate_options.body);
+			  		// still save it
+			  		saveNewComment(data, null, data.userid, data.comment_text, "");
 			  	}	  	
 			});
 	  		
@@ -599,6 +629,7 @@ io.on('connection', function(socket) {
 	  		request.post(options, function (error, response, body) {
 			  	if (error) {
 			  		console.log('error:', error); // Print the error if one occurred
+			  		console.log(options.body);
 			  	}
 			  	if (response && response.statusCode == 200) {
 			  		console.log('category:', body); 
