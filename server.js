@@ -77,7 +77,11 @@ function updateJSON(file, obj) {
 }
 
 function saveNewComment(data, category_string, address, new_comment, blank_values) {
-	var category = category_string.lastIndexOf("1") + 1;
+	var category = 0;
+	if (category_string) {
+		category = category_string.lastIndexOf("1") + 1;
+	}
+	
 	var new_id;
 	blank_values = blank_values.join(", ");
 	if (category == 0) {
