@@ -32,21 +32,31 @@ var server = express()
 // Format = { <IP address>: <socketid> }
 var sockets = {}; 
 
-var comment_obj = require('./original_comments.json');
-var comments = comment_obj["comments"];
+//var comment_obj = require('./original_comments.json');
+//var comments = comment_obj["comments"];
+// temp: recover from error
+var comments = require("./comments.json");
 var comment_update_file = "comments.json";
-var logs = [];
+//var logs = [];
+// temp: recover form error
+var logs = require("./logs.json");
 var log_file = "logs.json";
 
-var user_data = {} // { user id: {comments: <array holding comment objects>, consent: <whether or not they consented> } }
+//var user_data = {} // { user id: {comments: <array holding comment objects>, consent: <whether or not they consented> } }
+// temp: recover from error
+var user_data = require("./user_data.json");
 var user_file = "user_data.json";
 
-var design_data = {};
+//var design_data = {};
+// temp: recover from error
+var design_data = require("./design_data.json")
 var design_file = "design_data.json";
 
 var students = require('./students.json');
 var user_ids = Object.keys(students);
-var user_assignments = {};
+//var user_assignments = {};
+// temp: recover from error
+var user_assignments = require("./user_assignments.json");
 var assignment_file = "user_assignments.json";
 
 var admin_id = "SecretAdmin";
@@ -179,7 +189,7 @@ function getRandomArbitrary(min, max) {
 user_ids.sort(function(a, b){return 0.5 - Math.random()});
 
 // make users evaluate the person before and after them
-user_ids.forEach(function(user_id, i) {
+/*user_ids.forEach(function(user_id, i) {
 	if (i != 0 && i != user_ids.length - 1) { // not last one or first one
 		user_assignments[user_id] = [user_ids[i+1], user_ids[i-1]];
 	} else if (i != 0) { // last one
@@ -189,7 +199,7 @@ user_ids.forEach(function(user_id, i) {
 	}
 });
 
-updateJSON(assignment_file, user_assignments);
+updateJSON(assignment_file, user_assignments);*/
 
 // Socket response to new connections
 io.on('connection', function(socket) {
