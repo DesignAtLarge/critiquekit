@@ -511,7 +511,7 @@ io.on('connection', function(socket) {
 			  		console.log(response.statusCode, body);
 			  		console.log(curate_options.body);
 			  		// still save it
-			  		saveNewComment(data, null, data.userid, data.comment_text, "");
+			  		saveNewComment(data, null, data.userid, data.comment_text, []);
 			  	}	  	
 			});
 	  		
