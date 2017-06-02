@@ -192,7 +192,7 @@ for (var user_id in students) {
 	if (group_ids.indexOf(group_id) == -1) {
 		group_ids.push(group_id);
 	}
-});
+}
 console.log("group ids:");
 console.log(group_ids);
 
