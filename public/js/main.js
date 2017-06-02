@@ -615,7 +615,7 @@ $(function(){
 	// check for cookie
 	if (Cookies.get('critiquekit-cookie') != undefined) {
 		var cookie = Cookies.getJSON('critiquekit-cookie');
-		if (cookie.group_id || pid == admin_id) {
+		if (cookie.group_id || cookie.userid == admin_id) {
 			pid = cookie.userid;
 			userid = cookie.userid;
 			name = cookie.firstname;
