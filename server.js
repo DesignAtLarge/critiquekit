@@ -32,7 +32,7 @@ var server = express()
 // Format = { <IP address>: <socketid> }
 var sockets = {}; 
 
-//var comment_obj = require('./original_comments.json');
+var comment_obj = require('./original_comments.json');
 var comments = comment_obj["comments"];
 // temp: recover from error
 //var comments = require("./comments.json");
