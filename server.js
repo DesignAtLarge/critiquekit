@@ -33,30 +33,31 @@ var server = express()
 var sockets = {}; 
 
 //var comment_obj = require('./original_comments.json');
-//var comments = comment_obj["comments"];
+var comments = comment_obj["comments"];
 // temp: recover from error
-var comments = require("./comments.json");
+//var comments = require("./comments.json");
 var comment_update_file = "comments.json";
-//var logs = [];
+var logs = [];
 // temp: recover form error
-var logs = require("./logs.json");
+//var logs = require("./logs.json");
 var log_file = "logs.json";
 
-//var user_data = {} // { user id: {comments: <array holding comment objects>, consent: <whether or not they consented> } }
+var user_data = {} // { user id: {comments: <array holding comment objects>, consent: <whether or not they consented> } }
 // temp: recover from error
-var user_data = require("./user_data.json");
+//var user_data = require("./user_data.json");
 var user_file = "user_data.json";
 
-//var design_data = {};
+var design_data = {};
 // temp: recover from error
-var design_data = require("./design_data.json")
+//var design_data = require("./design_data.json")
 var design_file = "design_data.json";
 
 var students = require('./students.json');
 var user_ids = Object.keys(students);
-//var user_assignments = {};
+var user_assignments = {};
+var group_ids = [];
 // temp: recover from error
-var user_assignments = require("./user_assignments.json");
+//var user_assignments = require("./user_assignments.json");
 var assignment_file = "user_assignments.json";
 
 var admin_id = "SecretAdmin";
@@ -185,21 +186,31 @@ function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+// make list of group ids
+students.forEach(user_id, i) {
+	var group_id = students[user_id].group;
+	if (group_ids.indexOf(group_id) == -1) {
+		group_ids.push(group_id);
+	}
+}
+console.log("group ids:");
+console.log(group_ids);
+
 // randomly shuffle user_ids
-user_ids.sort(function(a, b){return 0.5 - Math.random()});
+group_ids.sort(function(a, b){return 0.5 - Math.random()});
 
 // make users evaluate the person before and after them
-/*user_ids.forEach(function(user_id, i) {
-	if (i != 0 && i != user_ids.length - 1) { // not last one or first one
-		user_assignments[user_id] = [user_ids[i+1], user_ids[i-1]];
+group_ids.forEach(function(group_id, i) {
+	if (i != 0 && i != group_ids.length - 1) { // not last one or first one
+		user_assignments[group_id] = [group_ids[i+1], group_ids[i-1]];
 	} else if (i != 0) { // last one
-		user_assignments[user_id] = [user_ids[0], user_ids[i-1]];
+		user_assignments[group_id] = [group_ids[0], group_ids[i-1]];
 	} else { // first one
-		user_assignments[user_id] = [user_ids[i+1], user_ids[user_ids.length-1]];
+		user_assignments[group_id] = [group_ids[i+1], group_ids[group_ids.length-1]];
 	}
 });
 
-updateJSON(assignment_file, user_assignments);*/
+updateJSON(assignment_file, user_assignments);
 
 // Socket response to new connections
 io.on('connection', function(socket) {
@@ -221,9 +232,10 @@ io.on('connection', function(socket) {
 	  		if (pid_index == -1) {
 	  			socket.emit('student name', {confirmed: false});
 	  		} else {
-	  			var fullname = students[pid];
+	  			var fullname = students[pid].name;
 	  			var firstname = fullname.split(",")[1];
-	  			socket.emit('student name', {confirmed: true, pid: pid, firstname: firstname});
+	  			var group_id = students[pid].group;
+	  			socket.emit('student name', {confirmed: true, pid: pid, firstname: firstname, group_id: group_id});
 	  		}
 	  	}
   	});
@@ -243,12 +255,16 @@ io.on('connection', function(socket) {
 		}
   	});
 
-  	socket.on('get peers', function(userid) {
-  		socket.emit('peers', {design_ids: user_assignments[userid]});
+  	socket.on('get peers', function(groupid) {
+  		socket.emit('peers', {design_ids: user_assignments[groupid]});
   	});
 
   	socket.on('get all students', function() {
   		socket.emit('all students', {students: Object.keys(user_assignments)});
+  	});
+
+  	socket.on('get all groups', function() {
+  		socket.emit('all groups', {groups: group_ids});
   	});
 
   	socket.on('consent', function(data) {
