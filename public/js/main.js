@@ -615,24 +615,23 @@ $(function(){
 	// check for cookie
 	if (Cookies.get('critiquekit-cookie') != undefined) {
 		var cookie = Cookies.getJSON('critiquekit-cookie');
+		pid = cookie.userid;
+		userid = cookie.userid;
+		name = cookie.firstname;
+		consent = cookie.consent;
 		if (cookie.group_id || cookie.userid == admin_id) {
-			pid = cookie.userid;
-			userid = cookie.userid;
-			name = cookie.firstname;
-			consent = cookie.consent;
 			group_id = cookie.group_id;
 			socket.emit('set cookie', userid);
-			if (pid == admin_id) {
-				mode = "admin";
-				logged_in = true;
-			} else if (consent != null) {
-				consent_done = true;
-			}
-			logged_in = true;
 		} else {
-			pid = cookie.userid;
 			socket.emit('student id', pid);
 		}
+		if (pid == admin_id) {
+			mode = "admin";
+			logged_in = true;
+		} else if (consent != null) {
+			consent_done = true;
+		}
+		logged_in = true;
 	} else {
 		logged_in = false;
 		consent_done = false;
