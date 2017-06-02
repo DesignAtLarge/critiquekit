@@ -619,6 +619,7 @@ $(function(){
 		userid = cookie.userid;
 		name = cookie.firstname;
 		consent = cookie.consent;
+		group_id = cookie.group_id;
 		socket.emit('set cookie', userid);
 		if (pid == admin_id) {
 			mode = "admin";
@@ -650,7 +651,7 @@ $(function(){
 			name = data.firstname;
 			group_id = data.group_id;
 			console.log("group id is " + group_id);
-			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, consent: null}, { expires: 52 });
+			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, group_id: group_id, consent: null}, { expires: 52 });
 			socket.emit('set cookie', userid);
 			logged_in = true;
 			$("#name_span").html(name);
