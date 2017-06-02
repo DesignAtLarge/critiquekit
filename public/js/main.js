@@ -619,12 +619,6 @@ $(function(){
 		userid = cookie.userid;
 		name = cookie.firstname;
 		consent = cookie.consent;
-		if (cookie.group_id || cookie.userid == admin_id) {
-			group_id = cookie.group_id;
-			socket.emit('set cookie', userid);
-		} else {
-			socket.emit('student id', pid);
-		}
 		if (pid == admin_id) {
 			mode = "admin";
 			logged_in = true;
@@ -632,6 +626,14 @@ $(function(){
 			consent_done = true;
 		}
 		logged_in = true;
+
+		if (cookie.group_id || cookie.userid == admin_id) {
+			group_id = cookie.group_id;
+			socket.emit('set cookie', userid);
+		} else {
+			socket.emit('student id', pid);
+		}
+		
 	} else {
 		logged_in = false;
 		consent_done = false;
@@ -655,7 +657,7 @@ $(function(){
 			name = data.firstname;
 			group_id = data.group_id;
 			console.log("group id is " + group_id);
-			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, group_id: group_id, consent: null}, { expires: 52 });
+			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, group_id: group_id, consent: consent}, { expires: 52 });
 			socket.emit('set cookie', userid);
 			logged_in = true;
 			$("#name_span").html(name);
