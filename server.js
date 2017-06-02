@@ -235,6 +235,7 @@ io.on('connection', function(socket) {
 	  			var fullname = students[pid].name;
 	  			var firstname = fullname.split(",")[1];
 	  			var group_id = students[pid].group;
+	  			console.log("student " + pid + " group is " + group_id);
 	  			socket.emit('student name', {confirmed: true, pid: pid, firstname: firstname, group_id: group_id});
 	  		}
 	  	}
@@ -256,6 +257,8 @@ io.on('connection', function(socket) {
   	});
 
   	socket.on('get peers', function(groupid) {
+  		console.log("getting peers for group " + groupid);
+  		console.log(user_assignments[groupid]);
   		socket.emit('peers', {design_ids: user_assignments[groupid]});
   	});
 

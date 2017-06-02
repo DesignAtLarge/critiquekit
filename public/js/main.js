@@ -649,6 +649,7 @@ $(function(){
 			pid = data.pid;
 			name = data.firstname;
 			group_id = data.group_id;
+			console.log("group id is " + group_id);
 			Cookies.set('critiquekit-cookie', {userid: userid, firstname: name, consent: null}, { expires: 52 });
 			socket.emit('set cookie', userid);
 			logged_in = true;
@@ -700,6 +701,7 @@ $(function(){
     		$("#welcome_intro").hide();
     		$("#welcome_choose").show();
     		$("#peer_submissions").html("<i>Loading...</i>");
+    		console.log("getting peers for group " + group_id);
     		socket.emit('get peers', group_id);     		
 
     		$("#welcome_footer").hide();
