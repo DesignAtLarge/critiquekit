@@ -187,12 +187,12 @@ function getRandomArbitrary(min, max) {
 }
 
 // make list of group ids
-students.forEach(user_id, i) {
+students.forEach(function(user_id, i) {
 	var group_id = students[user_id].group;
 	if (group_ids.indexOf(group_id) == -1) {
 		group_ids.push(group_id);
 	}
-}
+});
 console.log("group ids:");
 console.log(group_ids);
 
