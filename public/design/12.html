@@ -2,28 +2,17 @@
 <head><link rel="stylesheet" type="text/css" href="design-style.css"></head>
 
 <body>
-
 <span data-pats="text" class="actual_text post_region_text">
 <p>&nbsp;</p>
-<p><strong>LEAD USER:</strong>&nbsp;My lead user is my assistant technical director, Stephen. Stephen runs CG operation for Super Smash Bros. Melee tournament broadcasts--since he has yet to retire from competitive play (as do most production staff), Stephen wanted to figure out a method of CG operation in which scoring and text updates would be done without his constant input. In essence, this lead design was driven by his desire to play more video games, and to work less.</p>
+<p><strong>LEAD USER:</strong>&nbsp;My lead user is my assistant technical director, Stephen. In addition to his role as TD (scene switcher), Stephen runs CG operation for Super Smash Bros. Melee tournament broadcasts--since he has yet to retire from competitive play (as do most production staff), Stephen wanted to figure out a method of CG operation in which scoring and text updates would be done without his constant input. In essence, this lead design was driven by his desire to play more video games, and to work less.</p>
 <p>&nbsp;</p>
-<p><b>TASK:&nbsp;</b>Stephen is in charge of CG operation - "Character Generation", including dynamic text (scoreboard/names) updates to indicate match progression to our viewers. Stephen's goal with his interface, named "StreamLord", is to allow for players to operate CG via touch-screen interface. Player names would automatically be drawn from the pre-registration bracket, and thus scoring could be done without the need for his constant oversight.</p>
+<p>Stephen's proposed design involves a 7-in RPi touchscreen interface - in which the players competing on the live stream setup would input their own scores after each win, through an increment via single-tap. Here is a diagram of data flow:</p>
+<p><img src="https://d1b10bmlvqabco.cloudfront.net/attach/j154nikxuxc4e6/i19yguy0nqk507/j3lvysnk4375/eJwFwcENwyAMAMBdGABwIjDk10kiCxBBCjEC51V199591TtvdahLZKzDmNxW4pn1Ep5Ui67M9S402tKJuyERSlcvjyyzuYA7eG9tCNEjRDQ7gN3RhWjBbg4Qg_m8wp2k5HPJLNTP3KhO6no8Vf3mG0pmA.png" alt=""></p>
 <p>&nbsp;</p>
-<p><strong>VERIFY NAMES</strong></p>
-<p><img src="https://d1b10bmlvqabco.cloudfront.net/attach/j154nikxuxc4e6/i19yguy0nqk507/j3eryioaofsu/verify_names.png" alt=""></p>
-<p>Upon arrival at the stream setup, the players would verify that their names had been drawn from the bracket correctly. An admin would be notified if not, otherwise the players would start the CG interface by selecting "OK!"</p>
+<p><b>TASK:&nbsp;</b>Stephen is in charge of CG operation - "Character Generation", including dynamic text (scoreboard/names) updates to indicate match progression to our viewers. Stephen's goal with his interface, named "StreamLord", is to allow for players to operate CG via touch-screen interface. Player names would automatically be drawn from the pre-registration bracket data, and thus scoring could be done without the need for his constant oversight.</p>
 <p>&nbsp;</p>
-<p><strong>SELECT PORT</strong></p>
-<p><img src="https://d1b10bmlvqabco.cloudfront.net/attach/j154nikxuxc4e6/i19yguy0nqk507/j3es1rmao6wg/Select_Port.png" alt=""></p>
-<p>Next, the players would select the port their controller is plugged into. Port orientation is important for CG operation, as it'll determine whether the player is displayed on the left or the right side of the main in-game overlay.</p>
-<p>&nbsp;</p>
-<p><strong>SCOREBOARD</strong></p>
-<p><strong><img src="https://d1b10bmlvqabco.cloudfront.net/attach/j154nikxuxc4e6/i19yguy0nqk507/j3es3z74ryqe/Scoreboardreset.png" alt=""></strong></p>
-<p>With names and ports properly selected, the players would proceed to play their match series. Since the names were drawn from the online bracket data, StreamLord would know whether the&nbsp;series&nbsp;were a "quarterfinals" or a "semifinals", and thus would be able to determine whether the set count total would be a "Best of 3" or a "Best of 5", etc. A single tap increments a player's score - if a mistake is made, the reset button can be pressed to zero out both score fields.</p>
-<p>&nbsp;</p>
-<p><img src="https://d1b10bmlvqabco.cloudfront.net/attach/j154nikxuxc4e6/i19yguy0nqk507/j3es7qdgna2e/Scoreboardend.png" alt=""></p>
-<p>Once the match series is over (a single player reached the requisite number of wins), the reset button will appear as an "end" button - finishing out the match&nbsp;while exporting scores to the online bracket. The interface would progress back to the "VERIFY NAMES" screen, and the next match could be queued up at this point.</p>
-<p>&nbsp;</p>
+<p><strong>VIDEO:&nbsp;</strong></p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/p0G5JxNLon4" frameborder="0" allowfullscreen></iframe>
 <p>&nbsp;</p></span>
 
 </body>
