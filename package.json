@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Prototype system for critiquing and repurposing feedback",
   "engines": {
-    "node": "7.0.0"
+    "node": "7.10.1"
   },
   "main": "server.js",
   "scripts": {
