@@ -67,14 +67,14 @@ var admin_id = "SecretAdmin";
 const io = socketIO(server);
 
 var options = {
-    url: 'http://arielweingarten.com:8000/rate/',
+    url: 'http://104.131.160.94:8000/rate/',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 };
 
 var curate_options = {
-	url: 'http://arielweingarten.com:8000/curate',
+	url: 'http://104.131.160.94:8000/curate',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
