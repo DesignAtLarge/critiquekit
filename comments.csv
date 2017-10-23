@@ -1,8 +1,15 @@
 ID,Comment,Rubric,Length,Category,Frequency,Blank values
-0,This is interesting but not novel enough,ContentFunctionality,7,2,0,
-1,There is no clear lead user here,ContentFunctionality,7,2,0,
-2,The elements aren't lined up,VisualDesign,5,2,0,
-3,Could use space better ,VisualDesign,4,2,0,
-4,The page looks crowded,VisualDesign,4,2,0,
-5,There are too many _blank_ ,VisualDesign,5,2,0,lines
-6,Good use of space,VisualDesign,4,1,0,
+0,I like that navigation through the prototype is simple,ContentFunctionality,,1,0,
+1,The idea is creative and interesting to explore,ContentFunctionality,,1,0,
+2,I like that there is a lot of detail in this prototype,ContentFunctionality,,1,0,
+3,I like the overall visual design of the prototype,VisualDesign,,1,0,
+4,The layout is clean and kept within a grid.,VisualDesign,,1,0,
+5,It's a bit difficult to understand the purpose of the prototype at first look.,ContentFunctionality,,2,0,
+6,I wish the page contained a bit less at once.,VisualDesign,,2,0,
+7,The flow of the app is a bit confusing.,ContentFunctionality,,2,0,
+8,I wish there were more interactions shown in the prototype.,ContentFunctionality,,2,0,
+9,"Reduce the clutter a bit, and this will be a polished prototype.",VisualDesign,,3,0,
+10,Each prototype should diverge more to explore different ideas.,ContentFunctionality,,3,0,
+11,"You should include all interactions for all pages, especially from the _blank_ page.",ContentFunctionality,,3,0,home
+12,Add some margins around the page elements to give them some padding.,ContentFunctionality,,3,0,
+13,The main page is too textual: think of a more visual representation to show positive interactions.,VisualDesign,,3,0,
