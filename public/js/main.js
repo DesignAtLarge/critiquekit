@@ -732,7 +732,7 @@ $(function(){
 			$("#peer_submissions").append(
 				"<button type='button' class='btn peer_submission' data-dismiss='modal' " + 
 					"onclick='loadDesign(\"" + d_id + "\")'>" +
-					"Group &#35; " + peer_i + "</button>");
+					"Student &#35; " + peer_i + "</button>");
 			peer_i++;
 		});
     });
@@ -756,7 +756,7 @@ $(function(){
 		design_ids.forEach(function(d_id) {
 			$("#student_submissions").append(
 				"<button type='button' class='btn peer_submission' data-dismiss='modal' " + 
-					"onclick='loadDesign(\"" + d_id + "\")'>Group ID " + d_id + "</button>");
+					"onclick='loadDesign(\"" + d_id + "\")'>" + d_id + "</button>");
 			peer_i++;
 		});
     });
