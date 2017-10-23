@@ -732,7 +732,8 @@ $(function(){
 			$("#peer_submissions").append(
 				"<button type='button' class='btn peer_submission' data-dismiss='modal' " + 
 					"onclick='loadDesign(\"" + d_id + "\")'>" +
-					"Student &#35; " + peer_i + "</button>");
+					//"Student &#35; " + 
+					d_id + "</button>");
 			peer_i++;
 		});
     });
